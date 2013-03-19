@@ -11,7 +11,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RserveCli
+namespace RserveCLI2
 {
     using System;
     using System.Text;

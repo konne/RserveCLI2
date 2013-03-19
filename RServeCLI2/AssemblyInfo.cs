@@ -9,11 +9,11 @@ using System.Reflection;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
-[assembly: AssemblyTitle("RserveCLI")]
+[assembly: AssemblyTitle("RserveCLI2")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Oliver M. Haynold")]
-[assembly: AssemblyProduct("RserveCLI")]
+[assembly: AssemblyProduct("RserveCLI2")]
 [assembly: AssemblyCopyright("Copyright (c) 2010 by Oliver Haynold and other contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

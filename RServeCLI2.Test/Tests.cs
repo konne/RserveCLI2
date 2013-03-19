@@ -5,7 +5,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace RserveCli.Tests
+namespace RserveCLI2.Test
 {
     using System;
     using System.Collections.Generic;

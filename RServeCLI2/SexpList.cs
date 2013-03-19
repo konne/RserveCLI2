@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RserveCli
+namespace RserveCLI2
 {
     using System.Collections.Generic;
 

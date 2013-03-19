@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RserveCli
+namespace RserveCLI2
 {
     /// <summary>
     /// A Sexp for Symnames. Same as a string, but can't be NA.

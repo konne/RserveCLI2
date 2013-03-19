@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RserveCli.Examples
+namespace RserveCLI2.Example
 {
     using System;
     using System.IO;

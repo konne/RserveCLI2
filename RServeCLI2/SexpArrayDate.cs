@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RserveCli
+namespace RserveCLI2
 {
 
     /// <summary>

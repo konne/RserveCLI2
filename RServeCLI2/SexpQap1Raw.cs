@@ -9,7 +9,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RserveCli
+namespace RserveCLI2
 {
     /// <summary>
     /// A container for Sexps that we don't know how to interpret. This way you can still pass such a Sexp back to Rserve, even though its meaning

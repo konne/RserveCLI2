@@ -4,8 +4,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RserveCli.Examples</RootNamespace>
-    <AssemblyName>RserveCliExamples</AssemblyName>
+    <RootNamespace>RserveCLI2.Example</RootNamespace>
+    <AssemblyName>RserveCLI2.Example</AssemblyName>
     <ProjectGuid>{9821B6A9-BD55-4CEC-B9DF-938B1B68D075}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

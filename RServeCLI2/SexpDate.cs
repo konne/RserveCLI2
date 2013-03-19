@@ -11,7 +11,7 @@
 
 using System;
 
-namespace RserveCli
+namespace RserveCLI2
 {
 
     /// <summary>
