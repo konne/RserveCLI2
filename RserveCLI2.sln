@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RserveCLI", "RserveCLI\RserveCLI VS.csproj", "{9BCC1A07-126C-4B24-904A-C0F0D9DCC420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RserveCLI2", "RserveCLI2\RserveCLI2.csproj", "{9BCC1A07-126C-4B24-904A-C0F0D9DCC420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "RserveCLI\Tests\Tests VS.csproj", "{3F5A8601-1FCF-4B45-9F80-B7F8FAB4E3DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RServeCLI2.Test", "RserveCLI2.Test\RServeCLI2.Test.csproj", "{3F5A8601-1FCF-4B45-9F80-B7F8FAB4E3DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "RserveCLI\Examples\Examples VS.csproj", "{9821B6A9-BD55-4CEC-B9DF-938B1B68D075}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RServeCLI2.Example", "RserveCLI2.Example\RServeCLI2.Example.csproj", "{9821B6A9-BD55-4CEC-B9DF-938B1B68D075}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16078D4A-4647-48D3-B0A3-548C19F401EF}"
 	ProjectSection(SolutionItems) = preProject
@@ -57,6 +57,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = RserveCLI\RserveCLI VS.csproj
+		StartupItem = RserveCLI2\RserveCLI2.csproj
 	EndGlobalSection
 EndGlobal
