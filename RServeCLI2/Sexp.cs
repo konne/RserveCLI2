@@ -534,6 +534,21 @@ namespace RserveCli
                 return Make( ( double[ , ] )x );
             }
 
+            if ( x is decimal )
+            {
+                return Make( ( decimal )x );
+            }
+
+            if ( x is IEnumerable<decimal> )
+            {
+                return Make( ( IEnumerable<decimal> )x );
+            }
+
+            if ( x is decimal[ , ] )
+            {
+                return Make( ( decimal[ , ] )x );
+            }
+
             if ( x is int )
             {
                 return Make( ( int )x );
