@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9BCC1A07-126C-4B24-904A-C0F0D9DCC420}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>RserveCli</RootNamespace>
-    <AssemblyName>RserveCli</AssemblyName>
+    <RootNamespace>RserveCli2</RootNamespace>
+    <AssemblyName>RserveCli2</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -26,7 +26,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Externalconsole>true</Externalconsole>
-    <DocumentationFile>bin\Debug\RserveCli.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\RserveCli2.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Externalconsole>true</Externalconsole>
-    <DocumentationFile>bin\Release\RserveCli.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\RserveCli2.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
