@@ -43,7 +43,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RserveCLI2\RserveCLI2.csproj">
       <Project>{9BCC1A07-126C-4B24-904A-C0F0D9DCC420}</Project>
-      <Name>RserveCLI VS</Name>
+      <Name>RserveCLI2</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
