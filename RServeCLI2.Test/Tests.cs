@@ -33,8 +33,8 @@ namespace RserveCli.Tests
         [SetUp]
         public void Init()
         {
-            this.sConn = new RConnection(
-                new System.Net.IPAddress(new byte[] { 192, 168, 37, 10 }), user: "ruser", password: "rpwd");
+            sConn = new RConnection(
+                new System.Net.IPAddress( new byte[] { 192 , 168 , 37 , 10 } ) , user: "ruser" , password: "rpwd" );
         }
 
         /// <summary>
@@ -43,33 +43,33 @@ namespace RserveCli.Tests
         [Test]
         public void Int()
         {
-            var zero = new SexpInt(0);
-            var one = new SexpInt(1);
+            var zero = new SexpInt( 0 );
+            var one = new SexpInt( 1 );
             var na = SexpInt.Na;
 
             // ReSharper disable EqualExpressionComparison
-            Assert.That(zero.Equals(zero));
-            Assert.That(one.Equals(one));
-            Assert.That(!na.Equals(na));
+            Assert.That( zero.Equals( zero ) );
+            Assert.That( one.Equals( one ) );
+            Assert.That( !na.Equals( na ) );
 
             // ReSharper restore EqualExpressionComparison
-            Assert.That(!zero.Equals(one));
-            Assert.That(!zero.Equals(na));
-            Assert.That(!one.Equals(na));
-            Assert.That(zero.Equals(0));
-            Assert.That(one.Equals(1));
-            Assert.That(na.IsNa);
-            Assert.That(zero.AsInt == 0);
-            Assert.That(one.AsInt == 1);
-			#if(NUNIT_25)
-            #pragma warning disable 168
+            Assert.That( !zero.Equals( one ) );
+            Assert.That( !zero.Equals( na ) );
+            Assert.That( !one.Equals( na ) );
+            Assert.That( zero.Equals( 0 ) );
+            Assert.That( one.Equals( 1 ) );
+            Assert.That( na.IsNa );
+            Assert.That( zero.AsInt == 0 );
+            Assert.That( one.AsInt == 1 );
+#if(NUNIT_25)
+#pragma warning disable 168
             Assert.Throws<ArithmeticException>(delegate { var x = na.AsInt; });
-            #pragma warning restore 168
-			#endif		
+#pragma warning restore 168
+#endif
 
-            foreach (var a in new Sexp[] { zero, one, na })
+            foreach ( var a in new Sexp[] { zero , one , na } )
             {
-                Assert.That(!a.Equals(new SexpNull()));
+                Assert.That( !a.Equals( new SexpNull() ) );
             }
         }
 
@@ -79,31 +79,31 @@ namespace RserveCli.Tests
         [Test]
         public void Double()
         {
-            var zero = new SexpDouble(0.0);
-            var one = new SexpDouble(1.0);
+            var zero = new SexpDouble( 0.0 );
+            var one = new SexpDouble( 1.0 );
             var na = SexpDouble.Na;
 
             // ReSharper disable EqualExpressionComparison
-            Assert.That(zero.Equals(zero));
-            Assert.That(one.Equals(one));
-            Assert.That(!na.Equals(na));
+            Assert.That( zero.Equals( zero ) );
+            Assert.That( one.Equals( one ) );
+            Assert.That( !na.Equals( na ) );
 
             // ReSharper restore EqualExpressionComparison
-            Assert.That(!zero.Equals(one));
-            Assert.That(!zero.Equals(na));
-            Assert.That(!one.Equals(na));
-            Assert.That(zero.Equals(0));
-            Assert.That(one.Equals(1));
-            Assert.That(na.IsNa);
-            Assert.That(zero.AsDouble == 0.0);
-            Assert.That(one.AsDouble == 1.0);
-            Assert.That(zero.AsInt == 0);
-            Assert.That(one.AsInt == 1);
-            Assert.IsNaN(na.AsDouble);
+            Assert.That( !zero.Equals( one ) );
+            Assert.That( !zero.Equals( na ) );
+            Assert.That( !one.Equals( na ) );
+            Assert.That( zero.Equals( 0 ) );
+            Assert.That( one.Equals( 1 ) );
+            Assert.That( na.IsNa );
+            Assert.That( zero.AsDouble == 0.0 );
+            Assert.That( one.AsDouble == 1.0 );
+            Assert.That( zero.AsInt == 0 );
+            Assert.That( one.AsInt == 1 );
+            Assert.IsNaN( na.AsDouble );
 
-            foreach (var a in new Sexp[] { zero, one, na })
+            foreach ( var a in new Sexp[] { zero , one , na } )
             {
-                Assert.That(!a.Equals(new SexpNull()));
+                Assert.That( !a.Equals( new SexpNull() ) );
             }
         }
 
@@ -113,28 +113,28 @@ namespace RserveCli.Tests
         [Test]
         public void Bool()
         {
-            var sexpTrue = new SexpBool(SexpBoolValue.True);
-            var sexpFalse = new SexpBool(SexpBoolValue.False);
-            var sexpNa = new SexpBool(SexpBoolValue.Na);
+            var sexpTrue = new SexpBool( SexpBoolValue.True );
+            var sexpFalse = new SexpBool( SexpBoolValue.False );
+            var sexpNa = new SexpBool( SexpBoolValue.Na );
 
             // ReSharper disable EqualExpressionComparison
-            Assert.That(sexpTrue.Equals(sexpTrue));
-            Assert.That(sexpFalse.Equals(sexpFalse));
-            Assert.That(!sexpNa.Equals(sexpNa));
+            Assert.That( sexpTrue.Equals( sexpTrue ) );
+            Assert.That( sexpFalse.Equals( sexpFalse ) );
+            Assert.That( !sexpNa.Equals( sexpNa ) );
 
             // ReSharper restore EqualExpressionComparison
-            Assert.That(!sexpTrue.Equals(sexpFalse));
-            Assert.That(!sexpTrue.Equals(sexpNa));
-            Assert.That(sexpTrue.Equals(true));
-            Assert.That(sexpFalse.Equals(false));
-            Assert.That(!sexpNa.Equals(true));
-            Assert.That(!sexpNa.Equals(false));
-            foreach (var a in new Sexp[] { sexpTrue, sexpFalse, sexpNa })
+            Assert.That( !sexpTrue.Equals( sexpFalse ) );
+            Assert.That( !sexpTrue.Equals( sexpNa ) );
+            Assert.That( sexpTrue.Equals( true ) );
+            Assert.That( sexpFalse.Equals( false ) );
+            Assert.That( !sexpNa.Equals( true ) );
+            Assert.That( !sexpNa.Equals( false ) );
+            foreach ( var a in new Sexp[] { sexpTrue , sexpFalse , sexpNa } )
             {
-                Assert.That(!a.Equals(new SexpNull()));
+                Assert.That( !a.Equals( new SexpNull() ) );
             }
 
-            this.sConn["x.bool"] = Sexp.Make(true);
+            sConn[ "x.bool" ] = Sexp.Make( true );
         }
 
         /// <summary>
@@ -143,51 +143,51 @@ namespace RserveCli.Tests
         [Test]
         public void ArrayBool()
         {
-            var testvals = new[] { SexpBoolValue.True, SexpBoolValue.False, SexpBoolValue.Na };
-            var x1 = new SexpArrayBool(testvals);
+            var testvals = new[] { SexpBoolValue.True , SexpBoolValue.False , SexpBoolValue.Na };
+            var x1 = new SexpArrayBool( testvals );
 
-            Assert.AreEqual(testvals.Length, x1.Count);
+            Assert.AreEqual( testvals.Length , x1.Count );
 
-            this.sConn["x1"] = x1;
+            sConn[ "x1" ] = x1;
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                Assert.AreEqual(new SexpBool(testvals[i]).AsBool, x1[i].AsBool);
+                Assert.AreEqual( new SexpBool( testvals[ i ] ).AsBool , x1[ i ].AsBool );
             }
 
-            this.sConn.Eval("x2 <- as.logical(c(TRUE,FALSE,NA))");
-            var x2 = this.sConn["x2"];
+            sConn.Eval( "x2 <- as.logical(c(TRUE,FALSE,NA))" );
+            var x2 = sConn[ "x2" ];
 
-            Assert.AreEqual(x1.Count, x2.Count);
+            Assert.AreEqual( x1.Count , x2.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (x1[i].IsNa)
+                if ( x1[ i ].IsNa )
                 {
-                    Assert.IsTrue(x2[i].IsNa);
+                    Assert.IsTrue( x2[ i ].IsNa );
                 }
                 else
                 {
-                    Assert.AreEqual(x1[i].AsBool, x2[i].AsBool);
+                    Assert.AreEqual( x1[ i ].AsBool , x2[ i ].AsBool );
                 }
             }
 
-            var equals = this.sConn["x1 == x2"];
+            var equals = sConn[ "x1 == x2" ];
 
-            Assert.AreEqual(x1.Count, equals.Count);
+            Assert.AreEqual( x1.Count , equals.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (!x1[i].IsNa)
+                if ( !x1[ i ].IsNa )
                 {
-                    Assert.That(equals[i].AsBool, equals.ToString());
+                    Assert.That( equals[ i ].AsBool , equals.ToString() );
                 }
             }
 
-            Assert.AreEqual(x1.IndexOf(Sexp.Make(false)), 1);
+            Assert.AreEqual( x1.IndexOf( Sexp.Make( false ) ) , 1 );
 
-            x1.AsList[0] = false;
-            Assert.AreEqual(x1[0].AsBool, false);
+            x1.AsList[ 0 ] = false;
+            Assert.AreEqual( x1[ 0 ].AsBool , false );
         }
 
         /// <summary>
@@ -196,58 +196,58 @@ namespace RserveCli.Tests
         [Test]
         public void ArrayDouble()
         {
-            var testDoubles = new[] { -3.5, 0.0, 1.0, 2.0, 1.0E20, double.NaN, double.NaN };
-            var x1 = Sexp.Make(testDoubles);
-            x1[x1.Count - 1] = SexpDouble.Na;
+            var testDoubles = new[] { -3.5 , 0.0 , 1.0 , 2.0 , 1.0E20 , double.NaN , double.NaN };
+            var x1 = Sexp.Make( testDoubles );
+            x1[ x1.Count - 1 ] = SexpDouble.Na;
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                Assert.AreEqual(testDoubles[i], x1[i].AsDouble);
+                Assert.AreEqual( testDoubles[ i ] , x1[ i ].AsDouble );
             }
 
-            this.sConn.Eval("x2 <- as.numeric(c(-3.5,0,1,2,1E20,NaN,NA))");
-            var x2 = this.sConn["x2"];
+            sConn.Eval( "x2 <- as.numeric(c(-3.5,0,1,2,1E20,NaN,NA))" );
+            var x2 = sConn[ "x2" ];
 
-            Assert.AreEqual(x1.Count, x2.Count);
+            Assert.AreEqual( x1.Count , x2.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (x1[i].IsNa)
+                if ( x1[ i ].IsNa )
                 {
-                    Assert.IsTrue(x2[i].IsNa);
+                    Assert.IsTrue( x2[ i ].IsNa );
                 }
-                else if (x1[i].IsNull)
+                else if ( x1[ i ].IsNull )
                 {
-                    Assert.IsTrue(x2[i].IsNull);
+                    Assert.IsTrue( x2[ i ].IsNull );
                 }
-                else if (double.IsNaN(x1[i].AsDouble))
+                else if ( double.IsNaN( x1[ i ].AsDouble ) )
                 {
-                    Assert.That(double.IsNaN(x2[i].AsDouble));
+                    Assert.That( double.IsNaN( x2[ i ].AsDouble ) );
                 }
                 else
                 {
-					var res = Math.Abs(x1[i].AsDouble - x2[i].AsDouble) < Tol;
-                    Assert.That(res);
+                    var res = Math.Abs( x1[ i ].AsDouble - x2[ i ].AsDouble ) < Tol;
+                    Assert.That( res );
                 }
             }
 
-            this.sConn["x1"] = x1;
-            var equals = this.sConn["x1 == x2"];
+            sConn[ "x1" ] = x1;
+            var equals = sConn[ "x1 == x2" ];
 
-            Assert.AreEqual(x1.Count, equals.Count);
+            Assert.AreEqual( x1.Count , equals.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (!double.IsNaN(x1[i].AsDouble))
+                if ( !double.IsNaN( x1[ i ].AsDouble ) )
                 {
-                    Assert.That(equals[i].AsBool, equals.ToString());
+                    Assert.That( equals[ i ].AsBool , equals.ToString() );
                 }
             }
 
-            Assert.AreEqual(x1.IndexOf(new SexpDouble(1.0)), 2);
+            Assert.AreEqual( x1.IndexOf( new SexpDouble( 1.0 ) ) , 2 );
 
-            x1.AsList[0] = -5.5;
-            Assert.AreEqual(x1[0].AsDouble, -5.5);
+            x1.AsList[ 0 ] = -5.5;
+            Assert.AreEqual( x1[ 0 ].AsDouble , -5.5 );
         }
 
         /// <summary>
@@ -256,52 +256,52 @@ namespace RserveCli.Tests
         [Test]
         public void ArrayInt()
         {
-            var testInts = new[] { -3, 0, 1, 2, 524566, 0 };
-            var x1 = Sexp.Make(testInts);
-            x1[x1.Count - 1] = SexpInt.Na;
+            var testInts = new[] { -3 , 0 , 1 , 2 , 524566 , 0 };
+            var x1 = Sexp.Make( testInts );
+            x1[ x1.Count - 1 ] = SexpInt.Na;
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (!x1[i].IsNa)
+                if ( !x1[ i ].IsNa )
                 {
-                    Assert.AreEqual(testInts[i], x1[i].AsInt);
+                    Assert.AreEqual( testInts[ i ] , x1[ i ].AsInt );
                 }
             }
 
-            this.sConn.Eval("x2 <- as.integer(c(-3,0,1,2,524566,NA))");
-            var x2 = this.sConn["x2"];
+            sConn.Eval( "x2 <- as.integer(c(-3,0,1,2,524566,NA))" );
+            var x2 = sConn[ "x2" ];
 
-            Assert.AreEqual(x1.Count, x2.Count);
+            Assert.AreEqual( x1.Count , x2.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (x1[i].IsNa)
+                if ( x1[ i ].IsNa )
                 {
-                    Assert.IsTrue(x2[i].IsNa);
+                    Assert.IsTrue( x2[ i ].IsNa );
                 }
                 else
                 {
-                    Assert.That(x1[i].AsDouble == x2[i].AsDouble);
+                    Assert.That( x1[ i ].AsDouble == x2[ i ].AsDouble );
                 }
             }
 
-            this.sConn["x1"] = x1;
-            var equals = this.sConn["x1 == x2"];
+            sConn[ "x1" ] = x1;
+            var equals = sConn[ "x1 == x2" ];
 
-            Assert.AreEqual(x1.Count, equals.Count);
+            Assert.AreEqual( x1.Count , equals.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                if (!x1[i].IsNa)
+                if ( !x1[ i ].IsNa )
                 {
-                    Assert.That(equals[i].AsBool, equals.ToString());
+                    Assert.That( equals[ i ].AsBool , equals.ToString() );
                 }
             }
 
-            Assert.AreEqual(x1.IndexOf(new SexpInt(1)), 2);
+            Assert.AreEqual( x1.IndexOf( new SexpInt( 1 ) ) , 2 );
 
-            x1.AsList[0] = -5;
-            Assert.AreEqual(x1[0].AsInt, -5);
+            x1.AsList[ 0 ] = -5;
+            Assert.AreEqual( x1[ 0 ].AsInt , -5 );
         }
 
         /// <summary>
@@ -310,40 +310,40 @@ namespace RserveCli.Tests
         [Test]
         public void ArrayIntLarge()
         {
-            this.sConn.Eval("x <- 1:1000000");
-            var x = this.sConn["x"];
+            sConn.Eval( "x <- 1:1000000" );
+            var x = sConn[ "x" ];
 
-            Assert.AreEqual(x.Count, 1000000);
+            Assert.AreEqual( x.Count , 1000000 );
 
-            for (int i = 0; i < x.Count; i++)
+            for ( int i = 0 ; i < x.Count ; i++ )
             {
-                Assert.AreEqual(x[i].AsInt, i+1);
+                Assert.AreEqual( x[ i ].AsInt , i + 1 );
             }
 
         }
-        
+
         /// <summary>
         /// Tests SexpList.
         /// </summary>
         [Test]
         public void List()
         {
-            var mylist = new Dictionary<string, object> { { "One", 1 }, { "Two", 2.0 }, { "Three", "three" } };
-            var x1 = Sexp.Make(mylist);
-            this.sConn["x1"] = x1;
+            var mylist = new Dictionary<string , object> { { "One" , 1 } , { "Two" , 2.0 } , { "Three" , "three" } };
+            var x1 = Sexp.Make( mylist );
+            sConn[ "x1" ] = x1;
 
-            Assert.AreEqual(x1.Count, mylist.Count);
+            Assert.AreEqual( x1.Count , mylist.Count );
 
-            this.sConn.Eval("x2 <- list(One=1,Two=2.0,Three=\"three\")");
-            var x2 = this.sConn["x2"];
+            sConn.Eval( "x2 <- list(One=1,Two=2.0,Three=\"three\")" );
+            var x2 = sConn[ "x2" ];
 
-            Assert.AreEqual(x1.Count, x2.Count);
+            Assert.AreEqual( x1.Count , x2.Count );
 
-            for (int i = 0; i < x1.Count; i++)
+            for ( int i = 0 ; i < x1.Count ; i++ )
             {
-                Assert.That(x1[i].Equals(x2[i]));
-                Assert.AreEqual(x1.Names[i].AsString, x2.Names[i].AsString);
-                Assert.That(x1[x1.Names[i].AsString].Equals(x2[x2.Names[i].AsString]));
+                Assert.That( x1[ i ].Equals( x2[ i ] ) );
+                Assert.AreEqual( x1.Names[ i ].AsString , x2.Names[ i ].AsString );
+                Assert.That( x1[ x1.Names[ i ].AsString ].Equals( x2[ x2.Names[ i ].AsString ] ) );
             }
         }
 
@@ -354,42 +354,42 @@ namespace RserveCli.Tests
         public void MatrixDouble()
         {
             // Same as for integers -- we'll divide by two to get floating point values that aren't integers
-            var matA = new double[,] { { 14, 9, 3 }, { 2, 11, 15 }, { 0, 12, 17 }, { 5, 2, 3 } };
-            var matB = new double[,] { { 12, 25 }, { 9, 10 }, { 8, 5 } };
-            var matC = new double[,] { { 273, 455 }, { 243, 235 }, { 244, 205 }, { 102, 160 } };
-            var sexpA = Sexp.Make(matA);
-            this.sConn["a"] = sexpA;
-            this.sConn["b"] = Sexp.Make(matB);
+            var matA = new double[ , ] { { 14 , 9 , 3 } , { 2 , 11 , 15 } , { 0 , 12 , 17 } , { 5 , 2 , 3 } };
+            var matB = new double[ , ] { { 12 , 25 } , { 9 , 10 } , { 8 , 5 } };
+            var matC = new double[ , ] { { 273 , 455 } , { 243 , 235 } , { 244 , 205 } , { 102 , 160 } };
+            var sexpA = Sexp.Make( matA );
+            sConn[ "a" ] = sexpA;
+            sConn[ "b" ] = Sexp.Make( matB );
 
             // Some simple tests with A
-            for (int i = 0; i <= 1; i++)
+            for ( int i = 0 ; i <= 1 ; i++ )
             {
-                Assert.AreEqual(matA.GetLength(i), sexpA.GetLength(i));
-                Assert.AreEqual(matA.GetLength(i), this.sConn["a"].GetLength(i));
+                Assert.AreEqual( matA.GetLength( i ) , sexpA.GetLength( i ) );
+                Assert.AreEqual( matA.GetLength( i ) , sConn[ "a" ].GetLength( i ) );
             }
 
-            for (var row = 0; row < matA.GetLength(0); row++)
+            for ( var row = 0 ; row < matA.GetLength( 0 ) ; row++ )
             {
-                for (var col = 0; col < matA.GetLength(1); col++)
+                for ( var col = 0 ; col < matA.GetLength( 1 ) ; col++ )
                 {
-                    Assert.AreEqual(matA[row, col], sexpA[row, col].AsDouble);
-                    Assert.AreEqual(matA[row, col], this.sConn["a"][row, col].AsDouble);
+                    Assert.AreEqual( matA[ row , col ] , sexpA[ row , col ].AsDouble );
+                    Assert.AreEqual( matA[ row , col ] , sConn[ "a" ][ row , col ].AsDouble );
                 }
             }
 
-            var matD = this.sConn["a %*% b"];
-            
+            var matD = sConn[ "a %*% b" ];
+
             // check that C and D are equal
-            for (var i = 0; i <= 1; i++)
+            for ( var i = 0 ; i <= 1 ; i++ )
             {
-                Assert.AreEqual(matC.GetLength(i), matD.GetLength(i));
+                Assert.AreEqual( matC.GetLength( i ) , matD.GetLength( i ) );
             }
 
-            for (var row = 0; row < matC.GetLength(0); row++)
+            for ( var row = 0 ; row < matC.GetLength( 0 ) ; row++ )
             {
-                for (var col = 0; col < matD.GetLength(1); col++)
+                for ( var col = 0 ; col < matD.GetLength( 1 ) ; col++ )
                 {
-                    Assert.AreEqual(matC[row, col], matD[row, col].AsDouble);
+                    Assert.AreEqual( matC[ row , col ] , matD[ row , col ].AsDouble );
                 }
             }
         }
@@ -401,42 +401,42 @@ namespace RserveCli.Tests
         public void MatrixInt()
         {
             // Same as for integers -- we'll divide by two to get floating point values that aren't integers
-            var matA = new[,] { { 14, 9, 3 }, { 2, 11, 15 }, { 0, 12, 17 }, { 5, 2, 3 } };
-            var matB = new[,] { { 12, 25 }, { 9, 10 }, { 8, 5 } };
-            var matC = new[,] { { 273, 455 }, { 243, 235 }, { 244, 205 }, { 102, 160 } };
-            var sexpA = Sexp.Make(matA);
-            this.sConn["a"] = sexpA;
-            this.sConn["b"] = Sexp.Make(matB);
+            var matA = new[ , ] { { 14 , 9 , 3 } , { 2 , 11 , 15 } , { 0 , 12 , 17 } , { 5 , 2 , 3 } };
+            var matB = new[ , ] { { 12 , 25 } , { 9 , 10 } , { 8 , 5 } };
+            var matC = new[ , ] { { 273 , 455 } , { 243 , 235 } , { 244 , 205 } , { 102 , 160 } };
+            var sexpA = Sexp.Make( matA );
+            sConn[ "a" ] = sexpA;
+            sConn[ "b" ] = Sexp.Make( matB );
 
             // Some simple tests with A
-            for (int i = 0; i <= 1; i++)
+            for ( int i = 0 ; i <= 1 ; i++ )
             {
-                Assert.AreEqual(matA.GetLength(i), sexpA.GetLength(i));
-                Assert.AreEqual(matA.GetLength(i), this.sConn["a"].GetLength(i));
+                Assert.AreEqual( matA.GetLength( i ) , sexpA.GetLength( i ) );
+                Assert.AreEqual( matA.GetLength( i ) , sConn[ "a" ].GetLength( i ) );
             }
 
-            for (int row = 0; row < matA.GetLength(0); row++)
+            for ( int row = 0 ; row < matA.GetLength( 0 ) ; row++ )
             {
-                for (int col = 0; col < matA.GetLength(1); col++)
+                for ( int col = 0 ; col < matA.GetLength( 1 ) ; col++ )
                 {
-                    Assert.AreEqual(matA[row, col], sexpA[row, col].AsInt);
-                    Assert.AreEqual(matA[row, col], this.sConn["a"][row, col].AsInt);
+                    Assert.AreEqual( matA[ row , col ] , sexpA[ row , col ].AsInt );
+                    Assert.AreEqual( matA[ row , col ] , sConn[ "a" ][ row , col ].AsInt );
                 }
             }
 
-            var matD = this.sConn["a %*% b"];
+            var matD = sConn[ "a %*% b" ];
 
             // check that C and D are equal
-            for (var i = 0; i <= 1; i++)
+            for ( var i = 0 ; i <= 1 ; i++ )
             {
-                Assert.AreEqual(matC.GetLength(i), matD.GetLength(i));
+                Assert.AreEqual( matC.GetLength( i ) , matD.GetLength( i ) );
             }
 
-            for (var row = 0; row < matC.GetLength(0); row++)
+            for ( var row = 0 ; row < matC.GetLength( 0 ) ; row++ )
             {
-                for (var col = 0; col < matD.GetLength(1); col++)
+                for ( var col = 0 ; col < matD.GetLength( 1 ) ; col++ )
                 {
-                    Assert.AreEqual(matC[row, col], matD[row, col].AsInt);
+                    Assert.AreEqual( matC[ row , col ] , matD[ row , col ].AsInt );
                 }
             }
         }
@@ -447,7 +447,7 @@ namespace RserveCli.Tests
         [Test]
         public void TransferFileSmall()
         {
-            this.TransferFile(100);
+            TransferFile( 100 );
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace RserveCli.Tests
         [Test]
         public void TransferFileLarge()
         {
-            this.TransferFile(100000);
+            TransferFile( 100000 );
         }
 
         /// <summary>
@@ -465,9 +465,9 @@ namespace RserveCli.Tests
         [TearDown]
         public void Dispose()
         {
-            if (this.sConn!=null)
+            if ( sConn != null )
             {
-                this.sConn.Dispose();
+                sConn.Dispose();
             }
         }
 
@@ -475,25 +475,25 @@ namespace RserveCli.Tests
         /// Test file transfer to and from the R session.
         /// </summary>
         /// <param name="length">The length of the file to be transferred.</param>
-        private void TransferFile(int length)
+        private void TransferFile( int length )
         {
-            var data = new byte[length];
-            var rnd = new Random(2302);
-            rnd.NextBytes(data);
-            using (var os = new System.IO.MemoryStream(data))
+            var data = new byte[ length ];
+            var rnd = new Random( 2302 );
+            rnd.NextBytes( data );
+            using ( var os = new System.IO.MemoryStream( data ) )
             {
-                this.sConn.WriteFile("test.dat", os);
+                sConn.WriteFile( "test.dat" , os );
             }
 
-            using (var ist = this.sConn.ReadFile("test.dat"))
+            using ( var ist = sConn.ReadFile( "test.dat" ) )
             {
                 var checkstream = new System.IO.MemoryStream();
-                ist.CopyTo(checkstream);
+                ist.CopyTo( checkstream );
                 var checkbytes = checkstream.ToArray();
-                Assert.AreEqual(data, checkbytes);
+                Assert.AreEqual( data , checkbytes );
             }
 
-            this.sConn.RemoveFile("test.dat");
+            sConn.RemoveFile( "test.dat" );
         }
     }
 }

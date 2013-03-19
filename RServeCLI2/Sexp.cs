@@ -18,14 +18,14 @@ namespace RserveCli
     /// <summary>
     /// A local representation for an S-Expression (a.k.a., Sexp, Rexp, R-expression).
     /// </summary>
-    public abstract class Sexp : IList<Sexp>, IDictionary<string, Sexp>, IList<object>, IDictionary<string, object>
+    public abstract class Sexp : IList<Sexp> , IDictionary<string , Sexp> , IList<object> , IDictionary<string , object>
     {
         #region Constants and Fields
 
         /// <summary>
         /// The Sexp attributes, if any
         /// </summary>
-        private Dictionary<string, Sexp> attributes;
+        private Dictionary<string , Sexp> _attributes;
 
         #endregion
 
@@ -50,7 +50,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator bool(Sexp s)
+        public static explicit operator bool( Sexp s )
         {
             return s.AsBool;
         }
@@ -58,7 +58,7 @@ namespace RserveCli
         /// <summary>
         /// Gets as dictionary of objects.
         /// </summary>
-        public IDictionary<string, object> AsDictionary
+        public IDictionary<string , object> AsDictionary
         {
             get
             {
@@ -85,7 +85,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator double(Sexp s)
+        public static explicit operator double( Sexp s )
         {
             return s.AsDouble;
         }
@@ -109,7 +109,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator int(Sexp s)
+        public static explicit operator int( Sexp s )
         {
             return s.AsInt;
         }
@@ -144,7 +144,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator SexpBoolValue(Sexp s)
+        public static explicit operator SexpBoolValue( Sexp s )
         {
             return s.AsSexpBool;
         }
@@ -152,7 +152,7 @@ namespace RserveCli
         /// <summary>
         /// Gets as dictionary of Sexps.
         /// </summary>
-        public IDictionary<string, Sexp> AsSexpDictionary
+        public IDictionary<string , Sexp> AsSexpDictionary
         {
             get
             {
@@ -179,7 +179,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator string(Sexp s)
+        public static explicit operator string( Sexp s )
         {
             return s.AsString;
         }
@@ -191,7 +191,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Select<Sexp, string>(a => a.AsString).ToArray();
+                return this.Select<Sexp , string>( a => a.AsString ).ToArray();
             }
         }
 
@@ -200,7 +200,7 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator string[](Sexp s)
+        public static explicit operator string[]( Sexp s )
         {
             return s.AsStrings;
         }
@@ -208,11 +208,11 @@ namespace RserveCli
         /// <summary>
         /// Gets the attributes.
         /// </summary>
-        public Dictionary<string, Sexp> Attributes
+        public Dictionary<string , Sexp> Attributes
         {
             get
             {
-                return this.attributes ?? (this.attributes = new Dictionary<string, Sexp>());
+                return _attributes ?? ( _attributes = new Dictionary<string , Sexp>() );
             }
         }
 
@@ -240,12 +240,12 @@ namespace RserveCli
         {
             get
             {
-                if (this.Count == 1)
+                if ( Count == 1 )
                 {
-                    return this[0].IsNa;
+                    return this[ 0 ].IsNa;
                 }
 
-                throw new IndexOutOfRangeException("Only single values can be tested for NA.");
+                throw new IndexOutOfRangeException( "Only single values can be tested for NA." );
             }
         }
 
@@ -286,7 +286,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Names.AsStrings;
+                return Names.AsStrings;
             }
         }
 
@@ -297,7 +297,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Attributes["names"];
+                return Attributes[ "names" ];
             }
         }
 
@@ -308,7 +308,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Attributes["dim"].Count;
+                return Attributes[ "dim" ].Count;
             }
         }
 
@@ -332,11 +332,11 @@ namespace RserveCli
         /// <returns>
         /// An <see cref="T:System.Collections.Generic.ICollection`1"/> containing the values in the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"/>.
         /// </returns>
-        ICollection<object> IDictionary<string, object>.Values
+        ICollection<object> IDictionary<string , object>.Values
         {
             get
             {
-                return (ICollection<object>)this.Values;
+                return ( ICollection<object> )Values;
             }
         }
 
@@ -352,26 +352,26 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[int row, int col]
+        public virtual Sexp this[ int row , int col ]
         {
             get
             {
-                if (this.Rank != 2)
+                if ( Rank != 2 )
                 {
-                    throw new ArithmeticException("Only Sexps of Rank 2 can be accessed as arrays.");
+                    throw new ArithmeticException( "Only Sexps of Rank 2 can be accessed as arrays." );
                 }
 
-                return this[(col * this.GetLength(0)) + row];
+                return this[ ( col * GetLength( 0 ) ) + row ];
             }
 
             set
             {
-                if (this.Rank != 2)
+                if ( Rank != 2 )
                 {
-                    throw new ArithmeticException("Only objects of rank 2 can be accessed as matrices.");
+                    throw new ArithmeticException( "Only objects of rank 2 can be accessed as matrices." );
                 }
 
-                this[(col * this.GetLength(0)) + row] = value;
+                this[ ( col * GetLength( 0 ) ) + row ] = value;
             }
         }
 
@@ -382,7 +382,7 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[int index]
+        public virtual Sexp this[ int index ]
         {
             get
             {
@@ -402,29 +402,29 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[string key]
+        public virtual Sexp this[ string key ]
         {
             get
             {
-                var index = Array.IndexOf(this.Names.AsStrings, key);
-                if (index < 0)
+                var index = Array.IndexOf( Names.AsStrings , key );
+                if ( index < 0 )
                 {
-                    throw new KeyNotFoundException("Could not find key '" + key + "' in names.");
+                    throw new KeyNotFoundException( "Could not find key '" + key + "' in names." );
                 }
 
-                return this[index];
+                return this[ index ];
             }
 
             set
             {
-                var index = Array.IndexOf(this.Names.AsStrings, key);
-                if (index < 0)
+                var index = Array.IndexOf( Names.AsStrings , key );
+                if ( index < 0 )
                 {
-                    this.Add(key, value);
+                    Add( key , value );
                 }
                 else
                 {
-                    this[index] = value;
+                    this[ index ] = value;
                 }
             }
         }
@@ -436,16 +436,16 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        object IList<object>.this[int index]
+        object IList<object>.this[ int index ]
         {
             get
             {
-                return this[index];
+                return this[ index ];
             }
 
             set
             {
-                this[index] = Make(value);
+                this[ index ] = Make( value );
             }
         }
 
@@ -456,16 +456,16 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        object IDictionary<string, object>.this[string key]
+        object IDictionary<string , object>.this[ string key ]
         {
             get
             {
-                return this[key];
+                return this[ key ];
             }
 
             set
             {
-                this[key] = Make(value);
+                this[ key ] = Make( value );
             }
         }
 
@@ -482,65 +482,65 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(object x)
+        public static Sexp Make( object x )
         {
-            if (x is Sexp)
+            if ( x is Sexp )
             {
-                return (Sexp)x;
+                return ( Sexp )x;
             }
 
-            if (x is bool)
+            if ( x is bool )
             {
-                return Make((bool)x);
+                return Make( ( bool )x );
             }
 
-            if (x is double)
+            if ( x is double )
             {
-                return Make((double)x);
+                return Make( ( double )x );
             }
 
-            if (x is IEnumerable<double>)
+            if ( x is IEnumerable<double> )
             {
-                return Make((IEnumerable<double>)x);
+                return Make( ( IEnumerable<double> )x );
             }
 
-            if (x is double[,])
+            if ( x is double[ , ] )
             {
-                return Make((double[,])x);
+                return Make( ( double[ , ] )x );
             }
 
-            if (x is int)
+            if ( x is int )
             {
-                return Make((int)x);
+                return Make( ( int )x );
             }
 
-            if (x is int[,])
+            if ( x is int[ , ] )
             {
-                return Make((int[,])x);
+                return Make( ( int[ , ] )x );
             }
 
-            if (x is IEnumerable<int>)
+            if ( x is IEnumerable<int> )
             {
-                return Make((IEnumerable<int>)x);
+                return Make( ( IEnumerable<int> )x );
             }
 
-            if (x is string)
+            if ( x is string )
             {
-                return Make((string)x);
+                return Make( ( string )x );
             }
 
-            if (x is IEnumerable<string>)
+            if ( x is IEnumerable<string> )
             {
-                return Make((IEnumerable<string>)x);
+                return Make( ( IEnumerable<string> )x );
             }
 
-            if (x is IDictionary<string, object>)
+            if ( x is IDictionary<string , object> )
             {
-                return Make((IDictionary<string, object>)x);
+                return Make( ( IDictionary<string , object> )x );
             }
 
             throw new ArgumentException(
-                "I don't have an automatic conversion rule for type " + x.GetType().Name + " to Sexp.");
+                "I don't have an automatic conversion rule for type " + x.GetType().Name + " to Sexp." );
         }
 
         /// <summary>
@@ -552,9 +552,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(bool x)
+        public static Sexp Make( bool x )
         {
-            return new SexpBool(x);
+            return new SexpBool( x );
         }
 
         /// <summary>
@@ -566,9 +566,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(int x)
+        public static Sexp Make( int x )
         {
-            return new SexpInt(x);
+            return new SexpInt( x );
         }
 
         /// <summary>
@@ -580,9 +580,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(IEnumerable<int> xs)
+        public static Sexp Make( IEnumerable<int> xs )
         {
-            return new SexpArrayInt(xs);
+            return new SexpArrayInt( xs );
         }
 
         /// <summary>
@@ -594,9 +594,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(double x)
+        public static Sexp Make( double x )
         {
-            return new SexpDouble(x);
+            return new SexpDouble( x );
         }
 
         /// <summary>
@@ -608,9 +608,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(IEnumerable<double> xs)
+        public static Sexp Make( IEnumerable<double> xs )
         {
-            return new SexpArrayDouble(xs);
+            return new SexpArrayDouble( xs );
         }
 
         /// <summary>
@@ -622,21 +622,21 @@ namespace RserveCli
         /// <returns>
         /// The Sexp matrix.
         /// </returns>
-        public static Sexp Make(double[,] xs)
+        public static Sexp Make( double[ , ] xs )
         {
-            var rows = xs.GetLength(0);
-            var cols = xs.GetLength(1);
-            var fortranXs = new double[rows * cols];
-            for (int row = 0; row < rows; row++)
+            var rows = xs.GetLength( 0 );
+            var cols = xs.GetLength( 1 );
+            var fortranXs = new double[ rows * cols ];
+            for ( int row = 0 ; row < rows ; row++ )
             {
-                for (int col = 0; col < cols; col++)
+                for ( int col = 0 ; col < cols ; col++ )
                 {
-                    fortranXs[(col * rows) + row] = xs[row, col];
+                    fortranXs[ ( col * rows ) + row ] = xs[ row , col ];
                 }
             }
 
-            var res = new SexpArrayDouble(fortranXs);
-            res.Attributes.Add("dim", Make(new[] { rows, cols }));
+            var res = new SexpArrayDouble( fortranXs );
+            res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
             return res;
         }
 
@@ -649,21 +649,21 @@ namespace RserveCli
         /// <returns>
         /// The Sexp matrix.
         /// </returns>
-        public static Sexp Make(int[,] xs)
+        public static Sexp Make( int[ , ] xs )
         {
-            var rows = xs.GetLength(0);
-            var cols = xs.GetLength(1);
-            var fortranXs = new int[rows * cols];
-            for (int row = 0; row < rows; row++)
+            var rows = xs.GetLength( 0 );
+            var cols = xs.GetLength( 1 );
+            var fortranXs = new int[ rows * cols ];
+            for ( int row = 0 ; row < rows ; row++ )
             {
-                for (int col = 0; col < cols; col++)
+                for ( int col = 0 ; col < cols ; col++ )
                 {
-                    fortranXs[(col * rows) + row] = xs[row, col];
+                    fortranXs[ ( col * rows ) + row ] = xs[ row , col ];
                 }
             }
 
-            var res = new SexpArrayInt(fortranXs);
-            res.Attributes.Add("dim", Make(new[] { rows, cols }));
+            var res = new SexpArrayInt( fortranXs );
+            res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
             return res;
         }
 
@@ -676,9 +676,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(string x)
+        public static Sexp Make( string x )
         {
-            return new SexpString(x);
+            return new SexpString( x );
         }
 
         /// <summary>
@@ -690,9 +690,9 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(IEnumerable<string> xs)
+        public static Sexp Make( IEnumerable<string> xs )
         {
-            return new SexpArrayString(xs);
+            return new SexpArrayString( xs );
         }
 
         /// <summary>
@@ -704,12 +704,12 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make(IDictionary<string, object> xs)
+        public static Sexp Make( IDictionary<string , object> xs )
         {
             var res = new SexpList();
-            foreach (var a in xs)
+            foreach ( var a in xs )
             {
-                res.Add(a);
+                res.Add( a );
             }
 
             return res;
@@ -728,22 +728,22 @@ namespace RserveCli
         /// Sexp of data frame
         /// </returns>
         public static SexpList MakeDataFrame(
-            IEnumerable<KeyValuePair<string, object>> columns = null, IEnumerable<string> rowNames = null)
+            IEnumerable<KeyValuePair<string , object>> columns = null , IEnumerable<string> rowNames = null )
         {
             var res = new SexpList();
-            res.Attributes["class"] = new SexpString("data.frame");
-            res.Attributes["names"] = new SexpArrayString();
-            if (columns != null)
+            res.Attributes[ "class" ] = new SexpString( "data.frame" );
+            res.Attributes[ "names" ] = new SexpArrayString();
+            if ( columns != null )
             {
-                foreach (var col in columns)
+                foreach ( var col in columns )
                 {
-                    res.Attributes["names"].Add(new SexpString(col.Key));
-                    res.Add(Make(col.Value));
+                    res.Attributes[ "names" ].Add( new SexpString( col.Key ) );
+                    res.Add( Make( col.Value ) );
                 }
 
-                if (rowNames != null)
+                if ( rowNames != null )
                 {
-                    res.Attributes["row.names"] = new SexpArrayString(rowNames);
+                    res.Attributes[ "row.names" ] = new SexpArrayString( rowNames );
                 }
             }
 
@@ -759,9 +759,9 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            throw new NotSupportedException("Don't have an equality override for type" + this.GetType());
+            throw new NotSupportedException( "Don't have an equality override for type" + GetType() );
         }
 
         /// <summary>
@@ -784,9 +784,9 @@ namespace RserveCli
         /// <returns>
         /// Length of the object in the dimension requested.
         /// </returns>
-        public virtual int GetLength(int dim)
+        public virtual int GetLength( int dim )
         {
-            return this.Attributes["dim"][dim].AsInt;
+            return Attributes[ "dim" ][ dim ].AsInt;
         }
 
         /// <summary>
@@ -813,9 +813,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
-        public void Add(KeyValuePair<string, object> item)
+        public void Add( KeyValuePair<string , object> item )
         {
-            this.Add(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
+            Add( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
         }
 
         /// <summary>
@@ -827,9 +827,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public bool Contains(KeyValuePair<string, object> item)
+        public bool Contains( KeyValuePair<string , object> item )
         {
-            return this.Contains(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
+            return Contains( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
         }
 
         /// <summary>
@@ -841,7 +841,7 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+        public void CopyTo( KeyValuePair<string , object>[] array , int arrayIndex )
         {
             throw new NotImplementedException();
         }
@@ -858,9 +858,9 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public bool Remove(KeyValuePair<string, object> item)
+        public bool Remove( KeyValuePair<string , object> item )
         {
-            return this.Remove(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
+            return Remove( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
         }
 
         #endregion
@@ -876,9 +876,9 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public virtual void Add(KeyValuePair<string, Sexp> item)
+        public virtual void Add( KeyValuePair<string , Sexp> item )
         {
-            this.Add(item.Key, item.Value);
+            Add( item.Key , item.Value );
         }
 
         /// <summary>
@@ -890,7 +890,7 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public virtual bool Contains(KeyValuePair<string, Sexp> item)
+        public virtual bool Contains( KeyValuePair<string , Sexp> item )
         {
             throw new NotImplementedException();
         }
@@ -904,7 +904,7 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public virtual void CopyTo(KeyValuePair<string, Sexp>[] array, int arrayIndex)
+        public virtual void CopyTo( KeyValuePair<string , Sexp>[] array , int arrayIndex )
         {
             throw new NotImplementedException();
         }
@@ -921,7 +921,7 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public virtual bool Remove(KeyValuePair<string, Sexp> item)
+        public virtual bool Remove( KeyValuePair<string , Sexp> item )
         {
             throw new NotImplementedException();
         }
@@ -939,9 +939,9 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public void Add(object item)
+        public void Add( object item )
         {
-            this.Add(Make(item));
+            Add( Make( item ) );
         }
 
         /// <summary>
@@ -953,9 +953,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public bool Contains(object item)
+        public bool Contains( object item )
         {
-            return this.Contains(Make(item));
+            return Contains( Make( item ) );
         }
 
         /// <summary>
@@ -967,9 +967,9 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public void CopyTo(object[] array, int arrayIndex)
+        public void CopyTo( object[] array , int arrayIndex )
         {
-            this.CopyTo(array, arrayIndex);
+            CopyTo( array , arrayIndex );
         }
 
         /// <summary>
@@ -984,9 +984,9 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public bool Remove(object item)
+        public bool Remove( object item )
         {
-            return this.Remove(Make(item));
+            return Remove( Make( item ) );
         }
 
         #endregion
@@ -999,7 +999,7 @@ namespace RserveCli
         /// <param name="item">
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
-        public virtual void Add(Sexp item)
+        public virtual void Add( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -1024,7 +1024,7 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public virtual bool Contains(Sexp item)
+        public virtual bool Contains( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -1038,7 +1038,7 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public virtual void CopyTo(Sexp[] array, int arrayIndex)
+        public virtual void CopyTo( Sexp[] array , int arrayIndex )
         {
             throw new NotSupportedException();
         }
@@ -1055,7 +1055,7 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public virtual bool Remove(Sexp item)
+        public virtual bool Remove( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -1073,9 +1073,9 @@ namespace RserveCli
         /// <param name="value">
         /// The object to use as the value of the element to add.
         /// </param>
-        public void Add(string key, object value)
+        public void Add( string key , object value )
         {
-            this.Add(key, Make(value));
+            Add( key , Make( value ) );
         }
 
         /// <summary>
@@ -1090,9 +1090,9 @@ namespace RserveCli
         /// <returns>
         /// true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"/> contains an element with the specified key; otherwise, false.
         /// </returns>
-        public bool TryGetValue(string key, out object value)
+        public bool TryGetValue( string key , out object value )
         {
-            return this.TryGetValue(key, out value);
+            return TryGetValue( key , out value );
         }
 
         #endregion
@@ -1108,15 +1108,15 @@ namespace RserveCli
         /// <param name="value">
         /// The object to use as the value of the element to add.
         /// </param>
-        public virtual void Add(string key, Sexp value)
+        public virtual void Add( string key , Sexp value )
         {
-            if (this.Count == 0 && !this.Attributes.ContainsKey("names"))
+            if ( Count == 0 && !Attributes.ContainsKey( "names" ) )
             {
-                this.Attributes["names"] = new SexpArrayString();
+                Attributes[ "names" ] = new SexpArrayString();
             }
 
-            this.Add(value);
-            this.Names.Add(new SexpString(key));
+            Add( value );
+            Names.Add( new SexpString( key ) );
         }
 
         /// <summary>
@@ -1131,7 +1131,7 @@ namespace RserveCli
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public virtual bool ContainsKey(string key)
+        public virtual bool ContainsKey( string key )
         {
             throw new NotImplementedException();
         }
@@ -1145,21 +1145,21 @@ namespace RserveCli
         /// <returns>
         /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2"/>.
         /// </returns>
-        public virtual bool Remove(string key)
+        public virtual bool Remove( string key )
         {
-            if (this.Count == 0)
+            if ( Count == 0 )
             {
                 return false;
             }
 
-            var index = Array.IndexOf(this.Names.AsStrings, key);
-            if (index < 0)
+            var index = Array.IndexOf( Names.AsStrings , key );
+            if ( index < 0 )
             {
                 return false;
             }
 
-            this.RemoveAt(index);
-            this.Names.RemoveAt(index);
+            RemoveAt( index );
+            Names.RemoveAt( index );
             return true;
         }
 
@@ -1178,7 +1178,7 @@ namespace RserveCli
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public virtual bool TryGetValue(string key, out Sexp value)
+        public virtual bool TryGetValue( string key , out Sexp value )
         {
             throw new NotImplementedException();
         }
@@ -1195,7 +1195,7 @@ namespace RserveCli
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         #endregion
@@ -1208,11 +1208,11 @@ namespace RserveCli
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string , object>> IEnumerable<KeyValuePair<string , object>>.GetEnumerator()
         {
             return
-                (IEnumerator<KeyValuePair<string, object>>)
-                ((IEnumerable<KeyValuePair<string, Sexp>>)this).GetEnumerator();
+                ( IEnumerator<KeyValuePair<string , object>> )
+                ( ( IEnumerable<KeyValuePair<string , Sexp>> )this ).GetEnumerator();
         }
 
         #endregion
@@ -1225,7 +1225,7 @@ namespace RserveCli
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string, Sexp>> IEnumerable<KeyValuePair<string, Sexp>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string , Sexp>> IEnumerable<KeyValuePair<string , Sexp>>.GetEnumerator()
         {
             throw new NotImplementedException();
         }
@@ -1242,7 +1242,7 @@ namespace RserveCli
         /// </returns>
         IEnumerator<object> IEnumerable<object>.GetEnumerator()
         {
-            return (IEnumerator<object>)this.GetEnumerator();
+            return GetEnumerator();
         }
 
         #endregion
@@ -1273,9 +1273,9 @@ namespace RserveCli
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        public int IndexOf(object item)
+        public int IndexOf( object item )
         {
-            return this.IndexOf(Make(item));
+            return IndexOf( Make( item ) );
         }
 
         /// <summary>
@@ -1287,9 +1287,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
         /// </param>
-        public void Insert(int index, object item)
+        public void Insert( int index , object item )
         {
-            this.Insert(index, Make(item));
+            Insert( index , Make( item ) );
         }
 
         #endregion
@@ -1305,7 +1305,7 @@ namespace RserveCli
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        public virtual int IndexOf(Sexp item)
+        public virtual int IndexOf( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -1319,7 +1319,7 @@ namespace RserveCli
         /// <param name="item">
         /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
         /// </param>
-        public virtual void Insert(int index, Sexp item)
+        public virtual void Insert( int index , Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -1330,7 +1330,7 @@ namespace RserveCli
         /// <param name="index">
         /// The zero-based index of the item to remove.
         /// </param>
-        public virtual void RemoveAt(int index)
+        public virtual void RemoveAt( int index )
         {
             throw new NotSupportedException();
         }

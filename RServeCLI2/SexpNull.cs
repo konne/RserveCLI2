@@ -4,7 +4,7 @@
 // All rights reserved.
 // </copyright>
 // <summary>
-// The S NULL this.Value
+// The S NULL Value
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ namespace RserveCli
     using System.Collections.Generic;
 
     /// <summary>
-    /// The S NULL this.Value
+    /// The S NULL Value
     /// </summary>
     public class SexpNull : Sexp
     {
@@ -86,7 +86,7 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[int index]
+        public override Sexp this[ int index ]
         {
             get
             {
@@ -122,7 +122,7 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public override bool Contains(Sexp item)
+        public override bool Contains( Sexp item )
         {
             return false;
         }
@@ -136,7 +136,7 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public override void CopyTo(Sexp[] array, int arrayIndex)
+        public override void CopyTo( Sexp[] array , int arrayIndex )
         {
         }
 

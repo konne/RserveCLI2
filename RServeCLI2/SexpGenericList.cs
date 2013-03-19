@@ -31,7 +31,7 @@ namespace RserveCli
         {
             get
             {
-                return this.AssertOne()[0].AsBool;
+                return AssertOne()[ 0 ].AsBool;
             }
         }
 
@@ -45,7 +45,7 @@ namespace RserveCli
         {
             get
             {
-                return this.AssertOne()[0].AsDouble;
+                return AssertOne()[ 0 ].AsDouble;
             }
         }
 
@@ -59,7 +59,7 @@ namespace RserveCli
         {
             get
             {
-                return this.AssertOne()[0].AsInt;
+                return AssertOne()[ 0 ].AsInt;
             }
         }
 
@@ -73,7 +73,7 @@ namespace RserveCli
         {
             get
             {
-                return this.AssertOne()[0].AsSexpBool;
+                return AssertOne()[ 0 ].AsSexpBool;
             }
         }
 
@@ -87,7 +87,7 @@ namespace RserveCli
         {
             get
             {
-                return this.AssertOne()[0].AsString;
+                return AssertOne()[ 0 ].AsString;
             }
         }
 
@@ -104,17 +104,17 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            Sexp o = Make(obj);
-            if (o.Count != this.Count)
+            Sexp o = Make( obj );
+            if ( o.Count != Count )
             {
                 return false;
             }
 
-            for (int i = 0; i < this.Count; i++)
+            for ( int i = 0 ; i < Count ; i++ )
             {
-                if (!this[i].Equals(o[i]))
+                if ( !this[ i ].Equals( o[ i ] ) )
                 {
                     return false;
                 }
@@ -143,15 +143,15 @@ namespace RserveCli
         public override string ToString()
         {
             var a = new StringBuilder();
-            a.Append("[ ");
-            foreach (object b in (IEnumerable)this)
+            a.Append( "[ " );
+            foreach ( object b in ( IEnumerable )this )
             {
-                a.Append(b.ToString());
-                a.Append(", ");
+                a.Append( b.ToString() );
+                a.Append( ", " );
             }
 
-            a.Remove(a.Length - 2, 2);
-            a.Append(" ]");
+            a.Remove( a.Length - 2 , 2 );
+            a.Append( " ]" );
             return a.ToString();
         }
 
@@ -167,9 +167,9 @@ namespace RserveCli
         /// </returns>
         private Sexp AssertOne()
         {
-            if (this.Count != 1)
+            if ( Count != 1 )
             {
-                throw new Exception("I can only compare the equality of lists for ones that have exactly one member.");
+                throw new Exception( "I can only compare the equality of lists for ones that have exactly one member." );
             }
 
             return this;

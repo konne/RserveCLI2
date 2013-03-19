@@ -26,10 +26,10 @@ namespace RserveCli
         /// <param name="data">
         /// The data of the Sexp. Its meaning is opaque.
         /// </param>
-        public SexpQap1Raw(byte type, byte[] data)
+        public SexpQap1Raw( byte type , byte[] data )
         {
-            this.Data = data;
-            this.Type = type;
+            Data = data;
+            Type = type;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            return string.Format("[SexpQap1Raw (" + this.Type + ")]");
+            return string.Format( "[SexpQap1Raw (" + Type + ")]" );
         }
 
         #endregion

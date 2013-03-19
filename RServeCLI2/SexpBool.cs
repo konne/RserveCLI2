@@ -21,12 +21,12 @@ namespace RserveCli
         /// <summary>
         /// The boolean FALSE value
         /// </summary>
-        False = 0,
+        False = 0 ,
 
         /// <summary>
         /// The boolean TRUE value
         /// </summary>
-        True = 1,
+        True = 1 ,
 
         /// <summary>
         /// The NA value
@@ -56,14 +56,14 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpBool(SexpBoolValue theValue)
+        public SexpBool( SexpBoolValue theValue )
         {
-            if (theValue > SexpBoolValue.Na)
+            if ( theValue > SexpBoolValue.Na )
             {
-                throw new ArgumentOutOfRangeException("theValue");
+                throw new ArgumentOutOfRangeException( "theValue" );
             }
 
-            this.Value = theValue;
+            Value = theValue;
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace RserveCli
         /// <param name="theValue">
         /// if set to <c>true</c> [the value].
         /// </param>
-        public SexpBool(bool theValue)
+        public SexpBool( bool theValue )
         {
-            this.Value = theValue ? SexpBoolValue.True : SexpBoolValue.False;
+            Value = theValue ? SexpBoolValue.True : SexpBoolValue.False;
         }
 
         #endregion
@@ -102,7 +102,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value == SexpBoolValue.True;
+                return Value == SexpBoolValue.True;
             }
         }
 
@@ -116,7 +116,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -130,7 +130,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value == SexpBoolValue.Na;
+                return Value == SexpBoolValue.Na;
             }
         }
 
@@ -151,7 +151,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(SexpBoolValue x)
+        public static bool CheckNa( SexpBoolValue x )
         {
             return x == SexpBoolValue.Na;
         }
@@ -165,7 +165,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(SexpBool x)
+        public static bool CheckNa( SexpBool x )
         {
             return x.Value == SexpBoolValue.Na;
         }
@@ -179,43 +179,43 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            if (this.Value == SexpBoolValue.Na)
+            if ( Value == SexpBoolValue.Na )
             {
                 return false;
             }
 
-            if (obj is SexpBoolValue)
+            if ( obj is SexpBoolValue )
             {
-                return this.Value.Equals((SexpBoolValue)obj);
+                return Value.Equals( ( SexpBoolValue )obj );
             }
 
-            if (obj is bool)
+            if ( obj is bool )
             {
-                return (this.Value == SexpBoolValue.True && ((bool)obj)) ||
-                       (this.Value == SexpBoolValue.False && !((bool)obj));
+                return ( Value == SexpBoolValue.True && ( ( bool )obj ) ) ||
+                       ( Value == SexpBoolValue.False && !( ( bool )obj ) );
             }
 
-            if (obj is SexpBool)
+            if ( obj is SexpBool )
             {
-                return this.Equals(((SexpBool)obj).Value);
+                return Equals( ( ( SexpBool )obj ).Value );
             }
 
-            if (obj is Sexp)
+            if ( obj is Sexp )
             {
                 try
                 {
-                    var o = ((Sexp)obj).AsSexpBool;
-                    return this.Equals(o);
+                    var o = ( ( Sexp )obj ).AsSexpBool;
+                    return Equals( o );
                 }
-                catch (NotSupportedException)
+                catch ( NotSupportedException )
                 {
                     return false;
                 }
             }
 
-            return this.Equals(Make(obj));
+            return Equals( Make( obj ) );
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace RserveCli
         /// </returns>
         public override int GetHashCode()
         {
-            return this.Value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.AsBool;
+            return AsBool;
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            switch (this.Value)
+            switch ( Value )
             {
                 case SexpBoolValue.False:
                     return "False";
@@ -259,7 +259,7 @@ namespace RserveCli
                 case SexpBoolValue.Na:
                     return "NA";
                 default:
-                    throw new NotSupportedException("Not a valid SexpBoolValue.");
+                    throw new NotSupportedException( "Not a valid SexpBoolValue." );
             }
         }
 

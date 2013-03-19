@@ -27,9 +27,9 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpString(string theValue)
+        public SexpString( string theValue )
         {
-            this.Value = theValue;
+            Value = theValue;
         }
 
         #endregion
@@ -43,7 +43,7 @@ namespace RserveCli
         {
             get
             {
-                return new SexpString(null);
+                return new SexpString( null );
             }
         }
 
@@ -57,7 +57,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -71,7 +71,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value == null;
+                return Value == null;
             }
         }
 
@@ -92,7 +92,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(string x)
+        public static bool CheckNa( string x )
         {
             return x == null;
         }
@@ -106,7 +106,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(SexpString x)
+        public static bool CheckNa( SexpString x )
         {
             return x.Value == null;
         }
@@ -120,14 +120,14 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            if (obj is Sexp)
+            if ( obj is Sexp )
             {
-                return this.Value.Equals(((Sexp)obj).AsString);
+                return Value.Equals( ( ( Sexp )obj ).AsString );
             }
 
-            return this.Value.Equals(Convert.ChangeType(obj, typeof(string)));
+            return Value.Equals( Convert.ChangeType( obj , typeof( string ) ) );
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace RserveCli
         /// </returns>
         public override int GetHashCode()
         {
-            return this.Value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.Value;
+            return Value;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            return this.IsNa ? "NA" : this.Value;
+            return IsNa ? "NA" : Value;
         }
 
         #endregion

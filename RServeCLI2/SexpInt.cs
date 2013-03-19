@@ -35,9 +35,9 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpInt(int theValue)
+        public SexpInt( int theValue )
         {
-            this.Value = theValue;
+            Value = theValue;
         }
 
         #endregion
@@ -51,7 +51,7 @@ namespace RserveCli
         {
             get
             {
-                return new SexpInt(NaValue);
+                return new SexpInt( NaValue );
             }
         }
 
@@ -65,7 +65,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -79,12 +79,12 @@ namespace RserveCli
         {
             get
             {
-                if (this.IsNa)
+                if ( IsNa )
                 {
-                    throw new ArithmeticException("Cannot convert NA to int.");
+                    throw new ArithmeticException( "Cannot convert NA to int." );
                 }
 
-                return this.Value;
+                return Value;
             }
         }
 
@@ -98,7 +98,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value == NaValue;
+                return Value == NaValue;
             }
         }
 
@@ -120,7 +120,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(int x)
+        public static bool CheckNa( int x )
         {
             return x == NaValue;
         }
@@ -134,7 +134,7 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(SexpInt x)
+        public static bool CheckNa( SexpInt x )
         {
             return x.Value == NaValue;
         }
@@ -148,19 +148,19 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            if (obj is Sexp)
+            if ( obj is Sexp )
             {
-                if (this.IsNa || ((Sexp)obj).IsNa || ((Sexp)obj).IsNull)
+                if ( IsNa || ( ( Sexp )obj ).IsNa || ( ( Sexp )obj ).IsNull )
                 {
                     return false;
                 }
 
-                return this.Value.Equals(((Sexp)obj).AsInt);
+                return Value.Equals( ( ( Sexp )obj ).AsInt );
             }
 
-            return this.Value.Equals(Convert.ChangeType(obj, typeof(int)));
+            return Value.Equals( Convert.ChangeType( obj , typeof( int ) ) );
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace RserveCli
         /// </returns>
         public override int GetHashCode()
         {
-            return this.Value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.Value;
+            return Value;
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            return this.IsNa ? "NA" : this.Value.ToString();
+            return IsNa ? "NA" : Value.ToString();
         }
 
         #endregion

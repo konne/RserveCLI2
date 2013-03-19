@@ -127,17 +127,17 @@ namespace RserveCli
         /// <summary>
         /// The socket we use to talk to Rserve
         /// </summary>
-        private readonly Socket socket;
+        private readonly Socket _socket;
 
         /// <summary>
         /// The connection parameters we received from Rserve
         /// </summary>
-        private string[] connectionParameters;
+        private string[] _connectionParameters;
 
         /// <summary>
         /// The protocol that handles communication for us
         /// </summary>
-        private Qap1 protocol;
+        private Qap1 _protocol;
 
         #endregion
 
@@ -158,23 +158,23 @@ namespace RserveCli
         /// <param name="password">
         /// Password for the user, or nothing
         /// </param>
-        public RConnection(string hostname, int port = 6331, string user = null, string password = null)
+        public RConnection( string hostname , int port = 6331 , string user = null , string password = null )
         {
-            foreach (IPAddress addr in Dns.GetHostEntry(hostname).AddressList)
+            foreach ( IPAddress addr in Dns.GetHostEntry( hostname ).AddressList )
             {
-                var ipe = new IPEndPoint(addr, port);
-                var s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                s.Connect(ipe);
-                if (!s.Connected)
+                var ipe = new IPEndPoint( addr , port );
+                var s = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
+                s.Connect( ipe );
+                if ( !s.Connected )
                 {
                     continue;
                 }
 
-                this.socket = s;
+                _socket = s;
                 break;
             }
 
-            this.Init(user, password);
+            Init( user , password );
         }
 
         /// <summary>
@@ -192,17 +192,17 @@ namespace RserveCli
         /// <param name="password">
         /// Password for the user
         /// </param>
-        public RConnection(IPAddress addr = null, int port = 6311, string user = null, string password = null)
+        public RConnection( IPAddress addr = null , int port = 6311 , string user = null , string password = null )
         {
-            if (addr == null)
+            if ( addr == null )
             {
-                addr = new IPAddress(new byte[] { 127, 0, 0, 1 });
+                addr = new IPAddress( new byte[] { 127 , 0 , 0 , 1 } );
             }
 
-            var ipe = new IPEndPoint(addr, port);
-            this.socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            this.socket.Connect(ipe);
-            this.Init(user, password);
+            var ipe = new IPEndPoint( addr , port );
+            _socket = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
+            _socket.Connect( ipe );
+            Init( user , password );
         }
 
         #endregion
@@ -214,16 +214,16 @@ namespace RserveCli
         /// </summary>
         /// <param name="s">The variable to be assigned to or the expression to be evaluated</param>
         /// <returns>The value of the expression</returns>
-        public Sexp this[string s]
+        public Sexp this[ string s ]
         {
             get
             {
-                return this.Eval(s);
+                return Eval( s );
             }
 
             set
             {
-                this.Assign(s, value);
+                Assign( s , value );
             }
         }
 
@@ -240,9 +240,9 @@ namespace RserveCli
         /// <param name="val">
         /// Sexp to be assigned to the variable
         /// </param>
-        public void Assign(string symbol, Sexp val)
+        public void Assign( string symbol , Sexp val )
         {
-            this.protocol.Command(CmdAssignSexp, new object[] { symbol, val });
+            _protocol.Command( CmdAssignSexp , new object[] { symbol , val } );
         }
 
         /// <summary>
@@ -254,10 +254,10 @@ namespace RserveCli
         /// <returns>
         /// Sexp that resulted from the command
         /// </returns>
-        public Sexp Eval(string s)
+        public Sexp Eval( string s )
         {
-            List<object> res = this.protocol.Command(CmdEval, new object[] { s });
-            return (Sexp)res[0];
+            List<object> res = _protocol.Command( CmdEval , new object[] { s } );
+            return ( Sexp )res[ 0 ];
         }
 
         /// <summary>
@@ -269,23 +269,23 @@ namespace RserveCli
         /// <returns>
         /// Stream with the file data.
         /// </returns>
-        public Stream ReadFile(string fileName)
+        public Stream ReadFile( string fileName )
         {
-            this.protocol.Command(CmdOpenFile, new object[] { fileName });
+            _protocol.Command( CmdOpenFile , new object[] { fileName } );
             var resList = new List<byte>();
-            while (true)
+            while ( true )
             {
-                byte[] res = this.protocol.CommandReadStream(CmdReadFile, new object[] { });
-                if (res.Length == 0)
+                byte[] res = _protocol.CommandReadStream( CmdReadFile , new object[] { } );
+                if ( res.Length == 0 )
                 {
                     break;
                 }
 
-                resList.AddRange(res);
+                resList.AddRange( res );
             }
 
-            this.protocol.Command(CmdCloseFile, new object[] { });
-            return new MemoryStream(resList.ToArray());
+            _protocol.Command( CmdCloseFile , new object[] { } );
+            return new MemoryStream( resList.ToArray() );
         }
 
         /// <summary>
@@ -294,9 +294,9 @@ namespace RserveCli
         /// <param name="fileName">
         /// Name of the file to be deleted
         /// </param>
-        public void RemoveFile(string fileName)
+        public void RemoveFile( string fileName )
         {
-            this.protocol.Command(CmdRemoveFile, new object[] { fileName });
+            _protocol.Command( CmdRemoveFile , new object[] { fileName } );
         }
 
         /// <summary>
@@ -305,9 +305,9 @@ namespace RserveCli
         /// <param name="s">
         /// R command tp be evaluated
         /// </param>
-        public void VoidEval(string s)
+        public void VoidEval( string s )
         {
-            this.protocol.Command(CmdVoidEval, new object[] { s });
+            _protocol.Command( CmdVoidEval , new object[] { s } );
         }
 
         /// <summary>
@@ -321,14 +321,14 @@ namespace RserveCli
         /// <param name="data">
         /// Data to be written to the file
         /// </param>
-        public void WriteFile(string fileName, Stream data)
+        public void WriteFile( string fileName , Stream data )
         {
             var ms = new MemoryStream();
-            data.CopyTo(ms);
+            data.CopyTo( ms );
 
-            this.protocol.Command(CmdCreateFile, new object[] { fileName });
-            this.protocol.Command(CmdWriteFile, new object[] { ms.ToArray() });
-            this.protocol.Command(CmdCloseFile, new object[] { });
+            _protocol.Command( CmdCreateFile , new object[] { fileName } );
+            _protocol.Command( CmdWriteFile , new object[] { ms.ToArray() } );
+            _protocol.Command( CmdCloseFile , new object[] { } );
         }
 
         #endregion
@@ -342,9 +342,9 @@ namespace RserveCli
         /// </summary>
         public void Dispose()
         {
-            if (this.socket != null)
+            if ( _socket != null )
             {
-                ((IDisposable)this.socket).Dispose();
+                ( ( IDisposable )_socket ).Dispose();
             }
         }
 
@@ -363,40 +363,40 @@ namespace RserveCli
         /// <param name="password">
         /// Password for the user, or null
         /// </param>
-        private void Init(string user, string password)
+        private void Init( string user , string password )
         {
-            var buf = new byte[32];
-            this.socket.Receive(buf);
+            var buf = new byte[ 32 ];
+            _socket.Receive( buf );
             var parms = new List<string>();
-            for (int i = 0; i < buf.Length; i += 4)
+            for ( int i = 0 ; i < buf.Length ; i += 4 )
             {
-                var b = new byte[4];
-                Array.Copy(buf, i, b, 0, 4);
-                parms.Add(Encoding.ASCII.GetString(b));
+                var b = new byte[ 4 ];
+                Array.Copy( buf , i , b , 0 , 4 );
+                parms.Add( Encoding.ASCII.GetString( b ) );
             }
 
-            this.connectionParameters = parms.ToArray();
-            if (this.connectionParameters[0] != "Rsrv")
+            _connectionParameters = parms.ToArray();
+            if ( _connectionParameters[ 0 ] != "Rsrv" )
             {
-                throw new ProtocolViolationException("Did not receive Rserve ID signature.");
+                throw new ProtocolViolationException( "Did not receive Rserve ID signature." );
             }
 
-            if (this.connectionParameters[2] != "QAP1")
+            if ( _connectionParameters[ 2 ] != "QAP1" )
             {
-                throw new NotSupportedException("Only QAP1 protocol is supported.");
+                throw new NotSupportedException( "Only QAP1 protocol is supported." );
             }
 
-            this.protocol = new Qap1(this.socket);
-            if (this.connectionParameters.Contains("ARuc"))
+            _protocol = new Qap1( _socket );
+            if ( _connectionParameters.Contains( "ARuc" ) )
             {
-                string key = this.connectionParameters.FirstOrDefault(x => !String.IsNullOrEmpty(x) && x[0] == 'K');
-                key = String.IsNullOrEmpty(key) ? "rs" : key.Substring(1, key.Length - 1);
+                string key = _connectionParameters.FirstOrDefault( x => !String.IsNullOrEmpty( x ) && x[ 0 ] == 'K' );
+                key = String.IsNullOrEmpty( key ) ? "rs" : key.Substring( 1 , key.Length - 1 );
 
-                this.Login(user, password, "uc", key);
+                Login( user , password , "uc" , key );
             }
-            else if (this.connectionParameters.Contains("ARpt"))
+            else if ( _connectionParameters.Contains( "ARpt" ) )
             {
-                this.Login(user, password, "pt");
+                Login( user , password , "pt" );
             }
         }
 
@@ -415,29 +415,29 @@ namespace RserveCli
         /// <param name="salt">
         /// The salt to use to encrypt the password
         /// </param>
-        private void Login(string user, string password, string method, string salt = null)
+        private void Login( string user , string password , string method , string salt = null )
         {
-            if (user == null)
+            if ( user == null )
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException( "user" );
             }
 
-            if (password == null)
+            if ( password == null )
             {
-                throw new ArgumentNullException("password");
+                throw new ArgumentNullException( "password" );
             }
 
-            switch (method)
+            switch ( method )
             {
                 case "pt":
-                    this.protocol.Command(CmdLogin, new object[] { user + "\n" + password });
+                    _protocol.Command( CmdLogin , new object[] { user + "\n" + password } );
                     break;
                 case "uc":
-                    password = new DES().Encrypt(password, salt);
-                    this.protocol.Command(CmdLogin, new object[] { user + "\n" + password });
+                    password = new DES().Encrypt( password , salt );
+                    _protocol.Command( CmdLogin , new object[] { user + "\n" + password } );
                     break;
                 default:
-                    throw new ArgumentException("Could not interpret login method '" + method + "'");
+                    throw new ArgumentException( "Could not interpret login method '" + method + "'" );
             }
         }
 

@@ -18,14 +18,14 @@ namespace RserveCli
     /// <summary>
     /// A tagged list.
     /// </summary>
-    public class SexpTaggedList : Sexp, IEnumerable<KeyValuePair<string, Sexp>>
+    public class SexpTaggedList : Sexp , IEnumerable<KeyValuePair<string , Sexp>>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SexpTaggedList"/> class.
         /// </summary>
         public SexpTaggedList()
         {
-            this.Value = new List<KeyValuePair<string, Sexp>>();
+            Value = new List<KeyValuePair<string , Sexp>>();
         }
 
         #region Properties
@@ -40,7 +40,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value.Count;
+                return Value.Count;
             }
         }
 
@@ -67,7 +67,7 @@ namespace RserveCli
         {
             get
             {
-                return (from a in this.Value select a.Key).ToArray();
+                return ( from a in Value select a.Key ).ToArray();
             }
         }
 
@@ -81,14 +81,14 @@ namespace RserveCli
         {
             get
             {
-                return (from a in this.Value select a.Value).ToArray();
+                return ( from a in Value select a.Value ).ToArray();
             }
         }
 
         /// <summary>
         /// Gets the values stored in the tagged list
         /// </summary>
-        internal List<KeyValuePair<string, Sexp>> Value { get; private set; }
+        internal List<KeyValuePair<string , Sexp>> Value { get; private set; }
 
         #endregion
 
@@ -101,11 +101,11 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[int index]
+        public override Sexp this[ int index ]
         {
             get
             {
-                return this.Value[index].Value;
+                return Value[ index ].Value;
             }
 
             set
@@ -121,29 +121,29 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[string key]
+        public override Sexp this[ string key ]
         {
             get
             {
-                int ndx = this.Value.FindIndex(x => x.Key == key);
-                if (ndx < 0)
+                int ndx = Value.FindIndex( x => x.Key == key );
+                if ( ndx < 0 )
                 {
                     throw new KeyNotFoundException();
                 }
 
-                return this.Value[ndx].Value;
+                return Value[ ndx ].Value;
             }
 
             set
             {
-                int ndx = this.Value.FindIndex(x => x.Key == key);
-                if (ndx < 0)
+                int ndx = Value.FindIndex( x => x.Key == key );
+                if ( ndx < 0 )
                 {
-                    this.Value.Add(new KeyValuePair<string, Sexp>(key, value));
+                    Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
                 }
                 else
                 {
-                    this.Value[ndx] = new KeyValuePair<string, Sexp>(key, value);
+                    Value[ ndx ] = new KeyValuePair<string , Sexp>( key , value );
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace RserveCli
         /// <param name="item">
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
-        public override void Add(Sexp item)
+        public override void Add( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -172,9 +172,9 @@ namespace RserveCli
         /// <param name="value">
         /// The object to use as the value of the element to add.
         /// </param>
-        public override void Add(string key, Sexp value)
+        public override void Add( string key , Sexp value )
         {
-            this.Value.Add(new KeyValuePair<string, Sexp>(key, value));
+            Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace RserveCli
         /// </exception>
         public override void Clear()
         {
-            this.Value.Clear();
+            Value.Clear();
         }
 
         /// <summary>
@@ -197,9 +197,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public override bool Contains(Sexp item)
+        public override bool Contains( Sexp item )
         {
-            return this.Value.Exists(x => x.Value == item);
+            return Value.Exists( x => x.Value == item );
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public override bool Contains(KeyValuePair<string, Sexp> item)
+        public override bool Contains( KeyValuePair<string , Sexp> item )
         {
-            return this.Value.Contains(item);
+            return Value.Contains( item );
         }
 
         /// <summary>
@@ -228,9 +228,9 @@ namespace RserveCli
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public override bool ContainsKey(string key)
+        public override bool ContainsKey( string key )
         {
-            return this.Value.Exists(x => x.Key == key);
+            return Value.Exists( x => x.Key == key );
         }
 
         /// <summary>
@@ -242,11 +242,11 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public override void CopyTo(Sexp[] array, int arrayIndex)
+        public override void CopyTo( Sexp[] array , int arrayIndex )
         {
-            for (int i = 0; i < this.Value.Count; i++)
+            for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[arrayIndex + i] = this.Value[i].Value;
+                array[ arrayIndex + i ] = Value[ i ].Value;
             }
         }
 
@@ -259,9 +259,9 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public override void CopyTo(KeyValuePair<string, Sexp>[] array, int arrayIndex)
+        public override void CopyTo( KeyValuePair<string , Sexp>[] array , int arrayIndex )
         {
-            this.Value.CopyTo(array, arrayIndex);
+            Value.CopyTo( array , arrayIndex );
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace RserveCli
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return (from a in this.Value select a.Value).GetEnumerator();
+            return ( from a in Value select a.Value ).GetEnumerator();
         }
 
         /// <summary>
@@ -284,9 +284,9 @@ namespace RserveCli
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf(Sexp item)
+        public override int IndexOf( Sexp item )
         {
-            return this.Value.FindIndex(x => (x.Value == item));
+            return Value.FindIndex( x => ( x.Value == item ) );
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public override bool Remove(Sexp item)
+        public override bool Remove( Sexp item )
         {
             throw new NotSupportedException();
         }
@@ -315,9 +315,9 @@ namespace RserveCli
         /// <returns>
         /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2"/>.
         /// </returns>
-        public override bool Remove(string key)
+        public override bool Remove( string key )
         {
-            return this.Value.RemoveAll(x => x.Key == key) > 0;
+            return Value.RemoveAll( x => x.Key == key ) > 0;
         }
 
         /// <summary>
@@ -332,9 +332,9 @@ namespace RserveCli
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        public override bool Remove(KeyValuePair<string, Sexp> item)
+        public override bool Remove( KeyValuePair<string , Sexp> item )
         {
-            return this.Value.Remove(item);
+            return Value.Remove( item );
         }
 
         /// <summary>
@@ -343,9 +343,9 @@ namespace RserveCli
         /// <param name="index">
         /// The zero-based index of the item to remove.
         /// </param>
-        public override void RemoveAt(int index)
+        public override void RemoveAt( int index )
         {
-            this.Value.RemoveAt(index);
+            Value.RemoveAt( index );
         }
 
         /// <summary>
@@ -357,17 +357,17 @@ namespace RserveCli
         public override string ToString()
         {
             var r = new StringBuilder();
-            r.Append("{ ");
-            foreach (var a in this.Value)
+            r.Append( "{ " );
+            foreach ( var a in Value )
             {
-                r.Append(a.Key);
-                r.Append(": ");
-                r.Append(a.Value.ToString());
-                r.Append(", ");
+                r.Append( a.Key );
+                r.Append( ": " );
+                r.Append( a.Value.ToString() );
+                r.Append( ", " );
             }
 
-            r.Remove(r.Length - 2, 2);
-            r.Append(" }");
+            r.Remove( r.Length - 2 , 2 );
+            r.Append( " }" );
             return r.ToString();
         }
 
@@ -386,7 +386,7 @@ namespace RserveCli
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public override bool TryGetValue(string key, out Sexp value)
+        public override bool TryGetValue( string key , out Sexp value )
         {
             throw new NotImplementedException();
         }
@@ -403,9 +403,9 @@ namespace RserveCli
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string, Sexp>> IEnumerable<KeyValuePair<string, Sexp>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string , Sexp>> IEnumerable<KeyValuePair<string , Sexp>>.GetEnumerator()
         {
-            return this.Value.GetEnumerator();
+            return Value.GetEnumerator();
         }
 
         #endregion

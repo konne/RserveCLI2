@@ -23,14 +23,14 @@ namespace RserveCli
         #region Constants and Fields
 
         /// <summary>
-        /// This is how NA gets represented. This is NaN, but not every NaN is like this. The bit pattern might vary between platforms.
+        /// This is how NA gets represented. This is NaN, but not every NaN is like  The bit pattern might vary between platforms.
         /// </summary>
-        private static readonly byte[] Nabytes = BitConverter.GetBytes(BitConverter.ToDouble(new byte[] { 162, 7, 0, 0, 0, 0, 240, 127 }, 0));
+        private static readonly byte[] Nabytes = BitConverter.GetBytes( BitConverter.ToDouble( new byte[] { 162 , 7 , 0 , 0 , 0 , 0 , 240 , 127 } , 0 ) );
 
         /// <summary>
         /// The double that means NA.
         /// </summary>
-        private static readonly double NaValue = BitConverter.ToDouble(Nabytes, 0);
+        private static readonly double NaValue = BitConverter.ToDouble( Nabytes , 0 );
 
         #endregion
 
@@ -42,9 +42,9 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpDouble(double theValue)
+        public SexpDouble( double theValue )
         {
-            this.Value = theValue;
+            Value = theValue;
         }
 
         #endregion
@@ -58,7 +58,7 @@ namespace RserveCli
         {
             get
             {
-                return new SexpDouble(NaValue);
+                return new SexpDouble( NaValue );
             }
         }
 
@@ -72,7 +72,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -86,13 +86,13 @@ namespace RserveCli
         {
             get
             {
-                if (Math.Floor(this.Value) != this.Value)
+                if ( Math.Floor( Value ) != Value )
                 {
                     throw new ArgumentException(
-                        "Can only force integer values to integer type. Try to avoid using this.");
+                        "Can only force integer values to integer type. Try to avoid using " );
                 }
 
-                return (int)this.Value;
+                return ( int )Value;
             }
         }
 
@@ -106,7 +106,7 @@ namespace RserveCli
         {
             get
             {
-                return BitConverter.GetBytes(this.Value).SequenceEqual(Nabytes);
+                return BitConverter.GetBytes( Value ).SequenceEqual( Nabytes );
             }
         }
 
@@ -127,9 +127,9 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(double x)
+        public static bool CheckNa( double x )
         {
-            return BitConverter.GetBytes(x).SequenceEqual(Nabytes);
+            return BitConverter.GetBytes( x ).SequenceEqual( Nabytes );
         }
 
         /// <summary>
@@ -141,9 +141,9 @@ namespace RserveCli
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa(SexpDouble x)
+        public static bool CheckNa( SexpDouble x )
         {
-            return BitConverter.GetBytes(x.Value).SequenceEqual(Nabytes);
+            return BitConverter.GetBytes( x.Value ).SequenceEqual( Nabytes );
         }
 
         /// <summary>
@@ -155,19 +155,19 @@ namespace RserveCli
         /// <returns>
         /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals( object obj )
         {
-            if (obj is Sexp)
+            if ( obj is Sexp )
             {
-                if (this.IsNa || ((Sexp)obj).IsNa || ((Sexp)obj).IsNull)
+                if ( IsNa || ( ( Sexp )obj ).IsNa || ( ( Sexp )obj ).IsNull )
                 {
                     return false;
                 }
 
-                return this.Value.Equals(((Sexp)obj).AsDouble);
+                return Value.Equals( ( ( Sexp )obj ).AsDouble );
             }
 
-            return this.Value.Equals(Convert.ChangeType(obj, typeof(double)));
+            return Value.Equals( Convert.ChangeType( obj , typeof( double ) ) );
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace RserveCli
         /// </returns>
         public override int GetHashCode()
         {
-            return this.Value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.Value;
+            return Value;
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            return this.IsNa ? "NA" : this.Value.ToString();
+            return IsNa ? "NA" : Value.ToString();
         }
 
         #endregion

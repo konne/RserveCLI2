@@ -30,7 +30,7 @@ namespace RserveCli
         /// </summary>
         public SexpArrayBool()
         {
-            this.Value = new List<SexpBoolValue>();
+            Value = new List<SexpBoolValue>();
         }
 
         /// <summary>
@@ -39,10 +39,10 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpArrayBool(IEnumerable<SexpBoolValue> theValue)
+        public SexpArrayBool( IEnumerable<SexpBoolValue> theValue )
         {
-            this.Value = new List<SexpBoolValue>();
-            this.Value.AddRange(theValue);
+            Value = new List<SexpBoolValue>();
+            Value.AddRange( theValue );
         }
 
         #endregion
@@ -59,12 +59,12 @@ namespace RserveCli
         {
             get
             {
-                if (this.Value.Count == 1)
+                if ( Value.Count == 1 )
                 {
-                    return new SexpBool(this.Value[0]).AsBool;
+                    return new SexpBool( Value[ 0 ] ).AsBool;
                 }
 
-                throw new IndexOutOfRangeException("Can only convert numeric arrays of length 1 to double.");
+                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
             }
         }
 
@@ -78,7 +78,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value.Count;
+                return Value.Count;
             }
         }
 
@@ -110,16 +110,16 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[int index]
+        public override Sexp this[ int index ]
         {
             get
             {
-                return new SexpBool(this.Value[index]);
+                return new SexpBool( Value[ index ] );
             }
 
             set
             {
-                this.Value[index] = value.AsSexpBool;
+                Value[ index ] = value.AsSexpBool;
             }
         }
 
@@ -133,9 +133,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
-        public override void Add(Sexp item)
+        public override void Add( Sexp item )
         {
-            this.Value.Add(item.AsSexpBool);
+            Value.Add( item.AsSexpBool );
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace RserveCli
         /// </exception>
         public override void Clear()
         {
-            this.Value.Clear();
+            Value.Clear();
         }
 
         /// <summary>
@@ -158,11 +158,11 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public override void CopyTo(Sexp[] array, int arrayIndex)
+        public override void CopyTo( Sexp[] array , int arrayIndex )
         {
-            for (int i = 0; i < this.Value.Count; i++)
+            for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[arrayIndex + i] = new SexpBool(this.Value[i]);
+                array[ arrayIndex + i ] = new SexpBool( Value[ i ] );
             }
         }
 
@@ -174,7 +174,7 @@ namespace RserveCli
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return (from a in this.Value select (Sexp)(new SexpBool(a))).GetEnumerator();
+            return ( from a in Value select ( Sexp )( new SexpBool( a ) ) ).GetEnumerator();
         }
 
         /// <summary>
@@ -186,9 +186,9 @@ namespace RserveCli
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf(Sexp item)
+        public override int IndexOf( Sexp item )
         {
-            return this.Value.IndexOf(item.IsNa ? SexpBool.Na : item.AsSexpBool);
+            return Value.IndexOf( item.IsNa ? SexpBool.Na : item.AsSexpBool );
         }
 
         /// <summary>
@@ -200,9 +200,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
         /// </param>
-        public override void Insert(int index, Sexp item)
+        public override void Insert( int index , Sexp item )
         {
-            this.Value.Insert(index, item.AsSexpBool);
+            Value.Insert( index , item.AsSexpBool );
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace RserveCli
         /// <param name="index">
         /// The zero-based index of the item to remove.
         /// </param>
-        public override void RemoveAt(int index)
+        public override void RemoveAt( int index )
         {
-            this.Value.RemoveAt(index);
+            Value.RemoveAt( index );
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.Value.ToArray();
+            return Value.ToArray();
         }
 
         #endregion

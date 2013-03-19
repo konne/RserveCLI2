@@ -22,7 +22,7 @@ namespace RserveCli
         /// </summary>
         public SexpList()
         {
-            this.Value = new List<Sexp>();
+            Value = new List<Sexp>();
         }
 
         #region Properties
@@ -37,7 +37,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value.Count;
+                return Value.Count;
             }
         }
 
@@ -70,16 +70,16 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[int index]
+        public override Sexp this[ int index ]
         {
             get
             {
-                return this.Value[index];
+                return Value[ index ];
             }
 
             set
             {
-                this.Value[index] = value;
+                Value[ index ] = value;
             }
         }
 
@@ -93,9 +93,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
-        public override void Add(Sexp item)
+        public override void Add( Sexp item )
         {
-            this.Value.Add(item);
+            Value.Add( item );
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace RserveCli
         /// </summary>
         public override void Clear()
         {
-            this.Value.Clear();
+            Value.Clear();
         }
 
         /// <summary>
@@ -115,9 +115,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        public override bool Contains(Sexp item)
+        public override bool Contains( Sexp item )
         {
-            return this.Value.Contains(item);
+            return Value.Contains( item );
         }
 
         /// <summary>
@@ -129,9 +129,9 @@ namespace RserveCli
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public override void CopyTo(Sexp[] array, int arrayIndex)
+        public override void CopyTo( Sexp[] array , int arrayIndex )
         {
-            this.Value.CopyTo(array, arrayIndex);
+            Value.CopyTo( array , arrayIndex );
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace RserveCli
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return this.Value.GetEnumerator();
+            return Value.GetEnumerator();
         }
 
         /// <summary>
@@ -154,9 +154,9 @@ namespace RserveCli
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf(Sexp item)
+        public override int IndexOf( Sexp item )
         {
-            return this.Value.IndexOf(item);
+            return Value.IndexOf( item );
         }
 
         /// <summary>
@@ -168,9 +168,9 @@ namespace RserveCli
         /// <param name="item">
         /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
         /// </param>
-        public override void Insert(int index, Sexp item)
+        public override void Insert( int index , Sexp item )
         {
-            this.Value.Insert(index, item);
+            Value.Insert( index , item );
         }
 
         /// <summary>
@@ -182,9 +182,9 @@ namespace RserveCli
         /// <returns>
         /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </returns>
-        public override bool Remove(Sexp item)
+        public override bool Remove( Sexp item )
         {
-            return this.Value.Remove(item);
+            return Value.Remove( item );
         }
 
         /// <summary>
@@ -193,9 +193,9 @@ namespace RserveCli
         /// <param name="index">
         /// The zero-based index of the item to remove.
         /// </param>
-        public override void RemoveAt(int index)
+        public override void RemoveAt( int index )
         {
-            this.Value.RemoveAt(index);
+            Value.RemoveAt( index );
         }
 
         #endregion

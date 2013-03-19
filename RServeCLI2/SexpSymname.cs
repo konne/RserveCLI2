@@ -27,9 +27,9 @@ namespace RserveCli
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpSymname(string theValue)
+        public SexpSymname( string theValue )
         {
-            this.Value = theValue;
+            Value = theValue;
         }
 
         #endregion
@@ -46,7 +46,7 @@ namespace RserveCli
         {
             get
             {
-                return this.Value;
+                return Value;
             }
         }
 
@@ -68,7 +68,7 @@ namespace RserveCli
         /// </returns>
         public override object ToNative()
         {
-            return this.Value;
+            return Value;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace RserveCli
         /// </returns>
         public override string ToString()
         {
-            return this.Value;
+            return Value;
         }
 
         #endregion
