@@ -113,7 +113,31 @@ namespace RserveCli
         {
             return s.AsInt;
         }
+        
+        /// <summary>
+        /// Gets as date.
+        /// </summary>
+        /// <value>
+        /// The value as an integer.
+        /// </value>
+        public virtual DateTime AsDate
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
 
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to int
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator DateTime( Sexp s )
+        {
+            return s.AsDate;
+        }
+    
         /// <summary>
         /// Gets as list of objects.
         /// </summary>
@@ -484,6 +508,7 @@ namespace RserveCli
         /// </returns>
         public static Sexp Make( object x )
         {
+
             if ( x is Sexp )
             {
                 return ( Sexp )x;
@@ -522,6 +547,16 @@ namespace RserveCli
             if ( x is IEnumerable<int> )
             {
                 return Make( ( IEnumerable<int> )x );
+            }
+
+            if ( x is DateTime )
+            {
+                return Make( ( DateTime )x );
+            }
+
+            if ( x is IEnumerable<DateTime> )
+            {
+                return Make( ( IEnumerable<DateTime> )x );
             }
 
             if ( x is string )
@@ -583,6 +618,34 @@ namespace RserveCli
         public static Sexp Make( IEnumerable<int> xs )
         {
             return new SexpArrayInt( xs );
+        }
+
+        /// <summary>
+        /// Makes a Sexp from an object.
+        /// </summary>
+        /// <param name="x">
+        /// The object to convert into an Sexp.
+        /// </param>
+        /// <returns>
+        /// The Sexp made.
+        /// </returns>
+        public static Sexp Make( DateTime x )
+        {
+            return new SexpDate( x );
+        }
+
+        /// <summary>
+        /// Makes a Sexp from an object.
+        /// </summary>
+        /// <param name="xs">
+        /// The objects to convert into an Sexp.
+        /// </param>
+        /// <returns>
+        /// The Sexp made.
+        /// </returns>
+        public static Sexp Make( IEnumerable<DateTime> xs )
+        {
+            return new SexpArrayDate( xs );
         }
 
         /// <summary>

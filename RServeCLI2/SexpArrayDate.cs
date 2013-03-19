@@ -1,44 +1,67 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpArrayInt.cs" company="Oliver M. Haynold">
-//   Copyright (c) 2011, Oliver M. Haynold
+// <copyright file="SexpArrayDate.cs" company="Suraj K. Gupta">
+//   Copyright (c) 2013, Suraj K. Gupta
 // All rights reserved.
 // </copyright>
 // <summary>
-// An array of integers.
+// An array of dates.  Time portion of a date is severed.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace RserveCli
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
-    /// An array of integers.
+    /// An array of Dates.  Time portion of a date is severed.
     /// </summary>
-    public class SexpArrayInt : SexpGenericList
+    public class SexpArrayDate : SexpArrayInt
     {
+
+        #region Constants and Fields
+
+        /// <summary>
+        /// The origin for R's conversion of dates to ints
+        /// </summary>
+        private static readonly DateTime Origin = new DateTime( 1970 , 1 , 1 );
+
+        #endregion
+
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
         /// </summary>
-        public SexpArrayInt()
+        public SexpArrayDate()
         {
-            Value = new List<int>();
+            Attributes[ "class" ] = new SexpString( "Date" );
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
         /// </summary>
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpArrayInt( IEnumerable<int> theValue )
+        public SexpArrayDate( IEnumerable<DateTime> theValue )
+            : base( theValue.Select( x => x.Date ).Select( y => y.Subtract( Origin ).Days ) )
         {
-            Value = new List<int>();
-            Value.AddRange( theValue );
+            Attributes[ "class" ] = new SexpString( "Date" );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
+        /// </summary>
+        /// <param name="theValue">
+        /// The value.
+        /// </param>
+        public SexpArrayDate( IEnumerable<int> theValue )
+            : base( theValue )
+        {
+            Attributes[ "class" ] = new SexpString( "Date" );
         }
 
         #endregion
@@ -46,12 +69,12 @@ namespace RserveCli
         #region Properties
 
         /// <summary>
-        /// Gets or sets as int.
+        /// Gets or sets as Date.
         /// </summary>
         /// <value>
         /// The value as an integer.
         /// </value>
-        public override int AsInt
+        public override DateTime AsDate
         {
             get
             {
@@ -65,55 +88,15 @@ namespace RserveCli
         }
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
-        public override int Count
-        {
-            get
-            {
-                return Value.Count;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is NA.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is NA; otherwise, <c>false</c>.
-        /// </value>
-        public override bool IsNa
-        {
-            get
-            {
-                if ( Value.Count == 1 )
-                {
-                    return SexpInt.CheckNa( Value[ 0 ] );
-                }
-
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
-        /// </returns>
-        public override bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Gets the integers stored in the list
         /// </summary>
-        internal List<int> Value { get; private set; }
+        internal new List<DateTime> Value
+        {
+            get
+            {
+                return ( base.Value.Select( x => Origin.AddDays( x ) ).ToList() );
+            }
+        }
 
         #endregion
 
@@ -126,15 +109,15 @@ namespace RserveCli
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public new Sexp this[ int index ]
         {
             get
             {
-                return new SexpInt( Value[ index ] );
+                return new SexpDate( Value[ index ] );
             }
             set
             {
-                Value[ index ] = value.IsNa ? SexpInt.NaValue : value.AsInt;
+                base[ index ] = value.IsNa ? new SexpDate( SexpInt.NaValue ) : new SexpDate( value.AsDate );
             }
         }
 
@@ -149,19 +132,8 @@ namespace RserveCli
         /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </param>
         public override void Add( Sexp item )
-        {
-            Value.Add( item.IsNa ? SexpInt.NaValue : item.AsInt );
-        }
-
-        /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
-        public override void Clear()
-        {
-            Value.Clear();
+        {            
+            base.Add( item.IsNa ? item : new SexpDate( item.AsDate ) );
         }
 
         /// <summary>
@@ -175,7 +147,7 @@ namespace RserveCli
         /// </returns>
         public override bool Contains( Sexp item )
         {
-            return Value.Contains( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            return base.Contains( item.IsNa ? item : new SexpDate( item.AsDate ) );
         }
 
         /// <summary>
@@ -191,7 +163,7 @@ namespace RserveCli
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[ arrayIndex + i ] = new SexpInt( Value[ i ] );
+                array[ arrayIndex + i ] = new SexpDate( Value[ i ] );
             }
         }
 
@@ -203,7 +175,7 @@ namespace RserveCli
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpInt( a ) ) ).GetEnumerator();
+            return ( from a in Value select ( Sexp )( new SexpDate( a ) ) ).GetEnumerator();
         }
 
         /// <summary>
@@ -217,7 +189,7 @@ namespace RserveCli
         /// </returns>
         public override int IndexOf( Sexp item )
         {
-            return Value.IndexOf( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            return base.IndexOf( item.IsNa ? item : new SexpDate( item.AsDate ) );
         }
 
         /// <summary>
@@ -231,7 +203,7 @@ namespace RserveCli
         /// </param>
         public override void Insert( int index , Sexp item )
         {
-            Value.Insert( index , item.IsNa ? SexpInt.NaValue : item.AsInt );
+            base.Insert( index , item.IsNa ? item : new SexpDate( item.AsDate ) );
         }
 
         /// <summary>
@@ -248,18 +220,7 @@ namespace RserveCli
         /// </exception>
         public override bool Remove( Sexp item )
         {
-            return Value.Remove( item.IsNa ? SexpInt.NaValue : item.AsInt );
-        }
-
-        /// <summary>
-        /// Removes the <see cref="T:System.Collections.Generic.IList`1"/> item at the specified index.
-        /// </summary>
-        /// <param name="index">
-        /// The zero-based index of the item to remove.
-        /// </param>
-        public override void RemoveAt( int index )
-        {
-            Value.RemoveAt( index );
+            return base.Remove( item.IsNa ? item : new SexpDate( item.AsDate ) );
         }
 
         /// <summary>
@@ -275,5 +236,6 @@ namespace RserveCli
         }
 
         #endregion
+
     }
 }

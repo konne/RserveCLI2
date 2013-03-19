@@ -192,6 +192,12 @@ namespace RserveCli
                 t = s.GetType();
             }
 
+            if ( t == typeof( SexpDate ) )
+            {
+                s = new SexpArrayDate( new[] { ( ( SexpDate )s ).Value } );
+                t = s.GetType();
+            }
+
             if ( t == typeof( SexpBool ) )
             {
                 s = new SexpArrayBool( new[] { ( ( SexpBool )s ).Value } );
@@ -224,6 +230,15 @@ namespace RserveCli
                 }
             }
             else if ( t == typeof( SexpArrayInt ) )
+            {
+                xt = XtArrayInt;
+                var v = ( ( SexpArrayInt )s ).Value;
+                foreach ( var t1 in v )
+                {
+                    res.AddRange( BitConverter.GetBytes( t1 ) );
+                }
+            }
+            else if ( t == typeof( SexpArrayDate ) )
             {
                 xt = XtArrayInt;
                 var v = ( ( SexpArrayInt )s ).Value;
