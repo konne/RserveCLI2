@@ -865,13 +865,46 @@ namespace RserveCli
             res.Attributes[ "names" ] = new SexpArrayString();
             if ( columns != null )
             {
+                int? rows = null;
                 foreach ( var col in columns )
                 {
+                    // make the column
                     res.Attributes[ "names" ].Add( new SexpString( col.Key ) );
-                    res.Add( Make( col.Value ) );
+                    Sexp column = Make( col.Value );
+                    
+                    // must be an SexpArray type otherwise it's not a data.frame.  Technically it could be an SexpBool, SexpInt, etc. but too cumbersome to check all of those types
+                    if ( !column.GetType().ToString().Contains( "SexpArray" ) )
+                    {
+                        throw new NotSupportedException( "Can only build data.frame with SexpArray types" );
+                    }
+                    
+                    // each column must have the same number of rows.  
+                    // In R you can can do something like data.frame( A = c( 1 , 2 , 3 ) , B = "Test" ) and B will be replicated.
+                    // but this library does not support that convenience feature
+                    if ( rows == null )
+                    {
+                        rows = column.Count;
+                    }
+                    else if ( column.Count != rows )
+                    {
+                        throw new NotSupportedException( string.Format( "arguments imply differing number of rows: {0}, {1}" , rows , column.Count ) );
+                    }
+
+                    res.Add( column );
                 }
 
-                if ( rowNames != null )
+                if ( rowNames == null )
+                {
+                    // without this, data.frames will look like they have 0 observations
+                    // ReSharper disable PossibleInvalidOperationException
+                    res.Attributes[ "row.names" ] = new SexpArrayInt( new List<int> { SexpInt.Na.Value , -1 * ( int )rows } );
+                    // ReSharper restore PossibleInvalidOperationException
+                }
+                else if ( rowNames.Count() != rows )
+                {                    
+                    throw new NotSupportedException( "invalid 'row.names' length" );
+                }
+                else
                 {
                     res.Attributes[ "row.names" ] = new SexpArrayString( rowNames );
                 }
