@@ -4,7 +4,7 @@
 // All rights reserved.
 // </copyright>
 // <summary>
-// A convenience representation for R double values. Note that Rserve never uses this type,
+// A convenience representation for R double values. Rserve never uses this type,
 // but puts even a single number into a SexpArrayDouble.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ namespace RserveCli
     using System.Linq;
 
     /// <summary>
-    /// A convenience representation for R double values. Note that Rserve never uses this type,
+    /// A convenience representation for R double values. Rserve never uses this type,
     /// but puts even a single number into a SexpArrayDouble.
     /// </summary>
     public class SexpDouble : Sexp

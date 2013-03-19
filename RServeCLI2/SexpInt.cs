@@ -4,7 +4,7 @@
 // All rights reserved.
 // </copyright>
 // <summary>
-// A convenience representation for R integer values. Note that Rserve never uses this type,
+// A convenience representation for R integer values. Rserve never uses this type,
 // but puts even a single number into a SexpArrayInt.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ namespace RserveCli
     using System;
 
     /// <summary>
-    /// A convenience representation for R integer values. Note that Rserve never uses this type,
+    /// A convenience representation for R integer values. Rserve never uses this type,
     /// but puts even a single number into a SexpArrayInt.
     /// </summary>
     public class SexpInt : Sexp

@@ -4,7 +4,7 @@
 // All rights reserved.
 // </copyright>
 // <summary>
-// A convenience representation for R boolean values. Note that Rserve never uses this type,
+// A convenience representation for R boolean values. Rserve never uses this type,
 // but puts even a single number into a SexpArrayBool.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ namespace RserveCli
     }
 
     /// <summary>
-    /// A convenience representation for R boolean values. Note that Rserve never uses this type,
+    /// A convenience representation for R boolean values. Rserve never uses this type,
     /// but puts even a single number into a SexpArrayBool.
     /// </summary>
     public class SexpBool : Sexp

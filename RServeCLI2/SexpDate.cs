@@ -4,7 +4,7 @@
 // All rights reserved.
 // </copyright>
 // <summary>
-// A convenience representation for R date values. Note that Rserve never uses this type,
+// A convenience representation for R date values. Rserve never uses this type,
 // but puts even a single number into a SexpArrayInt.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ namespace RserveCli
 {
 
     /// <summary>
-    /// A convenience representation for R date values. Note that Rserve never uses this type,
+    /// A convenience representation for R date values. Rserve never uses this type,
     /// but puts even a single number into a SexpArrayInt.
     /// </summary>
     public class SexpDate : SexpInt
