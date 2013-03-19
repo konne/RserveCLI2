@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RserveCli</RootNamespace>
+    <AssemblyName>RserveCli</AssemblyName>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D70C9664-913B-407D-95C1-C165BC6E4A29}</ProjectGuid>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>FRAMEWORK_BELOW_4; MONO_NA_240</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+    <DocumentationFile>bin\Debug\RserveCli.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+    <DocumentationFile>bin\Release\RserveCli.xml</DocumentationFile>
+    <DefineConstants>FRAMEWORK_BELOW_4</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Future.cs" />
+    <Compile Include="SexpQap1Raw.cs" />
+    <Compile Include="SexpArrayString.cs" />
+    <Compile Include="SexpArrayDouble.cs" />
+    <Compile Include="SexpArrayBool.cs" />
+    <Compile Include="SexpArrayInt.cs" />
+    <Compile Include="SexpTaggedList.cs" />
+    <Compile Include="SexpList.cs" />
+    <Compile Include="SexpGenericList.cs" />
+    <Compile Include="SexpSymname.cs" />
+    <Compile Include="SexpString.cs" />
+    <Compile Include="SexpDouble.cs" />
+    <Compile Include="SexpBool.cs" />
+    <Compile Include="DES.cs">
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Sexp.cs" />
+    <Compile Include="Qap1.cs" />
+    <Compile Include="RConnection.cs" />
+    <Compile Include="SexpInt.cs" />
+    <Compile Include="SexpNull.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
