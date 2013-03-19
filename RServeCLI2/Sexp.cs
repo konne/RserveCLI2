@@ -657,6 +657,58 @@ namespace RserveCli
         /// <returns>
         /// The Sexp made.
         /// </returns>
+        public static Sexp Make( decimal x )
+        {
+            return Make( Convert.ToDouble( x ) );
+        }
+
+        /// <summary>
+        /// Makes a Sexp from an object.
+        /// </summary>
+        /// <param name="xs">
+        /// The objects to convert into an Sexp.
+        /// </param>
+        /// <returns>
+        /// The Sexp made.
+        /// </returns>
+        public static Sexp Make( IEnumerable<decimal> xs )
+        {
+            return Make( xs.Select( Convert.ToDouble ) );
+        }
+
+        /// <summary>
+        /// Makes a mathrix Sexp from a native matrix.
+        /// </summary>
+        /// <param name="xs">
+        /// The native matrix.
+        /// </param>
+        /// <returns>
+        /// The Sexp matrix.
+        /// </returns>
+        public static Sexp Make( decimal[ , ] xs )
+        {
+            var xsDouble = new double[ xs.GetLength( 0 ) , xs.GetLength( 1 ) ];
+            var rows = xs.GetLength( 0 );
+            var cols = xs.GetLength( 1 );
+            for ( int row = 0 ; row < rows ; row++ )
+            {
+                for ( int col = 0 ; col < cols ; col++ )
+                {
+                    xsDouble[ row , col ] = Convert.ToDouble( xs[ row , col ] );
+                }
+            }
+            return Make( xsDouble );            
+        }
+
+        /// <summary>
+        /// Makes a Sexp from an object.
+        /// </summary>
+        /// <param name="x">
+        /// The object to convert into an Sexp.
+        /// </param>
+        /// <returns>
+        /// The Sexp made.
+        /// </returns>
         public static Sexp Make( double x )
         {
             return new SexpDouble( x );
