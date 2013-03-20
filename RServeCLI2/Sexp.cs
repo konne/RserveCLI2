@@ -113,6 +113,54 @@ namespace RserveCLI2
         {
             return s.AsInt;
         }
+
+        /// <summary>
+        /// Gets as double.
+        /// </summary>
+        /// <value>
+        /// As double.
+        /// </value>
+        public virtual double[ , ] As2DArrayDouble
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to double
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator double[ , ]( Sexp s )
+        {
+            return s.As2DArrayDouble;
+        }
+
+        /// <summary>
+        /// Gets as int.
+        /// </summary>
+        /// <value>
+        /// The value as an integer.
+        /// </value>
+        public virtual int[ , ] As2DArrayInt
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to int
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator int[ , ]( Sexp s )
+        {
+            return s.As2DArrayInt;
+        }
         
         /// <summary>
         /// Gets as date.

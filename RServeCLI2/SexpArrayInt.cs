@@ -115,6 +115,39 @@ namespace RserveCLI2
         /// </summary>
         internal List<int> Value { get; private set; }
 
+        /// <summary>
+        /// Gets the values as a 2-dimensional array
+        /// </summary>
+        /// <remarks>
+        /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
+        /// </remarks>
+        public override int[ , ] As2DArrayInt
+        {
+            get
+            {
+                if ( !Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
+                }
+                if ( Rank == 2 )
+                {
+                    // if GetLength fails it means the user screwed around with the dim attribute
+                    int rows = GetLength( 0 );
+                    int cols = GetLength( 1 );
+                    var result = new int[ rows , cols ];
+                    for ( int row = 0 ; row < rows ; row++ )
+                    {
+                        for ( int col = 0 ; col < cols ; col++ )
+                        {
+                            result[ row , col ] = Value[ ( col * rows ) + row ];
+                        }
+                    }
+                    return result;
+                }
+                throw new NotSupportedException( "Sexp does not have 2 dimension." );
+            }
+        }
+
         #endregion
 
         #region Indexers

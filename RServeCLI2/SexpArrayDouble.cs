@@ -8,6 +8,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace RserveCLI2
 {
     using System.Collections.Generic;
@@ -101,6 +103,39 @@ namespace RserveCLI2
             set
             {
                 Value[ index ] = value.AsDouble;
+            }
+        }
+
+        /// <summary>
+        /// Gets the values as a 2-dimensional array
+        /// </summary>
+        /// <remarks>
+        /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
+        /// </remarks>
+        public override double[ , ] As2DArrayDouble
+        {
+            get
+            {
+                if ( !Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
+                }
+                if ( Rank == 2 )
+                {
+                    // if GetLength fails it means the user screwed around with the dim attribute
+                    int rows = GetLength( 0 );
+                    int cols = GetLength( 1 );
+                    var result = new double[ rows , cols ];
+                    for ( int row = 0 ; row < rows ; row++ )
+                    {
+                        for ( int col = 0 ; col < cols ; col++ )
+                        {
+                            result[ row , col ] = Value[ ( col * rows ) + row ];
+                        }
+                    }
+                    return result;
+                }
+                throw new NotSupportedException( "Sexp does not have 2 dimension." );
             }
         }
 
