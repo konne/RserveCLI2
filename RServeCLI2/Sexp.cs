@@ -364,6 +364,36 @@ namespace RserveCLI2
             }
         }
 
+        /// <summary>
+        /// Gets rownames of this matrix.
+        /// </summary>
+        public string[] RowNames
+        {
+            get
+            {
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    return Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
+                }
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Gets colnames of this matrix.
+        /// </summary>
+        public string[] ColNames
+        {
+            get
+            {
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    return Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
+                }
+                throw new NotSupportedException();
+            }
+        }
+
         #endregion
 
         #region Indexers

@@ -79,6 +79,7 @@ namespace RserveCLI2
         /// Gets the doubles stored in the list
         /// </summary>
         internal List<double> Value { get; private set; }
+        
         #endregion
 
         #region Indexers
