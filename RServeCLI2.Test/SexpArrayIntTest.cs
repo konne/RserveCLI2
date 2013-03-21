@@ -7,7 +7,7 @@ namespace RserveCLI2.Tests
     /// <summary>
     /// Tests RserveCLI2.SexpArrayInt
     /// </summary>
-    public class SexpArrayInt
+    public class SexpArrayIntTest
     {
 
         [Fact]
@@ -40,7 +40,7 @@ namespace RserveCLI2.Tests
 
             // Arrange
             var values1 = new int[ 1 ] { 2 };
-            var values2 = new int[ 2 ] { 3 ,  5 };
+            var values2 = new int[ 2 ] { 3 , 5 };
             var values3 = new int[ 4 ] { 8 , 2 , 7 , 4 };
 
             // Act
@@ -52,6 +52,24 @@ namespace RserveCLI2.Tests
             Assert.Throws<NotSupportedException>( () => sexp1.As2DArrayInt );
             Assert.Throws<NotSupportedException>( () => sexp2.As2DArrayInt );
             Assert.Throws<NotSupportedException>( () => sexp3.As2DArrayInt );
+        }
+
+        [Fact]
+        public void As2DArrayInt_MatrixCreatedInR_Returns2DArrayWithProperValues()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange                
+                service.RConnection.VoidEval( "test = matrix( as.integer( c( 1 , 2 , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" );
+                var expected = new int[ 2 , 3 ] { { 1 , 2 , 3 } , { -4 , -5 , 6 } };
+
+                // Act
+                Sexp matrix = service.RConnection[ "test" ];
+
+                // Assert
+                Assert.IsType<SexpArrayInt>( matrix );
+                Assert.Equal( expected , matrix.As2DArrayInt );
+            }
         }
 
 

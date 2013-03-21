@@ -7,19 +7,19 @@ namespace RserveCLI2.Tests
     /// <summary>
     /// Tests RserveCLI2.SexpArrayDouble
     /// </summary>
-    public class SexpArrayDouble
+    public class SexpArrayDoubleTest
     {
 
         [Fact]
         public void As2DArrayDouble_SexpConstructedUsing2dArray_ReturnsSame2dArray()
         {
-            
+
             // Arrange
             var values1 = new double[ 1 , 1 ] { { 2.9 } };
             var values2 = new double[ 2 , 1 ] { { 3.9 } , { 5.6 } };
             var values3 = new double[ 1 , 2 ] { { 7.9 , 4.3 } };
             var values4 = new double[ 3 , 4 ] { { 8.8 , 2.1 , 7.5 , 4.3 } , { 0.1 , -9.8 , 5.1 , -2.7 } , { 1.1 , -4.6 , -4.5 , -8.7 } };
-            
+
             // Act
             Sexp sexp1 = Sexp.Make( values1 );
             Sexp sexp2 = Sexp.Make( values2 );
@@ -53,6 +53,25 @@ namespace RserveCLI2.Tests
             Assert.Throws<NotSupportedException>( () => sexp2.As2DArrayDouble );
             Assert.Throws<NotSupportedException>( () => sexp3.As2DArrayDouble );
         }
+
+        [Fact]
+        public void As2DArrayDouble_MatrixCreatedInR_Returns2DArrayWithProperValues()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange                
+                service.RConnection.VoidEval( "test = matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , -5.8 , 6.3 ) , ncol = 3 , byrow = TRUE )" );
+                var expected = new double[ 2 , 3 ] { { 1.1 , 2.6 , 3.9 } , { -4.2 , -5.8 , 6.3 } };
+
+                // Act
+                Sexp matrix = service.RConnection[ "test" ];
+
+                // Assert
+                Assert.IsType<SexpArrayDouble>( matrix );
+                Assert.Equal( expected , matrix.As2DArrayDouble );
+            }
+        }
+
 
     }
 }

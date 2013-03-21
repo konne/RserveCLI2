@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -43,8 +44,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SexpArrayDouble.cs" />
-    <Compile Include="SexpArrayInt.cs" />
+    <Compile Include="Rservice.cs" />
+    <Compile Include="SexpArrayDoubleTest.cs" />
+    <Compile Include="SexpArrayIntTest.cs" />
     <None Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
