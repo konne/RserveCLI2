@@ -1,0 +1,16 @@
+RSassign	Rclient
+RSassign.old	Rclient
+RSattach	Rclient
+RSclose	Rclient
+RSconnect	Rclient
+RSdetach	Rclient
+Rserve	Rserv
+RSeval	Rclient
+RSeval.old	Rclient
+RSevalDetach	Rclient
+RSlogin	Rclient
+RSserverEval	Rclient
+RSserverSource	Rclient
+RSshutdown	Rclient
+self.ctrlEval	self
+self.ctrlSource	self

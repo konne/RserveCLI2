@@ -1,0 +1,13 @@
+Package: methods
+Version: 2.15.3
+Priority: base
+Imports: utils
+Title: Formal Methods and Classes
+Author: R Core Team
+Maintainer: R Core Team <R-core@r-project.org>
+Description: Formally defined methods and classes for R objects,
+  plus other programming tools, as described in the reference
+References: John M. Chambers (2008) ``Software for Data Analysis:
+        Programming with R''; Springer NY.
+License: Part of R 2.15.3
+Built: R 2.15.3; x86_64-w64-mingw32; 2013-03-01 11:19:28 UTC; windows
