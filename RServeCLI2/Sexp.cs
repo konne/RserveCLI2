@@ -161,7 +161,7 @@ namespace RserveCLI2
         {
             return s.As2DArrayInt;
         }
-        
+
         /// <summary>
         /// Gets as date.
         /// </summary>
@@ -185,7 +185,7 @@ namespace RserveCLI2
         {
             return s.AsDate;
         }
-    
+
         /// <summary>
         /// Gets as list of objects.
         /// </summary>
@@ -415,30 +415,40 @@ namespace RserveCLI2
         /// <summary>
         /// Gets rownames of this matrix.
         /// </summary>
+        /// <remarks>
+        /// If none, returns null.  This matches R's behavior.  
+        /// For example, both rownames( matrix( 1 ) ) and rownames( c( 1 , 2 , 3 ) ) return NULL in R.
+        /// </remarks>
         public string[] RowNames
         {
             get
             {
                 if ( Attributes.ContainsKey( "dimnames" ) )
                 {
-                    return Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
+                    string[] rowNames = Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
+                    return rowNames.Length == 0 ? null : rowNames;
                 }
-                throw new NotSupportedException();
+                return null;
             }
         }
 
         /// <summary>
         /// Gets colnames of this matrix.
         /// </summary>
+        /// <remarks>
+        /// If none, returns null.  This matches R's behavior.  
+        /// For example, both colnames( matrix( 1 ) ) and colnames( c( 1 , 2 , 3 ) ) return NULL in R.
+        /// </remarks>
         public string[] ColNames
         {
             get
             {
                 if ( Attributes.ContainsKey( "dimnames" ) )
                 {
-                    return Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
+                    string[] colNames = Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
+                    return colNames.Length == 0 ? null : colNames;
                 }
-                throw new NotSupportedException();
+                return null;
             }
         }
 
@@ -790,7 +800,7 @@ namespace RserveCLI2
                     xsDouble[ row , col ] = Convert.ToDouble( xs[ row , col ] );
                 }
             }
-            return Make( xsDouble );            
+            return Make( xsDouble );
         }
 
         /// <summary>
@@ -949,13 +959,13 @@ namespace RserveCLI2
                     // make the column
                     res.Attributes[ "names" ].Add( new SexpString( col.Key ) );
                     Sexp column = Make( col.Value );
-                    
+
                     // must be an SexpArray type otherwise it's not a data.frame.  Technically it could be an SexpBool, SexpInt, etc. but too cumbersome to check all of those types
                     if ( !column.GetType().ToString().Contains( "SexpArray" ) )
                     {
                         throw new NotSupportedException( "Can only build data.frame with SexpArray types" );
                     }
-                    
+
                     // each column must have the same number of rows.  
                     // In R you can can do something like data.frame( A = c( 1 , 2 , 3 ) , B = "Test" ) and B will be replicated.
                     // but this library does not support that convenience feature
@@ -979,7 +989,7 @@ namespace RserveCLI2
                     // ReSharper restore PossibleInvalidOperationException
                 }
                 else if ( rowNames.Count() != rows )
-                {                    
+                {
                     throw new NotSupportedException( "invalid 'row.names' length" );
                 }
                 else
