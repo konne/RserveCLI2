@@ -1,5 +1,13 @@
-RserveCLI2
-----------
+Overview
+---------
+RserveCLI2 is a .NET/CLR client for Rserve. It allows .NET/CLR client to access R on the same machine or across the network.
+
+Details
+-------
+Rserve (http://www.rforge.net/Rserve/) is a server application that allows users to access an R (http://www.r-project.org/) session remotely across the network. RserveCLI2 is a client library that allows one to access an Rserve server from a .NET/CLR environment using languages such as C#, Visual Basic, etc.
+
+Fork of RserveCLI
+-----------------
 - This is a fork of RserveCLI, by Oliver M. Haynold which is hosted here: https://rservecli.codeplex.com
 - Forked at commit 14449
 - I wanted to add features and fix bugs unencumbered by the author's bandwidth
