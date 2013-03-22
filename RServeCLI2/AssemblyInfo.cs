@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright( "Copyright (c) 2010 by Oliver Haynold and other contributors" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
-[assembly: InternalsVisibleTo( "RserveCLI2.Tests" )]
+[assembly: InternalsVisibleTo( "RserveCLI2.Test" )]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,

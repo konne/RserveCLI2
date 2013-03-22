@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace RserveCLI2.Tests
+namespace RserveCLI2.Test
 {
     public class SexpArrayDateTest
     {

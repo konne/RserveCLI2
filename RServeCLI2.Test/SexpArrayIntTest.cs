@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Xunit;
 
-namespace RserveCLI2.Tests
+namespace RserveCLI2.Test
 {
 
     /// <summary>

@@ -4,7 +4,7 @@ using System.IO;
 using System.Management;
 using System.Reflection;
 
-namespace RserveCLI2.Tests
+namespace RserveCLI2.Test
 {
 
     /// <summary>

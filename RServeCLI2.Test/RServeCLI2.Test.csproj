@@ -8,8 +8,8 @@
     <ProjectGuid>{3F5A8601-1FCF-4B45-9F80-B7F8FAB4E3DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RserveCLI2.Tests</RootNamespace>
-    <AssemblyName>RserveCLI2.Tests</AssemblyName>
+    <RootNamespace>RserveCLI2.Test</RootNamespace>
+    <AssemblyName>RserveCLI2.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
