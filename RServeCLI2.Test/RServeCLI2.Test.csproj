@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rservice.cs" />
+    <Compile Include="SexpArrayDateTest.cs" />
     <Compile Include="SexpArrayDoubleTest.cs" />
     <Compile Include="SexpArrayIntTest.cs" />
     <Compile Include="SexpTest.cs" />

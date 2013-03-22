@@ -145,6 +145,20 @@ namespace RserveCLI2
             }
         }
 
+        /// <summary>
+        /// Gets the values as an array of double
+        /// </summary>
+        /// <remarks>
+        /// A matrix is flattenend by columns.  So the order is: Row1Col1, Row2Col1, Row3Col1, ... , Row1Col2, Row2Col2, Row3Col2, ...
+        /// </remarks>
+        public override double[] AsDoubles
+        {
+            get
+            {
+                return Value.ToArray();
+            }
+        }
+
         #endregion
 
         #region Public Methods

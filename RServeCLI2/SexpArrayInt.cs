@@ -57,7 +57,7 @@ namespace RserveCLI2
         #region Properties
 
         /// <summary>
-        /// Gets or sets as int.
+        /// Gets as int.
         /// </summary>
         /// <value>
         /// The value as an integer.
@@ -72,6 +72,20 @@ namespace RserveCLI2
                 }
 
                 throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+            }
+        }
+
+        /// <summary>
+        /// Gets as array of int.
+        /// </summary>
+        /// <remarks>
+        /// A matrix is flattenend by columns.  So the order is: Row1Col1, Row2Col1, Row3Col1, ... , Row1Col2, Row2Col2, Row3Col2, ...
+        /// </remarks>
+        public override int[] AsInts
+        {
+            get
+            {
+                return Value.ToArray();
             }
         }
 

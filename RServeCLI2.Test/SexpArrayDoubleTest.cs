@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace RserveCLI2.Tests
@@ -35,7 +36,7 @@ namespace RserveCLI2.Tests
         }
 
         [Fact]
-        public void As2DArrayDouble_SexpConstructedUsingIEnumerableOfDouble_ThrowsNotSupportedException()
+        public void As2DArrayDouble_SexpConstructedUsingDoubleOrIEnumerableOfDouble_ThrowsNotSupportedException()
         {
 
             // Arrange
@@ -44,17 +45,20 @@ namespace RserveCLI2.Tests
             var values1 = new double[ 1 ] { 2.3 };
             var values2 = new double[ 2 ] { 3.6 , 5.2 };
             var values3 = new double[ 4 ] { 8.3 , 2.9 , 7.1 , -4.4 };
+            const double values4 = 4.4;
             // ReSharper restore RedundantExplicitArraySize
 
             // Act
             Sexp sexp1 = Sexp.Make( values1 );
             Sexp sexp2 = Sexp.Make( values2 );
             Sexp sexp3 = Sexp.Make( values3 );
+            Sexp sexp4 = Sexp.Make( values4 );
 
             // Assert
             Assert.Throws<NotSupportedException>( () => sexp1.As2DArrayDouble );
             Assert.Throws<NotSupportedException>( () => sexp2.As2DArrayDouble );
             Assert.Throws<NotSupportedException>( () => sexp3.As2DArrayDouble );
+            Assert.Throws<NotSupportedException>( () => sexp4.As2DArrayDouble );
         }
 
         [Fact]
@@ -73,6 +77,51 @@ namespace RserveCLI2.Tests
                 Assert.IsType<SexpArrayDouble>( matrix );
                 Assert.Equal( expected , matrix.As2DArrayDouble );
             }
+        }
+
+        [Fact]
+        public void AsDoubles_SexpConstructedUsingConstructorOrMake_ReturnsSameSetOfInts()
+        {
+
+            // Arrange
+            var values1 = new double[ 1 , 1 ] { { 2 } };
+            var values2 = new double[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
+            const double values3 = -5d;
+            var values4 = new List<double> { 4 , 5 , 6 };
+
+            // Act
+            Sexp sexp1 = Sexp.Make( values1 );
+            Sexp sexp2 = Sexp.Make( values2 );
+            Sexp sexp3 = new SexpArrayDouble( values3 );
+            Sexp sexp4 = new SexpArrayDouble( values4 );
+            Sexp sexp5 = new SexpArrayDouble();
+
+            // Assert
+            Assert.Equal( new double[] { 2 } , sexp1.AsDoubles );
+            Assert.Equal( new double[] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , 4 , -2 , -8 } , sexp2.AsDoubles );
+            Assert.Equal( new double[] { -5 } , sexp3.AsDoubles );
+            Assert.Equal( new double[] { 4 , 5 , 6 } , sexp4.AsDoubles );
+            Assert.Equal( new double[] { } , sexp5.AsDoubles );
+        }
+
+        [Fact]
+        public void AsDoubles_SexpConstructedFromR_ReturnsSameSetOfInts()
+        {
+
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange & Act
+                Sexp sexp1 = service.RConnection[ "numeric()" ];
+                Sexp sexp2 = service.RConnection[ "c( 1.1 , 2.1 , 3.1 )" ];
+                Sexp sexp3 = service.RConnection[ "matrix( c( 1.1 , 2.1 , 3.1 , 4.1 , 5.1 , 6.1 ) , nrow = 2 )" ];
+
+                // Assert
+                Assert.Equal( new double[] { } , sexp1.AsDoubles );
+                Assert.Equal( new [] { 1.1 , 2.1 , 3.1 } , sexp2.AsDoubles );
+                Assert.Equal( new [] { 1.1 , 2.1 , 3.1 , 4.1 , 5.1 , 6.1 } , sexp3.AsDoubles );
+            }
+
         }
 
         [Fact]

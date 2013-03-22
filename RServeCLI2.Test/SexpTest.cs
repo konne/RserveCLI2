@@ -131,7 +131,83 @@ namespace RserveCLI2.Tests
                 Assert.Null( data3.ColNames );
             }
         }
+
+        #region Make Methods
+
+        [Fact]
+        public void Make_WithDate_CreatesSexpArrayDate()
+        {
+
+            // Arrange
+            var dates = new DateTime( 2012 , 10 , 12 );
+
+            // Act
+            Sexp sexp = Sexp.Make( dates );
+
+            // Assert
+            Assert.IsType<SexpArrayDate>( sexp );
+        }
+
+        [Fact]
+        public void Make_WithIEnumerableOfDate_CreatesSexpArrayDate()
+        {
+
+            // Arrange
+            var dates = new[] { new DateTime( 1969 , 12 , 31 ) , new DateTime( 1970 , 1 , 1 ) , new DateTime( 1970 , 1 , 2 ) , new DateTime( 1970 , 1 , 3 ) , new DateTime( 2012 , 10 , 12 ) , new DateTime( 1953 , 10 , 12 ) };
+
+            // Act
+            Sexp sexp = Sexp.Make( dates );
+
+            // Assert
+            Assert.IsType<SexpArrayDate>( sexp );
+        }
         
+        [Fact]
+        public void Make_WithDate_ProperlyStoresDateAsInt()
+        {
+
+            // Arrange
+            var dates1A = new DateTime( 1970 , 1 , 1 );
+            var dates1B = new DateTime( 1970 , 1 , 2 );
+            var dates1C = new DateTime( 1969 , 12 , 31 );
+            var dates1D = new DateTime( 2012 , 10 , 12 );
+            var dates1E = new DateTime( 1953 , 10 , 12 );
+
+            // Act
+            Sexp sexp1A = Sexp.Make( dates1A );
+            Sexp sexp1B = Sexp.Make( dates1B );
+            Sexp sexp1C = Sexp.Make( dates1C );
+            Sexp sexp1D = Sexp.Make( dates1D );
+            Sexp sexp1E = Sexp.Make( dates1E );
+
+            // Assert
+            Assert.Equal( new[] { 0 } , sexp1A.AsInts );
+            Assert.Equal( new[] { 1 } , sexp1B.AsInts );
+            Assert.Equal( new[] { -1 } , sexp1C.AsInts );
+            Assert.Equal( new[] { 15625 } , sexp1D.AsInts );
+            Assert.Equal( new[] { -5925 } , sexp1E.AsInts );
+        }
+
+        [Fact]
+        public void Make_WithIEnumerableOfDates_ProperlyStoresDatesAsInts()
+        {
+
+            // Arrange
+            var dates1 = new DateTime[] { };
+            var dates2 = new[] { new DateTime( 1970 , 1 , 3 ) };
+            var dates3 = new[] { new DateTime( 1969 , 12 , 31 ) , new DateTime( 1970 , 1 , 1 ) , new DateTime( 1970 , 1 , 2 ) , new DateTime( 1970 , 1 , 3 ) , new DateTime( 2012 , 10 , 12 ) , new DateTime( 1953 , 10 , 12 ) };
+
+            // Act        
+            Sexp sexp1 = Sexp.Make( dates1 );
+            Sexp sexp2 = Sexp.Make( dates2 );
+            Sexp sexp3 = Sexp.Make( dates3 );
+
+            // Assert
+            Assert.Equal( new int[] { } , sexp1.AsInts );
+            Assert.Equal( new[] { 2 } , sexp2.AsInts );
+            Assert.Equal( new[] { -1 , 0 , 1 , 2 , 15625 , -5925 } , sexp3.AsInts );
+        }
+
         [Fact]
         public void Make_2dArrayOfDecimal_CreatesSexpArrayDouble()
         {
@@ -364,6 +440,8 @@ namespace RserveCLI2.Tests
             Assert.Throws<NotSupportedException>( () => Sexp.Make( matrixValues , new[] { "RowA" } , new[] { "ColA" , "ColB" , "ColC" , "ColD" } ) );
             // ReSharper restore RedundantArgumentDefaultValue            
         }
-        
+
+        # endregion
+
     }
 }

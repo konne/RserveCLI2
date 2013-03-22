@@ -33,7 +33,7 @@ namespace RserveCLI2
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
+        /// Initializes a new instance of SexpArrayDate.
         /// </summary>
         public SexpArrayDate()
         {
@@ -41,11 +41,17 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
+        /// Initializes a new instance of SexpArrayDate with a DateTime. 
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
+        public SexpArrayDate( DateTime theValue )
+            : base( theValue.Subtract( Origin ).Days )
+        {
+            Attributes[ "class" ] = new SexpString( "Date" );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of SexpArrayDate with IEnumerable of DateTime
+        /// </summary>
         public SexpArrayDate( IEnumerable<DateTime> theValue )
             : base( theValue.Select( x => x.Date ).Select( y => y.Subtract( Origin ).Days ) )
         {
@@ -53,15 +59,15 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayDate"/> class.
+        /// Initializes a new instance of the SexpArrayDate with dates in R integer format.
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
-        public SexpArrayDate( IEnumerable<int> theValue )
+        /// <remarks>
+        /// Should only be called from Qap1.DecodeSexp.  The class attribute will be added after this class is constructed.
+        /// If its constructed now, then there will be an exception inserting duplicate key into Dictionary
+        /// </remarks>
+        internal SexpArrayDate( IEnumerable<int> theValue )
             : base( theValue )
         {
-            Attributes[ "class" ] = new SexpString( "Date" );
         }
 
         #endregion
@@ -84,6 +90,20 @@ namespace RserveCLI2
                 }
 
                 throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets as Date.
+        /// </summary>
+        /// <value>
+        /// The value as an integer.
+        /// </value>
+        public override DateTime[] AsDates
+        {
+            get
+            {
+                return Value.ToArray();
             }
         }
 

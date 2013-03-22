@@ -92,6 +92,27 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Gets as array of double.
+        /// </summary>
+        public virtual double[] AsDoubles
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to double
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator double[]( Sexp s )
+        {
+            return s.AsDoubles;
+        }
+
+        /// <summary>
         /// Gets as int.
         /// </summary>
         /// <value>
@@ -145,6 +166,30 @@ namespace RserveCLI2
         /// <value>
         /// The value as an integer.
         /// </value>
+        public virtual int[] AsInts
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to int
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator int[]( Sexp s )
+        {
+            return s.AsInts;
+        }
+        
+        /// <summary>
+        /// Gets as int.
+        /// </summary>
+        /// <value>
+        /// The value as an integer.
+        /// </value>
         public virtual int[ , ] As2DArrayInt
         {
             get
@@ -185,6 +230,30 @@ namespace RserveCLI2
         public static explicit operator DateTime( Sexp s )
         {
             return s.AsDate;
+        }
+
+        /// <summary>
+        /// Gets as date.
+        /// </summary>
+        /// <value>
+        /// The value as an integer.
+        /// </value>
+        public virtual DateTime[] AsDates
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Syntactic sugar for explicit conversion to int
+        /// </summary>
+        /// <param name="s">The Sexp</param>
+        /// <returns>The converted value</returns>
+        public static explicit operator DateTime[]( Sexp s )
+        {
+            return s.AsDates;
         }
 
         /// <summary>
@@ -735,7 +804,7 @@ namespace RserveCLI2
         /// </returns>
         public static Sexp Make( DateTime x )
         {
-            return new SexpDate( x );
+            return new SexpArrayDate( x );
         }
 
         /// <summary>

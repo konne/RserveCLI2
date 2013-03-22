@@ -381,7 +381,15 @@ namespace RserveCLI2
                                 res[ i / 4 ] = BitConverter.ToInt32( data , start + i );
                             }
 
-                            result = new SexpArrayInt( res );
+                            // is date or just an integer?
+                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
+                            {
+                                result = new SexpArrayDate( res );
+                            }
+                            else
+                            {
+                                result = new SexpArrayInt( res );
+                            }                            
                         }
                         break;
                     case XtArrayBool:
@@ -425,7 +433,15 @@ namespace RserveCLI2
                                 res[ i / 8 ] = BitConverter.ToDouble( data , start + i );
                             }
 
-                            result = new SexpArrayDouble( res );
+                            // is date or just a double?
+                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
+                            {
+                                result = new SexpArrayDate( res.Select( Convert.ToInt32 ) );
+                            }
+                            else
+                            {
+                                result = new SexpArrayDouble( res );
+                            }
                         }
                         break;
                     case XtArrayString:

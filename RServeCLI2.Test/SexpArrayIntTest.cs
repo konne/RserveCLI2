@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace RserveCLI2.Tests
@@ -35,7 +36,7 @@ namespace RserveCLI2.Tests
         }
 
         [Fact]
-        public void As2DArrayInt_SexpConstructedUsingIEnumerableOfInt_ThrowsNotSupportedException()
+        public void As2DArrayInt_SexpConstructedUsingIntOrIEnumerableOfInt_ThrowsNotSupportedException()
         {
 
             // Arrange
@@ -44,17 +45,20 @@ namespace RserveCLI2.Tests
             var values1 = new int[ 1 ] { 2 };
             var values2 = new int[ 2 ] { 3 , 5 };
             var values3 = new int[ 4 ] { 8 , 2 , 7 , 4 };
+            const int values4 = 5;
             // ReSharper restore RedundantExplicitArraySize
 
             // Act
             Sexp sexp1 = Sexp.Make( values1 );
             Sexp sexp2 = Sexp.Make( values2 );
             Sexp sexp3 = Sexp.Make( values3 );
+            Sexp sexp4 = Sexp.Make( values4 );
 
             // Assert
             Assert.Throws<NotSupportedException>( () => sexp1.As2DArrayInt );
             Assert.Throws<NotSupportedException>( () => sexp2.As2DArrayInt );
             Assert.Throws<NotSupportedException>( () => sexp3.As2DArrayInt );
+            Assert.Throws<NotSupportedException>( () => sexp4.As2DArrayInt );
         }
 
         [Fact]
@@ -75,6 +79,51 @@ namespace RserveCLI2.Tests
             }
         }
 
+        [Fact]
+        public void AsInts_SexpConstructedUsingConstructorOrMake_ReturnsSameSetOfInts()
+        {
+
+            // Arrange
+            var values1 = new int[ 1 , 1 ] { { 2 } };
+            var values2 = new int[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
+            const int values3 = -5;
+            var values4 = new List<int> { 4 , 5 , 6 };
+
+            // Act
+            Sexp sexp1 = Sexp.Make( values1 );
+            Sexp sexp2 = Sexp.Make( values2 );
+            Sexp sexp3 = new SexpArrayInt( values3 );
+            Sexp sexp4 = new SexpArrayInt( values4 );
+            Sexp sexp5 = new SexpArrayInt();
+
+            // Assert
+            Assert.Equal( new [] { 2 } , sexp1.AsInts );
+            Assert.Equal( new [] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , 4 , -2 , -8 } , sexp2.AsInts );
+            Assert.Equal( new [] { -5 } , sexp3.AsInts );
+            Assert.Equal( new [] { 4 , 5 , 6 } , sexp4.AsInts );
+            Assert.Equal( new int[] { } , sexp5.AsInts );
+        }
+
+        [Fact]
+        public void AsInts_SexpConstructedFromR_ReturnsSameSetOfInts()
+        {
+
+            using ( var service = new Rservice() )
+            {
+                
+                // Arrange & Act
+                Sexp sexp1 = service.RConnection[ "integer()" ];
+                Sexp sexp2 = service.RConnection[ "as.integer( c( 1 , 2 , 3 ) )" ];
+                Sexp sexp3 = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , 4 , 5 , 6 ) ) , nrow = 2 )" ];
+
+                // Assert
+                Assert.Equal( new int[] { } , sexp1.AsInts );
+                Assert.Equal( new [] { 1 , 2 , 3 } , sexp2.AsInts );
+                Assert.Equal( new [] { 1 , 2 , 3 , 4 , 5 , 6 } , sexp3.AsInts );                
+            }
+            
+        }
+        
         [Fact]
         public void Equals_ComparedToSameReferencedObject_ReturnsTrue()
         {

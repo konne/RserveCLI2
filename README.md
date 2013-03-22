@@ -16,8 +16,8 @@ Fork of RserveCLI
 Added Features
 --------------
 - Greatly improved testing framework: testing against R/Rserve is now self-contained in the Test project (integration tests become unit tests!)
-- Date SEXP type supported
-- Can get row/column names
+- Bi-directional support for Date type
 - Read matrix as a 2d array
 - Create SEXP from decimal
 - Can now create usable data.frames
+- Bi-directional support for matrix row/column names
