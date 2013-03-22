@@ -22,7 +22,7 @@ namespace RserveCLI2.Test
         /// <summary>
         /// The Sexp attributes, if any
         /// </summary>
-        private int _port = 6311;
+        private const int Port = 6311;
 
         #endregion
 
@@ -46,14 +46,16 @@ namespace RserveCLI2.Test
             // ReSharper disable UseObjectOrCollectionInitializer
             _rtermProcess = new Process();
             _rtermProcess.StartInfo.FileName = rExeFilePath;
-            _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE );\"" , _port );
+            _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE );\"" , Port );
             _rtermProcess.StartInfo.UseShellExecute = false;
             _rtermProcess.StartInfo.CreateNoWindow = !showWindow;
             _rtermProcess.Start();
             // ReSharper restore UseObjectOrCollectionInitializer
 
             // create a connection to the server
-            RConnection = new RConnection( port: _port );
+            // ReSharper disable RedundantArgumentDefaultValue
+            RConnection = new RConnection( port: Port );
+            // ReSharper restore RedundantArgumentDefaultValue
 
         }
 

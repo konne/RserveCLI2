@@ -40,6 +40,7 @@ namespace RserveCLI2
     /// </summary>
     public class SexpBool : Sexp
     {
+
         #region Constants and Fields
         /// <summary>
         /// The representation of NA

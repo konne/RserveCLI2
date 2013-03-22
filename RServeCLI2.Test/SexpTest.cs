@@ -162,7 +162,7 @@ namespace RserveCLI2.Test
 
             // Act & Assert
             Assert.IsType<SexpTaggedList>( Sexp.Make( objSexp ) );
-            Assert.IsType<SexpBool>( Sexp.Make( objBool ) );
+            Assert.IsType<SexpArrayBool>( Sexp.Make( objBool ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( objDouble ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( objIEnumerableDouble ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( obj2DArrayDouble ) );
@@ -174,7 +174,7 @@ namespace RserveCLI2.Test
             Assert.IsType<SexpArrayInt>( Sexp.Make( obj2DArrayInt ) );
             Assert.IsType<SexpArrayDate>( Sexp.Make( objDate ) );
             Assert.IsType<SexpArrayDate>( Sexp.Make( objIEnumerableDate ) );
-            Assert.IsType<SexpString>( Sexp.Make( objString ) );
+            Assert.IsType<SexpArrayString>( Sexp.Make( objString ) );
             Assert.IsType<SexpArrayString>( Sexp.Make( objIEnumerableString ) );
             Assert.IsType<SexpList>( Sexp.Make( objDictionary ) );
             

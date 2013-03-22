@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace RserveCLI2
 {
@@ -44,7 +45,7 @@ namespace RserveCLI2
         /// Initializes a new instance of SexpArrayDate with a DateTime. 
         /// </summary>
         public SexpArrayDate( DateTime theValue )
-            : base( theValue.Subtract( Origin ).Days )
+            : base( DateToRInt( theValue ) )
         {
             Attributes[ "class" ] = new SexpString( "Date" );
         }
@@ -53,7 +54,7 @@ namespace RserveCLI2
         /// Initializes a new instance of SexpArrayDate with IEnumerable of DateTime
         /// </summary>
         public SexpArrayDate( IEnumerable<DateTime> theValue )
-            : base( theValue.Select( x => x.Date ).Select( y => y.Subtract( Origin ).Days ) )
+            : base( theValue.Select( DateToRInt ) )
         {
             Attributes[ "class" ] = new SexpString( "Date" );
         }
@@ -75,11 +76,8 @@ namespace RserveCLI2
         #region Properties
 
         /// <summary>
-        /// Gets or sets as Date.
+        /// Gets as DateTime.
         /// </summary>
-        /// <value>
-        /// The value as an integer.
-        /// </value>
         public override DateTime AsDate
         {
             get
@@ -88,17 +86,13 @@ namespace RserveCLI2
                 {
                     return Value[ 0 ];
                 }
-
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new NotSupportedException( "Can only convert length 1 Date." );
             }
         }
 
         /// <summary>
-        /// Gets or sets as Date.
+        /// Gets as array of Date.
         /// </summary>
-        /// <value>
-        /// The value as an integer.
-        /// </value>
         public override DateTime[] AsDates
         {
             get
@@ -108,13 +102,13 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets the integers stored in the list
+        /// Gets the dates stored in the list
         /// </summary>
         internal new List<DateTime> Value
         {
             get
             {
-                return ( base.Value.Select( x => Origin.AddDays( x ) ).ToList() );
+                return ( base.Value.Select( RIntToDate ).ToList() );
             }
         }
 
@@ -133,11 +127,11 @@ namespace RserveCLI2
         {
             get
             {
-                return new SexpDate( Value[ index ] );
+                return new SexpArrayDate( Value[ index ] );
             }
             set
             {
-                base[ index ] = value.IsNa ? new SexpDate( SexpInt.NaValue ) : new SexpDate( value.AsDate );
+                base[ index ] = new SexpInt( DateToRInt( value.AsDate ) );
             }
         }
 
@@ -146,44 +140,36 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Adds an item to the ICollection
         /// </summary>
-        /// <param name="item">
-        /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to add to the ICollection.</param>
         public override void Add( Sexp item )
-        {            
-            base.Add( item.IsNa ? item : new SexpDate( item.AsDate ) );
+        {
+            Add( item.AsDates.Select( DateToRInt ) );
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( Sexp item )
         {
-            return base.Contains( item.IsNa ? item : new SexpDate( item.AsDate ) );
+            return base.Contains( new SexpInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
         /// Copies to.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The array.</param>
+        /// <param name="arrayIndex">Index of the array.</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[ arrayIndex + i ] = new SexpDate( Value[ i ] );
+                array[ arrayIndex + i ] = new SexpArrayDate( Value[ i ] );
             }
         }
 
@@ -191,56 +177,45 @@ namespace RserveCLI2
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpDate( a ) ) ).GetEnumerator();
+            return ( from a in Value select ( Sexp )( new SexpArrayDate( a ) ) ).GetEnumerator();
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// Determines the index of a specific item in the IList.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the IList.</param>
         /// <returns>
-        /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
+        /// The index of item if found in the list; otherwise, -1.
         /// </returns>
         public override int IndexOf( Sexp item )
         {
-            return base.IndexOf( item.IsNa ? item : new SexpDate( item.AsDate ) );
+            return IndexOf( DateToRInt( item.AsDate ) );
         }
 
         /// <summary>
-        /// Inserts an item to the <see cref="T:System.Collections.Generic.IList`1"/> at the specified index.
+        /// Inserts an item to the IList at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index at which <paramref name="item"/> should be inserted.
-        /// </param>
-        /// <param name="item">
-        /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="index">The zero-based index at which item should be inserted.</param>
+        /// <param name="item">The object to insert into the IList.</param>
         public override void Insert( int index , Sexp item )
         {
-            base.Insert( index , item.IsNa ? item : new SexpDate( item.AsDate ) );
+            base.Insert( index , new SexpInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes the first occurrence of a specific object from the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override bool Remove( Sexp item )
         {
-            return base.Remove( item.IsNa ? item : new SexpDate( item.AsDate ) );
+            return base.Remove( new SexpInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
@@ -253,6 +228,47 @@ namespace RserveCLI2
         public override object ToNative()
         {
             return Value.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a string that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A string that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach ( int value in base.Value )
+            {
+                builder.Append( " " );
+                builder.Append( SexpInt.CheckNa( value ) ? "NA" : RIntToDate( value ).ToShortDateString() );
+            }
+            if ( builder.Length > 0 )
+            {
+                builder.Remove( 0 , 1 );
+            }
+            return builder.ToString();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Converts a DateTime into an R integer
+        /// </summary>
+        private static int DateToRInt( DateTime day )
+        {
+            return day.Subtract( Origin ).Days;
+        }
+
+        /// <summary>
+        /// Converts a DateTime into an R integer
+        /// </summary>
+        private static DateTime RIntToDate( int rdate )
+        {
+            return Origin.AddDays( rdate );
         }
 
         #endregion

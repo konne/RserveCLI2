@@ -192,12 +192,6 @@ namespace RserveCLI2
                 t = s.GetType();
             }
 
-            if ( t == typeof( SexpDate ) )
-            {
-                s = new SexpArrayDate( new[] { ( ( SexpDate )s ).Value } );
-                t = s.GetType();
-            }
-
             if ( t == typeof( SexpBool ) )
             {
                 s = new SexpArrayBool( new[] { ( ( SexpBool )s ).Value } );

@@ -60,7 +60,37 @@ namespace RserveCLI2.Test
             Assert.Equal( dates4C , sexp4C.AsInts );
 
         }
-        
+
+        [Fact]
+        public void AsDate_ArrayContainsOneDate_ReturnsTheDate()
+        {
+
+            // Arrange
+            var day = new DateTime( 2012 , 02 , 23 );
+            Sexp sexp1 = new SexpArrayDate( day );
+            Sexp sexp2 = new SexpArrayDate( new [] { day } );
+
+            // Act & Assert
+            Assert.Equal( day , sexp1.AsDate );
+            Assert.Equal( day , sexp2.AsDate );
+        }
+
+        [Fact]
+        public void AsDate_ArrayContainsNoDatesOrMoreThanOneDate_ThrowsNotSupportedExeption()
+        {
+            // Arrange
+            var day1 = new DateTime( 2012 , 02 , 23 );
+            var day2 = new DateTime( 2012 , 04 , 23 );
+            Sexp sexp1 = new SexpArrayDate( );
+            Sexp sexp2 = new SexpArrayDate( new DateTime[] { } );
+            Sexp sexp3 = new SexpArrayDate( new [] { day1 , day2 } );
+
+            // Act & Assert
+            Assert.Throws<NotSupportedException>( () => sexp1.AsDate );
+            Assert.Throws<NotSupportedException>( () => sexp2.AsDate );
+            Assert.Throws<NotSupportedException>( () => sexp3.AsDate );
+        }
+
         [Fact]
         public void AsDates_SexpConstructedUsingConstructorOrMake_ReturnsSameSetOfDates()
         {
@@ -115,6 +145,104 @@ namespace RserveCLI2.Test
                 Assert.Equal( new[] { new DateTime( 2012 , 01 , 01 ) , new DateTime( 1970 , 01 , 01 ) , new DateTime( 1950 , 06 , 08 ) } , sexp3.AsDates );
             }
         }        
+
+        [Fact]
+        public void Indexer_Get_ReturnsSexpWithExpectedDate()
+        {            
+            // Arrange            
+            var sexp1 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+            var sexp2 = new SexpArrayDate( new [] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+            // Act & Assert
+            Assert.Equal( new DateTime( 2004 , 01 , 23 ) , sexp1[ 0 ].AsDate );
+            Assert.Equal( new DateTime( 2004 , 01 , 23 ) , sexp2[ 0 ].AsDate );
+            Assert.Equal( new DateTime( 2005 , 01 , 23 ) , sexp2[ 1 ].AsDate );
+            Assert.Equal( new DateTime( 2007 , 03 , 12 ) , sexp2[ 2 ].AsDate );            
+        }
+
+        [Fact]
+        public void Indexer_GetIndexOutOfBounds_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange            
+            var sexp1 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+            var sexp2 = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>( () => sexp1[ 2 ] );
+            Assert.Throws<ArgumentOutOfRangeException>( () => sexp2[ 4 ] );
+        }
+
+        [Fact]
+        public void Indexer_Set_ReplacesExistingDate()
+        {
+            // Arrange            
+            var sexp1 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+            var sexp2A = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+            var sexp2B = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+            // Act
+            sexp1[ 0 ] = new SexpArrayDate( new DateTime( 2005 , 02 , 03 ) );
+            sexp2A[ 1 ] = new SexpArrayDate( new DateTime( 2005 , 02 , 03 ) );
+            sexp2B[ 2 ] = new SexpArrayDate( new DateTime( 2007 , 02 , 03 ) );
+
+            // Assert
+            Assert.Equal( new DateTime( 2005 , 02 , 03 ) , sexp1.AsDate );
+            Assert.Equal( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 02 , 03 ) , new DateTime( 2007 , 03 , 12 ) } , sexp2A.AsDates );
+            Assert.Equal( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 02 , 03 ) } , sexp2B.AsDates );            
+        }
+
+        [Fact]
+        public void Indexer_SetWithNonSexpArrayDate_ThrowsNotSupportedException()
+        {
+            // Arrange            
+            var sexp1 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+            var sexp2 = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+            // Act & Assert
+            Assert.Throws<NotSupportedException>( () => sexp1[ 0 ] = new SexpBool( false ) );
+            Assert.Throws<NotSupportedException>( () => sexp2[ 0 ] = new SexpArrayString( "asdf" ) );            
+        }
+
+        [Fact]
+        public void Indexer_SetIndexOutOfRange_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange            
+            var sexp1 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+            var sexp2 = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>( () => sexp1[ 4 ] = new SexpArrayDate( new DateTime( 2005 , 02 , 03 ) ) );
+            Assert.Throws<ArgumentOutOfRangeException>( () => sexp2[ 5 ] = new SexpArrayDate( new DateTime( 2005 , 02 , 03 ) ) );
+            
+        }
+
+        //[Fact]
+        //public void Add_AddsDateToList()
+        //{            
+            
+        //    // Arrange
+        //    var sexp1 = new SexpArrayDate(  );
+        //    var sexp2 = new SexpArrayDate( new DateTime( 2004 , 01 , 23 ) );
+        //    var sexp3 = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+            
+        //    // Act
+        //    sexp1.Add( new SexpArrayDate() );
+        //    sexp1.Add( new SexpArrayDate( new DateTime( 2009 , 01 , 23 ) ) );
+        //    sexp1.Add( new SexpArrayDate( new []{ new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+        //    sexp2.Add( new SexpArrayDate() );
+        //    sexp2.Add( new SexpArrayDate( new DateTime( 2009 , 01 , 23 ) ) );
+        //    sexp2.Add( new SexpArrayDate( new []{ new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+        //    sexp3.Add( new SexpArrayDate() );
+        //    sexp3.Add( new SexpArrayDate( new DateTime( 2009 , 01 , 23 ) ) );
+        //    sexp3.Add( new SexpArrayDate( new []{ new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
+
+        //    // Assert
+        //    Assert.Equal( new DateTime[]{} , sexp1 )
+        //}
+
+
 
     }
 }

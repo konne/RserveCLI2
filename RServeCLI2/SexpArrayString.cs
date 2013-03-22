@@ -19,13 +19,14 @@ namespace RserveCLI2
     /// </summary>
     public class SexpArrayString : SexpGenericList
     {
+
         #region Constants and Fields
         #endregion
 
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayString"/> class.
+        /// Initializes a new instance of the SexpArryString.
         /// </summary>
         public SexpArrayString()
         {
@@ -33,11 +34,16 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayString"/> class.
+        /// Initializes a new instance of SexpArryString with a string.
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
+        public SexpArrayString( string theValue )
+        {
+            Value = new List<string> { theValue };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of SexpArrayString with an IEnumerable of string.
+        /// </summary>
         public SexpArrayString( IEnumerable<string> theValue )
         {
             Value = new List<string>();

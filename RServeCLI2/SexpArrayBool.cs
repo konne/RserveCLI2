@@ -19,6 +19,7 @@ namespace RserveCLI2
     /// </summary>
     public class SexpArrayBool : SexpGenericList
     {
+
         #region Constants and Fields
 
         #endregion
@@ -26,7 +27,7 @@ namespace RserveCLI2
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayBool"/> class.
+        /// Initializes a new instance of SexpArrayBool.
         /// </summary>
         public SexpArrayBool()
         {
@@ -34,11 +35,16 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayBool"/> class.
+        /// Initializes a new instance of SexpArrayBool with a bool.
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
+        public SexpArrayBool( bool theValue )
+        {
+            Value = new List<SexpBoolValue> { theValue ? SexpBoolValue.True : SexpBoolValue.False };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of SexpArrayBool with an IEnumerable of SexpBoolValue.
+        /// </summary>
         public SexpArrayBool( IEnumerable<SexpBoolValue> theValue )
         {
             Value = new List<SexpBoolValue>();

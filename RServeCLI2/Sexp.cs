@@ -686,12 +686,12 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Makes a SexpBool from a bool.
+        /// Makes a SexpArrayBool from a bool.
         /// </summary>
-        /// <param name="x">The bool to convert into an SexpBool.</param>
+        /// <param name="x">The bool to convert into an SexpArrayBool.</param>
         public static Sexp Make( bool x )
         {
-            return new SexpBool( x );
+            return new SexpArrayBool( x );
         }
 
         /// <summary>
@@ -838,12 +838,12 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Makes a SexpString from a string.
+        /// Makes a SexpArrayString from a string.
         /// </summary>
-        /// <param name="x">The string to convert into an SexpString.</param>
+        /// <param name="x">The string to convert into an SexpArrayString.</param>
         public static Sexp Make( string x )
         {
-            return new SexpString( x );
+            return new SexpArrayString( x );
         }
 
         /// <summary>
