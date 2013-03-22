@@ -179,9 +179,7 @@ namespace RserveCLI2.Test
             Assert.IsType<SexpList>( Sexp.Make( objDictionary ) );
             
         }
-
-
-
+        
         [Fact]
         public void Make_WithDate_CreatesSexpArrayDate()
         {

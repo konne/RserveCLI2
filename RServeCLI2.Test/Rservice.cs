@@ -28,7 +28,11 @@ namespace RserveCLI2.Test
 
         #region Constructors
 
-        public Rservice()
+        /// <summary>
+        /// Creates a self-hosted Rserve.
+        /// </summary>
+        /// <param name="showWindow">If true then the Rserve window will be visible.  Useful for debugging.  Default is false.</param>
+        public Rservice( bool showWindow = false )
         {
 
             // ReSharper disable AssignNullToNotNullAttribute
@@ -39,11 +43,14 @@ namespace RserveCLI2.Test
             // launch RTerm and tell it load Rserve, tell it wait until RServe has completed.  We want RTerm to stay open because
             // our only strategy for finding/killing RServe is to search RTerm's child processes.  If wait = FALSE then RTerm completes
             // but RServe does not die
+            // ReSharper disable UseObjectOrCollectionInitializer
             _rtermProcess = new Process();
             _rtermProcess.StartInfo.FileName = rExeFilePath;
             _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE );\"" , _port );
             _rtermProcess.StartInfo.UseShellExecute = false;
+            _rtermProcess.StartInfo.CreateNoWindow = !showWindow;
             _rtermProcess.Start();
+            // ReSharper restore UseObjectOrCollectionInitializer
 
             // create a connection to the server
             RConnection = new RConnection( port: _port );

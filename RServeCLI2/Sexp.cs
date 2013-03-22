@@ -655,6 +655,8 @@ namespace RserveCLI2
 
         #region Public Methods
 
+        #region Make Methods
+
         /// <summary>
         /// Makes a Sexp from an object.
         /// </summary>
@@ -934,6 +936,8 @@ namespace RserveCLI2
 
             return res;
         }
+
+        #endregion
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
