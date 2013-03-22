@@ -658,206 +658,101 @@ namespace RserveCLI2
         /// <summary>
         /// Makes a Sexp from an object.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
+        /// <param name="x">The object to convert into an Sexp.</param>
         /// <returns>
         /// The Sexp made.
         /// </returns>
         public static Sexp Make( object x )
-        {
-
-            if ( x is Sexp )
-            {
-                return ( Sexp )x;
-            }
-
-            if ( x is bool )
-            {
-                return Make( ( bool )x );
-            }
-
-            if ( x is double )
-            {
-                return Make( ( double )x );
-            }
-
-            if ( x is IEnumerable<double> )
-            {
-                return Make( ( IEnumerable<double> )x );
-            }
-
-            if ( x is double[ , ] )
-            {
-                return Make( ( double[ , ] )x );
-            }
-
-            if ( x is decimal )
-            {
-                return Make( ( decimal )x );
-            }
-
-            if ( x is IEnumerable<decimal> )
-            {
-                return Make( ( IEnumerable<decimal> )x );
-            }
-
-            if ( x is decimal[ , ] )
-            {
-                return Make( ( decimal[ , ] )x );
-            }
-
-            if ( x is int )
-            {
-                return Make( ( int )x );
-            }
-
-            if ( x is int[ , ] )
-            {
-                return Make( ( int[ , ] )x );
-            }
-
-            if ( x is IEnumerable<int> )
-            {
-                return Make( ( IEnumerable<int> )x );
-            }
-
-            if ( x is DateTime )
-            {
-                return Make( ( DateTime )x );
-            }
-
-            if ( x is IEnumerable<DateTime> )
-            {
-                return Make( ( IEnumerable<DateTime> )x );
-            }
-
-            if ( x is string )
-            {
-                return Make( ( string )x );
-            }
-
-            if ( x is IEnumerable<string> )
-            {
-                return Make( ( IEnumerable<string> )x );
-            }
-
-            if ( x is IDictionary<string , object> )
-            {
-                return Make( ( IDictionary<string , object> )x );
-            }
-
-            throw new ArgumentException(
-                "I don't have an automatic conversion rule for type " + x.GetType().Name + " to Sexp." );
+        {        
+            if ( x is Sexp                         ) { return       ( Sexp )x;                           }
+            if ( x is bool                         ) { return Make( ( bool )x                         ); }
+            if ( x is double                       ) { return Make( ( double )x                       ); }
+            if ( x is IEnumerable<double>          ) { return Make( ( IEnumerable<double> )x          ); }
+            if ( x is double[ , ]                  ) { return Make( ( double[ , ] )x                  ); }
+            if ( x is decimal                      ) { return Make( ( decimal )x                      ); }
+            if ( x is IEnumerable<decimal>         ) { return Make( ( IEnumerable<decimal> )x         ); }
+            if ( x is decimal[ , ]                 ) { return Make( ( decimal[ , ] )x                 ); }
+            if ( x is int                          ) { return Make( ( int )x                          ); }
+            if ( x is int[ , ]                     ) { return Make( ( int[ , ] )x                     ); }
+            if ( x is IEnumerable<int>             ) { return Make( ( IEnumerable<int> )x             ); }
+            if ( x is DateTime                     ) { return Make( ( DateTime )x                     ); }
+            if ( x is IEnumerable<DateTime>        ) { return Make( ( IEnumerable<DateTime> )x        ); }
+            if ( x is string                       ) { return Make( ( string )x                       ); }
+            if ( x is IEnumerable<string>          ) { return Make( ( IEnumerable<string> )x          ); }
+            if ( x is IDictionary<string , object> ) { return Make( ( IDictionary<string , object> )x ); }
+            throw new ArgumentException( string.Format( "I don't have an automatic conversion rule for type {0} to Sexp." , x.GetType().Name ) );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpBool from a bool.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="x">The bool to convert into an SexpBool.</param>
         public static Sexp Make( bool x )
         {
             return new SexpBool( x );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayInt from an int.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="x">The int to convert into an SexpArrayInt.</param>
         public static Sexp Make( int x )
         {
-            return new SexpInt( x );
+            return new SexpArrayInt( x );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayInt from an IEnumerable of int.
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The IEnumerable of int to convert into an SexpArrayInt.</param>
         public static Sexp Make( IEnumerable<int> xs )
         {
             return new SexpArrayInt( xs );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDate from a DateTime.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
+        /// <param name="x">The DateTime to convert into an SexpArrayDate.
         /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
         public static Sexp Make( DateTime x )
         {
             return new SexpArrayDate( x );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDate from an IEnumerable of DateTime
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The IEnumerable of DateTime to convert into an SexpArrayDate.</param>
         public static Sexp Make( IEnumerable<DateTime> xs )
         {
             return new SexpArrayDate( xs );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDouble from a decimal.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="x">The decimal to convert into an SexpArrayDouble.</param>
         public static Sexp Make( decimal x )
         {
             return Make( Convert.ToDouble( x ) );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDouble from an IEnumerable of decimal.
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The IEnumerable of decimal to convert into an SexpArrayDouble.</param>
         public static Sexp Make( IEnumerable<decimal> xs )
         {
             return Make( xs.Select( Convert.ToDouble ) );
         }
 
         /// <summary>
-        /// Makes a mathrix Sexp from a native matrix.
+        /// Makes a SexpArrayDouble Sexp from a matrix of decimal.
         /// </summary>
-        /// <param name="xs">The native matrix.</param>
+        /// <param name="xs">The matrix of decimal.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        /// <returns>
-        /// The Sexp matrix.
-        /// </returns>
         public static Sexp Make( decimal[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var xsDouble = new double[ xs.GetLength( 0 ) , xs.GetLength( 1 ) ];
@@ -874,42 +769,29 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDouble from a double.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="x">The double to convert into an SexpArrayDouble.</param>
         public static Sexp Make( double x )
         {
-            return new SexpDouble( x );
+            return new SexpArrayDouble( x );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayDouble from an IEnumerable of double.
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The IEnumerable of double to convert into an SexpArrayDouble.</param>
         public static Sexp Make( IEnumerable<double> xs )
         {
             return new SexpArrayDouble( xs );
         }
 
         /// <summary>
-        /// Makes a mathrix Sexp from a native matrix.
+        /// Makes a SexpArrayDouble from a matrix of double.
         /// </summary>
-        /// <param name="xs">The native matrix.</param>
+        /// <param name="xs">The matrix of double.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        /// <returns>
-        /// The Sexp matrix.
-        /// </returns>
         public static Sexp Make( double[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var rows = xs.GetLength( 0 );
@@ -929,14 +811,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Makes a mathrix Sexp from a native matrix.
+        /// Makes a SexpArrayInt from a matrix of int.
         /// </summary>
-        /// <param name="xs">The native matrix.</param>
+        /// <param name="xs">The matrix of int.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        /// <returns>
-        /// The Sexp matrix.
-        /// </returns>
         public static Sexp Make( int[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var rows = xs.GetLength( 0 );
@@ -957,42 +836,27 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpString from a string.
         /// </summary>
-        /// <param name="x">
-        /// The object to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="x">The string to convert into an SexpString.</param>
         public static Sexp Make( string x )
         {
             return new SexpString( x );
         }
 
         /// <summary>
-        /// Makes a Sexp from an object.
+        /// Makes a SexpArrayString from an IEnumerable of string.
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The IEnumerable of string to convert into an SexpArrayString.</param>
         public static Sexp Make( IEnumerable<string> xs )
         {
             return new SexpArrayString( xs );
         }
 
         /// <summary>
-        /// Makes a Sexp from a Dictionary.
+        /// Makes a SexpList from a Dictionary.
         /// </summary>
-        /// <param name="xs">
-        /// The objects to convert into an Sexp.
-        /// </param>
-        /// <returns>
-        /// The Sexp made.
-        /// </returns>
+        /// <param name="xs">The Dictionary to convert into an SexpList.</param>
         public static Sexp Make( IDictionary<string , object> xs )
         {
             var res = new SexpList();
@@ -1000,7 +864,6 @@ namespace RserveCLI2
             {
                 res.Add( a );
             }
-
             return res;
         }
 

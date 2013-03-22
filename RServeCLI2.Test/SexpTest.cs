@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace RserveCLI2.Test
@@ -133,6 +134,53 @@ namespace RserveCLI2.Test
         }
 
         #region Make Methods
+
+        [Fact]
+        public void Make_WithObject_ReturnsExpectedSexpType()
+        {
+
+            // Arrange
+
+            // ReSharper disable RedundantExplicitArrayCreation
+            object objSexp = new SexpTaggedList();
+            object objBool = true;
+            object objDouble = 4.4d;
+            object objIEnumerableDouble = new[] { -5.4d , 2.3d };
+            object obj2DArrayDouble = new double[ 2 , 2 ] { { -5.4d , 2.3d } , { 5.4d , -2.3d } };
+            object objDecimal = 3.5m;
+            object objIEnumerableDecimal = new[] { -5.4m , 2.3m };
+            object obj2DArrayDecimal = new decimal[ 2 , 2 ] { { -5.4m , 2.3m } , { 5.4m , -2.3m } };
+            object objint = 6;
+            object objIEnumerableInt = new[] { -3 , -9 };
+            object obj2DArrayInt = new int[ 2 , 2 ] { { 2 , 5 } , { 8 , 2 } };
+            object objDate = new DateTime( 2011 , 1 , 1 );
+            object objIEnumerableDate = new[] { new DateTime( 1969 , 12 , 31 ) , new DateTime( 1970 , 1 , 1 ) , new DateTime( 1970 , 1 , 2 ) , new DateTime( 1970 , 1 , 3 ) , new DateTime( 2012 , 10 , 12 ) , new DateTime( 1953 , 10 , 12 ) };
+            object objString = "abcde";
+            object objIEnumerableString = new string[] { "abcde" , "def" };
+            object objDictionary = new Dictionary<string , object> { { "Test" , new SexpArrayDate() } };
+            // ReSharper restore RedundantExplicitArrayCreation
+
+            // Act & Assert
+            Assert.IsType<SexpTaggedList>( Sexp.Make( objSexp ) );
+            Assert.IsType<SexpBool>( Sexp.Make( objBool ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( objDouble ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( objIEnumerableDouble ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( obj2DArrayDouble ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( objDecimal ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( objIEnumerableDecimal ) );
+            Assert.IsType<SexpArrayDouble>( Sexp.Make( obj2DArrayDecimal ) );
+            Assert.IsType<SexpArrayInt>( Sexp.Make( objint ) );
+            Assert.IsType<SexpArrayInt>( Sexp.Make( objIEnumerableInt ) );
+            Assert.IsType<SexpArrayInt>( Sexp.Make( obj2DArrayInt ) );
+            Assert.IsType<SexpArrayDate>( Sexp.Make( objDate ) );
+            Assert.IsType<SexpArrayDate>( Sexp.Make( objIEnumerableDate ) );
+            Assert.IsType<SexpString>( Sexp.Make( objString ) );
+            Assert.IsType<SexpArrayString>( Sexp.Make( objIEnumerableString ) );
+            Assert.IsType<SexpList>( Sexp.Make( objDictionary ) );
+            
+        }
+
+
 
         [Fact]
         public void Make_WithDate_CreatesSexpArrayDate()
