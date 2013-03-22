@@ -8,6 +8,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections;
+
 namespace RserveCLI2
 {
     using System;
@@ -19,6 +21,7 @@ namespace RserveCLI2
     /// </summary>
     public class SexpArrayInt : SexpGenericList
     {
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -27,6 +30,14 @@ namespace RserveCLI2
         public SexpArrayInt()
         {
             Value = new List<int>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// </summary>
+        public SexpArrayInt( int theValue )
+        {
+            Value = new List<int> { theValue };
         }
 
         /// <summary>
@@ -229,6 +240,41 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">
+        /// The <see cref="System.Object"/> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public override bool Equals( object obj )
+        {
+            var objSexpArrayInt = obj as SexpArrayInt;
+            if ( objSexpArrayInt != null )
+            {
+                return Equals( objSexpArrayInt );
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the specified SexpArrayInt is equal to this instance.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// <c>true</c> if the specified SexpArrayInt is equal to this instance; otherwise, <c>false</c>.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public bool Equals( SexpArrayInt other )
+        {
+            if ( ReferenceEquals( null , other ) ) return false;
+            if ( ReferenceEquals( this , other ) ) return true;
+            return StructuralComparisons.StructuralEqualityComparer.Equals( other.Value.ToArray() , Value.ToArray() );
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
@@ -237,6 +283,17 @@ namespace RserveCLI2
         public override IEnumerator<Sexp> GetEnumerator()
         {
             return ( from a in Value select ( Sexp )( new SexpInt( a ) ) ).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Gets hash code.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+            }
         }
 
         /// <summary>

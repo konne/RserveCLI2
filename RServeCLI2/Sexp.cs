@@ -20,6 +20,7 @@ namespace RserveCLI2
     /// </summary>
     public abstract class Sexp : IList<Sexp> , IDictionary<string , Sexp> , IList<object> , IDictionary<string , object>
     {
+
         #region Constants and Fields
 
         /// <summary>
@@ -782,13 +783,13 @@ namespace RserveCLI2
         /// <summary>
         /// Makes a mathrix Sexp from a native matrix.
         /// </summary>
-        /// <param name="xs">
-        /// The native matrix.
-        /// </param>
+        /// <param name="xs">The native matrix.</param>
+        /// <param name="rowNames">Matrix row names</param>
+        /// <param name="colNames">Matrix column names</param>
         /// <returns>
         /// The Sexp matrix.
         /// </returns>
-        public static Sexp Make( decimal[ , ] xs )
+        public static Sexp Make( decimal[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var xsDouble = new double[ xs.GetLength( 0 ) , xs.GetLength( 1 ) ];
             var rows = xs.GetLength( 0 );
@@ -800,7 +801,7 @@ namespace RserveCLI2
                     xsDouble[ row , col ] = Convert.ToDouble( xs[ row , col ] );
                 }
             }
-            return Make( xsDouble );
+            return Make( xsDouble , rowNames , colNames );
         }
 
         /// <summary>
@@ -834,13 +835,13 @@ namespace RserveCLI2
         /// <summary>
         /// Makes a mathrix Sexp from a native matrix.
         /// </summary>
-        /// <param name="xs">
-        /// The native matrix.
-        /// </param>
+        /// <param name="xs">The native matrix.</param>
+        /// <param name="rowNames">Matrix row names</param>
+        /// <param name="colNames">Matrix column names</param>
         /// <returns>
         /// The Sexp matrix.
         /// </returns>
-        public static Sexp Make( double[ , ] xs )
+        public static Sexp Make( double[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var rows = xs.GetLength( 0 );
             var cols = xs.GetLength( 1 );
@@ -852,22 +853,22 @@ namespace RserveCLI2
                     fortranXs[ ( col * rows ) + row ] = xs[ row , col ];
                 }
             }
-
             var res = new SexpArrayDouble( fortranXs );
             res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
+            AddDimNamesAttribute( res , rows , cols , rowNames , colNames );
             return res;
         }
 
         /// <summary>
         /// Makes a mathrix Sexp from a native matrix.
         /// </summary>
-        /// <param name="xs">
-        /// The native matrix.
-        /// </param>
+        /// <param name="xs">The native matrix.</param>
+        /// <param name="rowNames">Matrix row names</param>
+        /// <param name="colNames">Matrix column names</param>
         /// <returns>
         /// The Sexp matrix.
         /// </returns>
-        public static Sexp Make( int[ , ] xs )
+        public static Sexp Make( int[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
         {
             var rows = xs.GetLength( 0 );
             var cols = xs.GetLength( 1 );
@@ -882,6 +883,7 @@ namespace RserveCLI2
 
             var res = new SexpArrayInt( fortranXs );
             res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
+            AddDimNamesAttribute( res , rows , cols , rowNames , colNames );
             return res;
         }
 
@@ -1589,5 +1591,47 @@ namespace RserveCLI2
         #endregion
 
         #endregion
+
+        #region Private Members
+
+        /// <summary>
+        /// Adds dimnames attribute to an Sexp
+        /// </summary>
+        private static void AddDimNamesAttribute( Sexp data , int rows , int cols , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
+        {
+            if ( ( rowNames != null ) || ( colNames != null ) )
+            {
+                var dimnames = new SexpList();
+                if ( rowNames == null )
+                {
+                    dimnames.Add( new SexpNull() );
+                }
+                else
+                {
+                    if ( rows != rowNames.Count() )
+                    {
+                        throw new NotSupportedException( "length of 'dimnames' [1] not equal to array extent" );
+                    }
+                    dimnames.Add( Make( rowNames ) );
+                }
+
+                if ( colNames == null )
+                {
+                    dimnames.Add( new SexpNull() );
+                }
+                else
+                {
+                    if ( cols != colNames.Count() )
+                    {
+                        throw new NotSupportedException( "length of 'dimnames' [2] not equal to array extent" );
+                    }
+                    dimnames.Add( Make( colNames ) );
+                }
+                data.Attributes.Add( "dimnames" , dimnames );
+            }
+        }
+
+        #endregion
+
     }
 }

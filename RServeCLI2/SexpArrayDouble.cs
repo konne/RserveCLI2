@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 
 namespace RserveCLI2
 {
@@ -20,9 +21,6 @@ namespace RserveCLI2
     /// </summary>
     public class SexpArrayDouble : SexpGenericList
     {
-        #region Constants and Fields
-
-        #endregion
 
         #region Constructors and Destructors
 
@@ -32,6 +30,14 @@ namespace RserveCLI2
         public SexpArrayDouble()
         {
             Value = new List<double>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SexpArrayDouble"/> class.
+        /// </summary>
+        public SexpArrayDouble( double theValue )
+        {
+            Value = new List<double> { theValue };
         }
 
         /// <summary>
@@ -197,6 +203,41 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">
+        /// The <see cref="System.Object"/> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public override bool Equals( object obj )
+        {
+            var objSexpArrayDouble = obj as SexpArrayDouble;
+            if ( objSexpArrayDouble != null )
+            {
+                return Equals( objSexpArrayDouble );
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the specified SexpArrayDouble is equal to this instance.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// <c>true</c> if the specified SexpArrayDouble is equal to this instance; otherwise, <c>false</c>.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public bool Equals( SexpArrayDouble other )
+        {
+            if ( ReferenceEquals( null , other ) ) return false;
+            if ( ReferenceEquals( this , other ) ) return true;
+            return StructuralComparisons.StructuralEqualityComparer.Equals( other.Value.ToArray() , Value.ToArray() );
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
@@ -205,6 +246,17 @@ namespace RserveCLI2
         public override IEnumerator<Sexp> GetEnumerator()
         {
             return ( from a in Value select ( Sexp )( new SexpDouble( a ) ) ).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Return hash code for this instance.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+            }
         }
 
         /// <summary>
@@ -276,5 +328,6 @@ namespace RserveCLI2
         }
 
         #endregion
+        
     }
 }
