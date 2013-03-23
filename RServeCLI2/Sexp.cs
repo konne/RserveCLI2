@@ -880,7 +880,7 @@ namespace RserveCLI2
             IEnumerable<KeyValuePair<string , object>> columns = null , IEnumerable<string> rowNames = null )
         {
             var res = new SexpList();
-            res.Attributes[ "class" ] = new SexpString( "data.frame" );
+            res.Attributes[ "class" ] = new SexpArrayString( "data.frame" );
             res.Attributes[ "names" ] = new SexpArrayString();
             if ( columns != null )
             {
@@ -888,7 +888,7 @@ namespace RserveCLI2
                 foreach ( var col in columns )
                 {
                     // make the column
-                    res.Attributes[ "names" ].Add( new SexpString( col.Key ) );
+                    res.Attributes[ "names" ].Add( new SexpArrayString( col.Key ) );
                     Sexp column = Make( col.Value );
 
                     // must be an SexpArray type otherwise it's not a data.frame.  Technically it could be an SexpBool, SexpInt, etc. but too cumbersome to check all of those types
@@ -1300,7 +1300,7 @@ namespace RserveCLI2
             }
 
             Add( value );
-            Names.Add( new SexpString( key ) );
+            Names.Add( new SexpArrayString( key ) );
         }
 
         /// <summary>

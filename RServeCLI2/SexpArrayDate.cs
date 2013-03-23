@@ -34,7 +34,7 @@ namespace RserveCLI2
         /// </summary>
         public SexpArrayDate()
         {
-            Attributes[ "class" ] = new SexpString( "Date" );
+            Attributes[ "class" ] = new SexpArrayString( "Date" );
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace RserveCLI2
         public SexpArrayDate( DateTime theValue )
             : base( DateToRInt( theValue ) )
         {
-            Attributes[ "class" ] = new SexpString( "Date" );
+            Attributes[ "class" ] = new SexpArrayString( "Date" );
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace RserveCLI2
         public SexpArrayDate( IEnumerable<DateTime> theValue )
             : base( theValue.Select( DateToRInt ) )
         {
-            Attributes[ "class" ] = new SexpString( "Date" );
+            Attributes[ "class" ] = new SexpArrayString( "Date" );
         }
 
         /// <summary>
