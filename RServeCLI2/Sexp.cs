@@ -386,7 +386,6 @@ namespace RserveCLI2
                 {
                     return this[ 0 ].IsNa;
                 }
-
                 throw new IndexOutOfRangeException( "Only single values can be tested for NA." );
             }
         }

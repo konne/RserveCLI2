@@ -60,7 +60,6 @@
     <Compile Include="SexpGenericList.cs" />
     <Compile Include="SexpSymname.cs" />
     <Compile Include="SexpString.cs" />
-    <Compile Include="SexpDouble.cs" />
     <Compile Include="SexpBool.cs" />
     <Compile Include="DES.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>

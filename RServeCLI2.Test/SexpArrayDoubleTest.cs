@@ -20,19 +20,21 @@ namespace RserveCLI2.Test
             var values2 = new double[ 2 , 1 ] { { 3.9 } , { 5.6 } };
             var values3 = new double[ 1 , 2 ] { { 7.9 , 4.3 } };
             var values4 = new double[ 3 , 4 ] { { 8.8 , 2.1 , 7.5 , 4.3 } , { 0.1 , -9.8 , 5.1 , -2.7 } , { 1.1 , -4.6 , -4.5 , -8.7 } };
+            var values5 = new double[ 2 , 1 ] { { 3.9 } , { double.NaN } };
 
             // Act
             Sexp sexp1 = Sexp.Make( values1 );
             Sexp sexp2 = Sexp.Make( values2 );
             Sexp sexp3 = Sexp.Make( values3 );
             Sexp sexp4 = Sexp.Make( values4 );
+            Sexp sexp5 = Sexp.Make( values5 );
 
             // Assert
             Assert.Equal( values1 , sexp1.As2DArrayDouble );
             Assert.Equal( values2 , sexp2.As2DArrayDouble );
             Assert.Equal( values3 , sexp3.As2DArrayDouble );
             Assert.Equal( values4 , sexp4.As2DArrayDouble );
-
+            Assert.Equal( values5 , sexp5.As2DArrayDouble );
         }
 
         [Fact]
@@ -67,8 +69,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                service.RConnection.VoidEval( "test = matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , -5.8 , 6.3 ) , ncol = 3 , byrow = TRUE )" );
-                var expected = new double[ 2 , 3 ] { { 1.1 , 2.6 , 3.9 } , { -4.2 , -5.8 , 6.3 } };
+                service.RConnection.VoidEval( "test = matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , -5.8 , NA ) , ncol = 3 , byrow = TRUE )" );
+                var expected = new double[ 2 , 3 ] { { 1.1 , 2.6 , 3.9 } , { -4.2 , -5.8 , double.NaN } };
 
                 // Act
                 Sexp matrix = service.RConnection[ "test" ];
@@ -80,12 +82,12 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void AsDoubles_SexpConstructedUsingConstructorOrMake_ReturnsSameSetOfInts()
+        public void AsDoubles_SexpConstructedUsingConstructorOrMake_ReturnsSameSetOfDoubles()
         {
 
             // Arrange
             var values1 = new double[ 1 , 1 ] { { 2 } };
-            var values2 = new double[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
+            var values2 = new double[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , double.NaN , 5 , -2 } , { 1 , -4 , -3 , -8 } };
             const double values3 = -5d;
             var values4 = new List<double> { 4 , 5 , 6 };
 
@@ -98,14 +100,14 @@ namespace RserveCLI2.Test
 
             // Assert
             Assert.Equal( new double[] { 2 } , sexp1.AsDoubles );
-            Assert.Equal( new double[] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , 4 , -2 , -8 } , sexp2.AsDoubles );
+            Assert.Equal( new[] { 8 , 0 , 1 , 2 , double.NaN , -4 , 7 , 5 , -3 , 4 , -2 , -8 } , sexp2.AsDoubles );
             Assert.Equal( new double[] { -5 } , sexp3.AsDoubles );
             Assert.Equal( new double[] { 4 , 5 , 6 } , sexp4.AsDoubles );
             Assert.Equal( new double[] { } , sexp5.AsDoubles );
         }
 
         [Fact]
-        public void AsDoubles_SexpConstructedFromR_ReturnsSameSetOfInts()
+        public void AsDoubles_SexpConstructedFromR_ReturnsSameSetOfDoubles()
         {
 
             using ( var service = new Rservice() )
@@ -114,12 +116,12 @@ namespace RserveCLI2.Test
                 // Arrange & Act
                 Sexp sexp1 = service.RConnection[ "numeric()" ];
                 Sexp sexp2 = service.RConnection[ "c( 1.1 , 2.1 , 3.1 )" ];
-                Sexp sexp3 = service.RConnection[ "matrix( c( 1.1 , 2.1 , 3.1 , 4.1 , 5.1 , 6.1 ) , nrow = 2 )" ];
+                Sexp sexp3 = service.RConnection[ "matrix( c( 1.1 , NA , 3.1 , 4.1 , 5.1 , 6.1 ) , nrow = 2 )" ];
 
                 // Assert
                 Assert.Equal( new double[] { } , sexp1.AsDoubles );
                 Assert.Equal( new [] { 1.1 , 2.1 , 3.1 } , sexp2.AsDoubles );
-                Assert.Equal( new [] { 1.1 , 2.1 , 3.1 , 4.1 , 5.1 , 6.1 } , sexp3.AsDoubles );
+                Assert.Equal( new [] { 1.1 , double.NaN , 3.1 , 4.1 , 5.1 , 6.1 } , sexp3.AsDoubles );
             }
 
         }
@@ -129,7 +131,7 @@ namespace RserveCLI2.Test
         {            
             // Arrange
             var value1 = new SexpArrayDouble();
-            var value2 = new SexpArrayDouble( new[] { 2.3 , -5 , 4 } );
+            var value2 = new SexpArrayDouble( new[] { 2.3 , double.NaN , 4 } );
             var value3 = new SexpArrayDouble( -6.6 );
 
             // Act & Assert
@@ -147,8 +149,8 @@ namespace RserveCLI2.Test
             // Arrange
             var value1A = new SexpArrayDouble();
             var value1B = new SexpArrayDouble();
-            var value2A = new SexpArrayDouble( new[] { 1.2 , -6.4 , -3.3 } );
-            var value2B = new SexpArrayDouble( new[] { 1.2 , -6.4 , -3.3 } );
+            var value2A = new SexpArrayDouble( new[] { 1.2 , double.NaN , -3.3 } );
+            var value2B = new SexpArrayDouble( new[] { 1.2 , double.NaN , -3.3 } );
             var value3A = new SexpArrayDouble( 1.4 );
             var value3B = new SexpArrayDouble( 1.4 );
             var value4A = new SexpArrayDouble( new[] { -8.4 } );
@@ -166,7 +168,7 @@ namespace RserveCLI2.Test
         {
             // Arrange
             var value1 = new SexpArrayDouble();
-            var value2 = new SexpArrayDouble( new[] { 2.3 , -5 , 4 } );
+            var value2 = new SexpArrayDouble( new[] { 2.3 , double.NaN , 4 } );
             var value3 = new SexpArrayDouble( 6.5 );
 
             // Act & Assert
@@ -186,7 +188,7 @@ namespace RserveCLI2.Test
         public void Equals_ComparedToObjectOfDifferentType_ReturnsFalse()
         {
             // Arrange
-            var value1 = new SexpArrayDouble( new[] { 2.3 , -5 , 4 } );
+            var value1 = new SexpArrayDouble( new[] { 2.3 , double.NaN , 4 } );
             var value2 = new SexpBool( true );
             var value3 = new SexpArrayInt( new[] { 1 , 3 } );
 
@@ -207,7 +209,7 @@ namespace RserveCLI2.Test
             var value1 = new SexpArrayDouble();
             var value2 = new SexpArrayDouble( -7.7 );
             var value3 = new SexpArrayDouble( new[] { -1.2 , -6.4 , -3.3 } );
-            var value4 = new SexpArrayDouble( new[] { 1.2 , -6.4 , -3.3 } );
+            var value4 = new SexpArrayDouble( new[] { 1.2 , double.NaN , -3.3 } );
 
             // Act & Assert
             Assert.False( value1.Equals( value2 ) );
@@ -230,8 +232,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                var value1A = service.RConnection[ "matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , -5.8 , 6.3 ) , ncol = 3 , byrow = TRUE )" ];
-                var value1B = new SexpArrayDouble( new[] { 1.1 , -4.2 , 2.6 , -5.8 , 3.9 , 6.3 } );
+                var value1A = service.RConnection[ "matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , NA , 6.3 ) , ncol = 3 , byrow = TRUE )" ];
+                var value1B = new SexpArrayDouble( new[] { 1.1 , -4.2 , 2.6 , double.NaN , 3.9 , 6.3 } );
 
                 var value2A = service.RConnection[ "c( -4.4 , -2.2 , -1 )" ];
                 var value2B = new SexpArrayDouble( new[] { -4.4 , -2.2 , -1 } );
@@ -260,8 +262,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                var value1A = service.RConnection[ "matrix( c( 1.1 , 2.6 , 3.9 , -4.2 , -5.8 , 6.3 ) , ncol = 3 , byrow = TRUE )" ];
-                var value1B = new SexpArrayDouble( new[] { 1.1 , -4.2 , 2.6 , -5.8 , 3.9 , 6.3 } );
+                var value1A = service.RConnection[ "matrix( c( 1.1 , 2.6 , NA , -4.2 , -5.8 , 6.3 ) , ncol = 3 , byrow = TRUE )" ];
+                var value1B = new SexpArrayDouble( new[] { 1.1 , -4.2 , 2.6 , -5.8 , double.NaN , 6.3 } );
 
                 var value2A = service.RConnection[ "c( -4.4 , -2.2 , -1 )" ];
                 var value2B = new SexpArrayDouble( new[] { -4.4 , -2.2 , -1 } );
@@ -287,6 +289,59 @@ namespace RserveCLI2.Test
             }
         }
 
+        [Fact]
+        public void IsNa_NaValueReadFromR_ReturnTrue()
+        {
+            using ( var rWrapper = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp naSexp = rWrapper.RConnection[ "as.numeric( NA )" ];
 
+                // Assert
+                Assert.IsType<SexpArrayDouble>( naSexp );
+                Assert.True( naSexp.IsNa );
+            }
+        }
+
+        [Fact]
+        public void IsNa_NaValueInConstructor_ReturnTrue()
+        {            
+            // Arrange
+            var sexp1 = new SexpArrayDouble( double.NaN );
+            var sexp2 = new SexpArrayDouble( new [] { double.NaN } );
+
+            // Act & Assert
+            Assert.True( sexp1.IsNa );
+            Assert.True( sexp2.IsNa );
+        }
+
+        [Fact]
+        public void IsNa_NotNa_ReturnFalse()
+        {
+            // Arrange
+            var sexp1 = new SexpArrayDouble( 3.4 );
+            var sexp2 = new SexpArrayDouble( new[] { -8.3 } );
+
+            // Act & Assert
+            Assert.False( sexp1.IsNa );
+            Assert.False( sexp2.IsNa );
+        }
+
+        [Fact]
+        public void IsNa_SexpContainsZeroOrMultipleValues_ThrowsNotSupportedException()
+        {
+            // Arrange
+            var sexp1 = new SexpArrayDouble();
+            var sexp2 = new SexpArrayDouble( new double[] { } );
+            var sexp3 = new SexpArrayDouble( new[] { double.NaN , 4.4 } );
+            var sexp4 = new SexpArrayDouble( new[] { 4.4 , -9.4 } );
+
+            // Act & Assert
+            Assert.Throws<NotSupportedException>( () => sexp1.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp2.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp3.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp4.IsNa );
+        }
+        
     }
 }

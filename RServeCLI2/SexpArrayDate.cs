@@ -161,10 +161,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">The array.</param>
-        /// <param name="arrayIndex">Index of the array.</param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
