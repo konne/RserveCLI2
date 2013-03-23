@@ -1,12 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpArrayDate.cs" company="Suraj K. Gupta">
-//   Copyright (c) 2013, Suraj K. Gupta
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
-// <summary>
-// An array of dates.  Time portion of a date is severed.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;

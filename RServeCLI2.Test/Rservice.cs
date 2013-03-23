@@ -1,4 +1,9 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// Copyright (c) 2013, Suraj Gupta
+// All rights reserved.
+//-----------------------------------------------------------------------
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Management;

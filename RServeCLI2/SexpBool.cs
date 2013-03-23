@@ -1,13 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpBool.cs" company="Oliver M. Haynold">
-//   Copyright (c) 2011, Oliver M. Haynold
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
-// <summary>
-// A convenience representation for R boolean values. Rserve never uses this type,
-// but puts even a single number into a SexpArrayBool.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 namespace RserveCLI2
 {

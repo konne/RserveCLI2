@@ -1,14 +1,6 @@
 //-----------------------------------------------------------------------
-// <copyright file="DES.cs" company="Oliver M. Haynold">
-//   Copyright (c) 2011, Elmar Langholz
-//   Copyright (c) 2011, Oliver M. Haynold
-//   All rights reserved.
-// </copyright>
-// <summary>
-//   DES Encryption algorithm.
-//   Based on FreeBSD's libcrypt:
-//   secure/lib/libcrypt/crypt-des.c
-// </summary>
+// Copyright (c) 2011, Elmar Langholz
+// Copyright (c) 2011, Oliver M. Haynold
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace RserveCLI2

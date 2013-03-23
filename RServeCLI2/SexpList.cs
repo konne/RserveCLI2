@@ -1,12 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpList.cs" company="Oliver M. Haynold">
-//   Copyright (c) 2011, Oliver M. Haynold
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
-// <summary>
-// A List that can contain Sexps of various types. This is the basis for data frames, too.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 namespace RserveCLI2
 {

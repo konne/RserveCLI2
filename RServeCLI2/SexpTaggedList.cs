@@ -1,12 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpTaggedList.cs" company="Oliver M. Haynold">
-//   Copyright (c) 2011, Oliver M. Haynold
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
-// <summary>
-// A tagged list.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 namespace RserveCLI2
 {

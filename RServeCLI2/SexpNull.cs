@@ -1,12 +1,8 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SexpNull.cs" company="Oliver M. Haynold">
-// Copyright (c) 2011, Oliver M. Haynold
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
-// <summary>
-// The S NULL Value
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
 namespace RserveCLI2
 {

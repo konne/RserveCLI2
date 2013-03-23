@@ -1,4 +1,9 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// Copyright (c) 2013, Suraj Gupta with contributions from Oliver M. Haynold
+// All rights reserved.
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using Xunit;
 

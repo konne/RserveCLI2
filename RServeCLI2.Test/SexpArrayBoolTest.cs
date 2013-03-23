@@ -1,4 +1,10 @@
-﻿using Xunit;
+﻿//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
+// All rights reserved.
+//-----------------------------------------------------------------------
+
+using Xunit;
 
 namespace RserveCLI2.Test
 {

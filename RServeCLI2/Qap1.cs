@@ -1,8 +1,7 @@
 //-----------------------------------------------------------------------
-// <copyright file="QAP1.cs" company="Oliver M. Haynold">
-// Copyright (c) 2011, Oliver M. Haynold
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
 //-----------------------------------------------------------------------
 
 namespace RserveCLI2

@@ -1,8 +1,7 @@
 //-----------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs" company="Oliver M. Haynold">
-// Copyright (c) 2011, Oliver M. Haynold
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
-// </copyright>
 //-----------------------------------------------------------------------
 
 using System.Reflection;
@@ -13,9 +12,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle( "RserveCLI2" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Oliver M. Haynold" )]
+[assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "RserveCLI2" )]
-[assembly: AssemblyCopyright( "Copyright (c) 2010 by Oliver Haynold and other contributors" )]
+[assembly: AssemblyCopyright( "Original work Copyright (c) 2010 by Oliver Haynold and other contributors.  Modified work Copyright (c) 2013 by Suraj Gupta" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 [assembly: InternalsVisibleTo( "RserveCLI2.Test" )]

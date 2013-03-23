@@ -1,11 +1,8 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RConnection.cs" company="Oliver M. Haynold">
-// Oliver M. Haynold
-// </copyright>
-// <summary>
-// A connection to an R session
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------
+// Original work Copyright (c) 2011, Oliver M. Haynold
+// Modified work Copyright (c) 2013, Suraj Gupta
+// All rights reserved.
+//-----------------------------------------------------------------------
 
 namespace RserveCLI2
 {
