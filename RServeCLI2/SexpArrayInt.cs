@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Collections;
+using System.Text;
 
 namespace RserveCLI2
 {
@@ -22,10 +23,19 @@ namespace RserveCLI2
     public class SexpArrayInt : SexpGenericList
     {
 
+        #region Constants and Fields
+
+        /// <summary>
+        /// The special values that marks an integer as NA.
+        /// </summary>
+        internal static readonly int NaValue = -2147483648;
+
+        #endregion
+
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// Initializes a new instance of SexpArrayInt.
         /// </summary>
         public SexpArrayInt()
         {
@@ -33,7 +43,7 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// Initializes a new instance of SexpArrayInt with an int.
         /// </summary>
         public SexpArrayInt( int theValue )
         {
@@ -41,11 +51,8 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpArrayInt"/> class.
+        /// Initializes a new instance of SexpArrayInt with an IEnumerable of int
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
         public SexpArrayInt( IEnumerable<int> theValue )
         {
             Value = new List<int>();
@@ -55,6 +62,39 @@ namespace RserveCLI2
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the values as a 2-dimensional array
+        /// </summary>
+        /// <remarks>
+        /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
+        /// </remarks>
+        public override int[ , ] As2DArrayInt
+        {
+            get
+            {
+                if ( !Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
+                }
+                if ( Rank == 2 )
+                {
+                    // if GetLength fails it means the user screwed around with the dim attribute
+                    int rows = GetLength( 0 );
+                    int cols = GetLength( 1 );
+                    var result = new int[ rows , cols ];
+                    for ( int row = 0 ; row < rows ; row++ )
+                    {
+                        for ( int col = 0 ; col < cols ; col++ )
+                        {
+                            result[ row , col ] = Value[ ( col * rows ) + row ];
+                        }
+                    }
+                    return result;
+                }
+                throw new NotSupportedException( "Sexp does not have 2 dimension." );
+            }
+        }
 
         /// <summary>
         /// Gets as int.
@@ -90,11 +130,8 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Gets the number of elements contained in the ICollection.
         /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
         public override int Count
         {
             get
@@ -104,29 +141,23 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is NA.
+        /// Determines if the value of this integer is NA.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is NA; otherwise, <c>false</c>.
-        /// </value>
         public override bool IsNa
         {
             get
             {
                 if ( Value.Count == 1 )
                 {
-                    return SexpInt.CheckNa( Value[ 0 ] );
+                    return CheckNa( Value[ 0 ] );
                 }
-
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new NotSupportedException( "Can only check NA for length 1 integer" );
             }
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
+        /// Determines whether the ICollection is read-only.
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
-        /// </returns>
         public override bool IsReadOnly
         {
             get
@@ -136,42 +167,20 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets the integers stored in the list
+        /// Gets a representation of the NA value.
         /// </summary>
-        internal List<int> Value { get; private set; }
-
-        /// <summary>
-        /// Gets the values as a 2-dimensional array
-        /// </summary>
-        /// <remarks>
-        /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
-        /// </remarks>
-        public override int[ , ] As2DArrayInt
+        public static int Na
         {
             get
             {
-                if ( !Attributes.ContainsKey( "dim" ) )
-                {
-                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
-                }
-                if ( Rank == 2 )
-                {
-                    // if GetLength fails it means the user screwed around with the dim attribute
-                    int rows = GetLength( 0 );
-                    int cols = GetLength( 1 );
-                    var result = new int[ rows , cols ];
-                    for ( int row = 0 ; row < rows ; row++ )
-                    {
-                        for ( int col = 0 ; col < cols ; col++ )
-                        {
-                            result[ row , col ] = Value[ ( col * rows ) + row ];
-                        }
-                    }
-                    return result;
-                }
-                throw new NotSupportedException( "Sexp does not have 2 dimension." );
+                return NaValue;
             }
         }
+
+        /// <summary>
+        /// Gets the integers stored in the list
+        /// </summary>
+        internal List<int> Value { get; private set; }
 
         #endregion
 
@@ -188,11 +197,11 @@ namespace RserveCLI2
         {
             get
             {
-                return new SexpInt( Value[ index ] );
+                return new SexpArrayInt( Value[ index ] );
             }
             set
             {
-                Value[ index ] = value.IsNa ? SexpInt.NaValue : value.AsInt;
+                Value[ index ] = value.IsNa ? NaValue : value.AsInt;
             }
         }
 
@@ -201,66 +210,65 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Adds an item to the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to add to the ICollection.</param>
         public override void Add( Sexp item )
         {
-            Value.Add( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            Value.Add( item.IsNa ? NaValue : item.AsInt );
         }
 
         /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Checks whether a value is NA.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
+        /// <param name="x">The value to be checked.</param>
+        /// <returns>
+        /// True if the value is NA, false otherwise.
+        /// </returns>
+        public static bool CheckNa( int x )
+        {
+            return x == NaValue;
+        }
+
+        /// <summary>
+        /// Removes all items from the ICollection.
+        /// </summary>
         public override void Clear()
         {
             Value.Clear();
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( Sexp item )
         {
-            return Value.Contains( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            return Value.Contains( item.IsNa ? NaValue : item.AsInt );
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[ arrayIndex + i ] = new SexpInt( Value[ i ] );
+                array[ arrayIndex + i ] = new SexpArrayInt( Value[ i ] );
             }
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// Determines whether the specified object is equal to this instance.
         /// </summary>
-        /// <param name="obj">
-        /// The <see cref="System.Object"/> to compare with this instance.
-        /// </param>
+        /// <param name="obj">The object to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// true if the specified object is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
         public override bool Equals( object obj )
@@ -292,11 +300,11 @@ namespace RserveCLI2
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpInt( a ) ) ).GetEnumerator();
+            return ( from a in Value select ( Sexp )( new SexpArrayInt( a ) ) ).GetEnumerator();
         }
 
         /// <summary>
@@ -311,64 +319,51 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// Determines the index of a specific item in the IList.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the IList.</param>
         /// <returns>
-        /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
+        /// The index of item if found in the list; otherwise, -1.
         /// </returns>
         public override int IndexOf( Sexp item )
         {
-            return Value.IndexOf( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            return Value.IndexOf( item.IsNa ? NaValue : item.AsInt );
         }
 
         /// <summary>
-        /// Inserts an item to the <see cref="T:System.Collections.Generic.IList`1"/> at the specified index.
+        /// Inserts an item to the IList at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index at which <paramref name="item"/> should be inserted.
-        /// </param>
-        /// <param name="item">
-        /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="index">The zero-based index at which item should be inserted.</param>
+        /// <param name="item">The object to insert into the IList.</param>
         public override void Insert( int index , Sexp item )
         {
-            Value.Insert( index , item.IsNa ? SexpInt.NaValue : item.AsInt );
+            Value.Insert( index , item.IsNa ? NaValue : item.AsInt );
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes the first occurrence of a specific object from the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override bool Remove( Sexp item )
         {
-            return Value.Remove( item.IsNa ? SexpInt.NaValue : item.AsInt );
+            return Value.Remove( item.IsNa ? NaValue : item.AsInt );
         }
 
         /// <summary>
-        /// Removes the <see cref="T:System.Collections.Generic.IList`1"/> item at the specified index.
+        /// Removes the IList item at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index of the item to remove.
-        /// </param>
+        /// <param name="index">The zero-based index of the item to remove.</param>
         public override void RemoveAt( int index )
         {
             Value.RemoveAt( index );
         }
 
         /// <summary>
-        /// Converts the Sexp into the most appropriate native representation. Use with caution--this is more a rapid prototyping than
-        /// a production feature.
+        /// Converts the Sexp into the most appropriate native representation. 
+        /// Use with caution--this is more a rapid prototyping than a production feature.
         /// </summary>
         /// <returns>
         /// A CLI native representation of the Sexp
@@ -376,6 +371,27 @@ namespace RserveCLI2
         public override object ToNative()
         {
             return Value.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a string that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A string that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach ( int value in Value )
+            {
+                builder.Append( " " );
+                builder.Append( CheckNa( value ) ? "NA" : value.ToString() );
+            }
+            if ( builder.Length > 0 )
+            {
+                builder.Remove( 0 , 1 );
+            }
+            return builder.ToString();
         }
 
         #endregion

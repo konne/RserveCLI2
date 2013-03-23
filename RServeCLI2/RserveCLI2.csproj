@@ -67,7 +67,6 @@
     <Compile Include="Sexp.cs" />
     <Compile Include="Qap1.cs" />
     <Compile Include="RConnection.cs" />
-    <Compile Include="SexpInt.cs" />
     <Compile Include="SexpNull.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

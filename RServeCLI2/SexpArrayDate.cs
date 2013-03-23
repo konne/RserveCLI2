@@ -131,7 +131,7 @@ namespace RserveCLI2
             }
             set
             {
-                base[ index ] = new SexpInt( DateToRInt( value.AsDate ) );
+                base[ index ] = new SexpArrayInt( DateToRInt( value.AsDate ) );
             }
         }
 
@@ -157,7 +157,7 @@ namespace RserveCLI2
         /// </returns>
         public override bool Contains( Sexp item )
         {
-            return base.Contains( new SexpInt( DateToRInt( item.AsDate ) ) );
+            return base.Contains( new SexpArrayInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace RserveCLI2
         /// <param name="item">The object to insert into the IList.</param>
         public override void Insert( int index , Sexp item )
         {
-            base.Insert( index , new SexpInt( DateToRInt( item.AsDate ) ) );
+            base.Insert( index , new SexpArrayInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace RserveCLI2
         /// </returns>
         public override bool Remove( Sexp item )
         {
-            return base.Remove( new SexpInt( DateToRInt( item.AsDate ) ) );
+            return base.Remove( new SexpArrayInt( DateToRInt( item.AsDate ) ) );
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace RserveCLI2
             foreach ( int value in base.Value )
             {
                 builder.Append( " " );
-                builder.Append( SexpInt.CheckNa( value ) ? "NA" : RIntToDate( value ).ToShortDateString() );
+                builder.Append( CheckNa( value ) ? "NA" : RIntToDate( value ).ToShortDateString() );
             }
             if ( builder.Length > 0 )
             {

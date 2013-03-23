@@ -19,7 +19,7 @@ namespace RserveCLI2.Test
             var values1 = new int[ 1 , 1 ] { { 2 } };
             var values2 = new int[ 2 , 1 ] { { 3 } , { 5 } };
             var values3 = new int[ 1 , 2 ] { { 7 , 4 } };
-            var values4 = new int[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
+            var values4 = new int[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , SexpArrayInt.Na , -2 } , { 1 , -4 , -3 , -8 } };
 
             // Act
             Sexp sexp1 = Sexp.Make( values1 );
@@ -44,7 +44,7 @@ namespace RserveCLI2.Test
             // ReSharper disable RedundantExplicitArraySize
             var values1 = new int[ 1 ] { 2 };
             var values2 = new int[ 2 ] { 3 , 5 };
-            var values3 = new int[ 4 ] { 8 , 2 , 7 , 4 };
+            var values3 = new int[ 4 ] { 8 , SexpArrayInt.Na , 7 , 4 };
             const int values4 = 5;
             // ReSharper restore RedundantExplicitArraySize
 
@@ -67,8 +67,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                service.RConnection.VoidEval( "test = matrix( as.integer( c( 1 , 2 , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" );
-                var expected = new int[ 2 , 3 ] { { 1 , 2 , 3 } , { -4 , -5 , 6 } };
+                service.RConnection.VoidEval( "test = matrix( as.integer( c( 1 , NA , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" );
+                var expected = new int[ 2 , 3 ] { { 1 , SexpArrayInt.Na , 3 } , { -4 , -5 , 6 } };
 
                 // Act
                 Sexp matrix = service.RConnection[ "test" ];
@@ -85,7 +85,7 @@ namespace RserveCLI2.Test
 
             // Arrange
             var values1 = new int[ 1 , 1 ] { { 2 } };
-            var values2 = new int[ 3 , 4 ] { { 8 , 2 , 7 , 4 } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
+            var values2 = new int[ 3 , 4 ] { { 8 , 2 , 7 , SexpArrayInt.Na } , { 0 , -9 , 5 , -2 } , { 1 , -4 , -3 , -8 } };
             const int values3 = -5;
             var values4 = new List<int> { 4 , 5 , 6 };
 
@@ -98,7 +98,7 @@ namespace RserveCLI2.Test
 
             // Assert
             Assert.Equal( new [] { 2 } , sexp1.AsInts );
-            Assert.Equal( new [] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , 4 , -2 , -8 } , sexp2.AsInts );
+            Assert.Equal( new [] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , SexpArrayInt.Na , -2 , -8 } , sexp2.AsInts );
             Assert.Equal( new [] { -5 } , sexp3.AsInts );
             Assert.Equal( new [] { 4 , 5 , 6 } , sexp4.AsInts );
             Assert.Equal( new int[] { } , sexp5.AsInts );
@@ -114,12 +114,12 @@ namespace RserveCLI2.Test
                 // Arrange & Act
                 Sexp sexp1 = service.RConnection[ "integer()" ];
                 Sexp sexp2 = service.RConnection[ "as.integer( c( 1 , 2 , 3 ) )" ];
-                Sexp sexp3 = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , 4 , 5 , 6 ) ) , nrow = 2 )" ];
+                Sexp sexp3 = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , 4 , 5 , NA ) ) , nrow = 2 )" ];
 
                 // Assert
                 Assert.Equal( new int[] { } , sexp1.AsInts );
                 Assert.Equal( new [] { 1 , 2 , 3 } , sexp2.AsInts );
-                Assert.Equal( new [] { 1 , 2 , 3 , 4 , 5 , 6 } , sexp3.AsInts );                
+                Assert.Equal( new [] { 1 , 2 , 3 , 4 , 5 , SexpArrayInt.Na } , sexp3.AsInts );                
             }
             
         }
@@ -129,7 +129,7 @@ namespace RserveCLI2.Test
         {
             // Arrange
             var value1 = new SexpArrayInt();
-            var value2 = new SexpArrayInt( new[] { 2 , -5 , 4 } );
+            var value2 = new SexpArrayInt( new[] { 2 , SexpArrayInt.Na , -4 } );
             var value3 = new SexpArrayInt( -6 );
 
             // Act & Assert
@@ -147,8 +147,8 @@ namespace RserveCLI2.Test
             // Arrange
             var value1A = new SexpArrayInt();
             var value1B = new SexpArrayInt();
-            var value2A = new SexpArrayInt( new[] { 1 , -6 , -3 } );
-            var value2B = new SexpArrayInt( new[] { 1 , -6 , -3 } );
+            var value2A = new SexpArrayInt( new[] { 1 , SexpArrayInt.Na , -3 } );
+            var value2B = new SexpArrayInt( new[] { 1 , SexpArrayInt.Na , -3 } );
             var value3A = new SexpArrayInt( 1 );
             var value3B = new SexpArrayInt( 1 );
             var value4A = new SexpArrayInt( new[] { -8 } );
@@ -166,7 +166,7 @@ namespace RserveCLI2.Test
         {
             // Arrange
             var value1 = new SexpArrayInt();
-            var value2 = new SexpArrayInt( new[] { 2 , -5 , 4 } );
+            var value2 = new SexpArrayInt( new[] { SexpArrayInt.Na , -5 , 4 } );
             var value3 = new SexpArrayInt( 6 );
 
             // Act & Assert
@@ -184,7 +184,7 @@ namespace RserveCLI2.Test
         public void Equals_ComparedToObjectOfDifferentType_ReturnsFalse()
         {
             // Arrange
-            var value1 = new SexpArrayInt( new[] { 2 , -5 , 4 } );
+            var value1 = new SexpArrayInt( new[] { 2 , -5 , SexpArrayInt.Na } );
             var value2 = new SexpBool( true );
             var value3 = new SexpArrayDouble( new[] { 1.4 , 3.6 } );
 
@@ -205,7 +205,7 @@ namespace RserveCLI2.Test
             var value1 = new SexpArrayInt();
             var value2 = new SexpArrayInt( -7 );
             var value3 = new SexpArrayInt( new[] { -1 , -6 , -3 } );
-            var value4 = new SexpArrayInt( new[] { 1 , -6 , -3 } );
+            var value4 = new SexpArrayInt( new[] { SexpArrayInt.Na , -6 , -3 } );
 
             // Act & Assert
             Assert.False( value1.Equals( value2 ) );
@@ -228,8 +228,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                var value1A = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" ];
-                var value1B = new SexpArrayInt( new[] { 1 , -4 , 2 , -5 , 3 , 6 } );
+                var value1A = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , -4 , -5 , NA ) ) , ncol = 3 , byrow = TRUE )" ];
+                var value1B = new SexpArrayInt( new[] { 1 , -4 , 2 , -5 , 3 , SexpArrayInt.Na } );
 
                 var value2A = service.RConnection[ "as.integer( c( -4 , -2 , -1 ) )" ];
                 var value2B = new SexpArrayInt( new[] { -4 , -2 , -1 } );
@@ -258,8 +258,8 @@ namespace RserveCLI2.Test
             using ( var service = new Rservice() )
             {
                 // Arrange                
-                var value1A = service.RConnection[ "matrix( as.integer( c( 1 , 2 , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" ];
-                var value1B = new SexpArrayInt( new[] { 1 , -4 , 2 , -5 , 3 , 6 } );
+                var value1A = service.RConnection[ "matrix( as.integer( c( NA , 2 , 3 , -4 , -5 , 6 ) ) , ncol = 3 , byrow = TRUE )" ];
+                var value1B = new SexpArrayInt( new[] { SexpArrayInt.Na , -4 , 2 , -5 , 3 , 6 } );
 
                 var value2A = service.RConnection[ "as.integer( c( -4 , -2 , -1 ) )" ];
                 var value2B = new SexpArrayInt( new[] { -4 , -2 , -1 } );
@@ -283,6 +283,60 @@ namespace RserveCLI2.Test
                 Assert.False( value1B.Equals( value4B ) );
 
             }
+        }
+
+        [Fact]
+        public void IsNa_NaValueReadFromR_ReturnTrue()
+        {
+            using ( var rWrapper = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp naSexp = rWrapper.RConnection[ "as.integer( NA )" ];
+
+                // Assert
+                Assert.IsType<SexpArrayInt>( naSexp );
+                Assert.True( naSexp.IsNa );
+            }
+        }
+
+        [Fact]
+        public void IsNa_NaValueInConstructor_ReturnTrue()
+        {
+            // Arrange
+            var sexp1 = new SexpArrayInt( SexpArrayInt.Na );
+            var sexp2 = new SexpArrayInt( new[] { SexpArrayInt.Na } );
+
+            // Act & Assert
+            Assert.True( sexp1.IsNa );
+            Assert.True( sexp2.IsNa );
+        }
+
+        [Fact]
+        public void IsNa_NotNa_ReturnFalse()
+        {
+            // Arrange
+            var sexp1 = new SexpArrayInt( 3 );
+            var sexp2 = new SexpArrayInt( new[] { -8 } );
+
+            // Act & Assert
+            Assert.False( sexp1.IsNa );
+            Assert.False( sexp2.IsNa );
+        }
+
+        [Fact]
+        public void IsNa_SexpContainsZeroOrMultipleValues_ThrowsNotSupportedException()
+        {
+            // Arrange
+            var sexp1 = new SexpArrayInt();
+            var sexp2 = new SexpArrayInt( new int[] { } );
+            var sexp3 = new SexpArrayInt( new[] { SexpArrayInt.Na , 4 } );
+            var sexp4 = new SexpArrayInt( new[] { 4 , -9 } );
+
+            // Act & Assert
+            Assert.Throws<NotSupportedException>( () => sexp1.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp2.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp3.IsNa );
+            Assert.Throws<NotSupportedException>( () => sexp4.IsNa );
         }
 
     }

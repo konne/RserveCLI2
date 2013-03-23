@@ -920,7 +920,7 @@ namespace RserveCLI2
                 {
                     // without this, data.frames will look like they have 0 observations
                     // ReSharper disable PossibleInvalidOperationException
-                    res.Attributes[ "row.names" ] = new SexpArrayInt( new List<int> { SexpInt.Na.Value , -1 * ( int )rows } );
+                    res.Attributes[ "row.names" ] = new SexpArrayInt( new List<int> { SexpArrayInt.Na , -1 * ( int )rows } );
                     // ReSharper restore PossibleInvalidOperationException
                 }
                 else if ( rowNames.Count() != rows )

@@ -186,12 +186,6 @@ namespace RserveCLI2
                 res.AddRange( EncodeSexp( attrs ) );
             }
 
-            if ( t == typeof( SexpInt ) )
-            {
-                s = new SexpArrayInt( new[] { ( ( SexpInt )s ).Value } );
-                t = s.GetType();
-            }
-
             if ( t == typeof( SexpBool ) )
             {
                 s = new SexpArrayBool( new[] { ( ( SexpBool )s ).Value } );
