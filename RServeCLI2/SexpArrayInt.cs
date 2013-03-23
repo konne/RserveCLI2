@@ -97,6 +97,33 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Gets as double.
+        /// </summary>
+        public override double AsDouble
+        {
+            get
+            {
+                if ( Value.Count == 1 )
+                {
+                    return Convert.ToDouble( Value[ 0 ] );
+                }
+
+                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+            }
+        }
+
+        /// <summary>
+        /// Gets as array of double
+        /// </summary>
+        public override double[] AsDoubles
+        {
+            get
+            {
+                return Value.Select( Convert.ToDouble ).ToArray();
+            }
+        }
+
+        /// <summary>
         /// Gets as int.
         /// </summary>
         /// <value>
@@ -273,11 +300,22 @@ namespace RserveCLI2
         /// </returns>
         public override bool Equals( object obj )
         {
+            if ( obj == null )
+            {
+                return false;
+            }
             var objSexpArrayInt = obj as SexpArrayInt;
             if ( objSexpArrayInt != null )
             {
                 return Equals( objSexpArrayInt );
             }
+
+            // can obj be coersed into an array of int?
+            try
+            {
+                return Equals( new SexpArrayInt( Make( obj ).AsInts ) );
+            }
+            catch ( NotSupportedException ) { }
             return false;
         }
 

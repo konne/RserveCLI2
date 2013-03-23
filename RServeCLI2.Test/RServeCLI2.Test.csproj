@@ -44,12 +44,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RConnectionTest.cs" />
     <Compile Include="Rservice.cs" />
+    <Compile Include="SexpArrayBoolTest.cs" />
     <Compile Include="SexpArrayDateTest.cs" />
     <Compile Include="SexpArrayDoubleTest.cs" />
     <Compile Include="SexpArrayIntTest.cs" />
+    <Compile Include="SexpListTest.cs" />
     <Compile Include="SexpTest.cs" />
-    <None Include="Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

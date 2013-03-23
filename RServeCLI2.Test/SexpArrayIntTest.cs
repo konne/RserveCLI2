@@ -40,7 +40,7 @@ namespace RserveCLI2.Test
         {
 
             // Arrange
-            
+
             // ReSharper disable RedundantExplicitArraySize
             var values1 = new int[ 1 ] { 2 };
             var values2 = new int[ 2 ] { 3 , 5 };
@@ -97,10 +97,10 @@ namespace RserveCLI2.Test
             Sexp sexp5 = new SexpArrayInt();
 
             // Assert
-            Assert.Equal( new [] { 2 } , sexp1.AsInts );
-            Assert.Equal( new [] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , SexpArrayInt.Na , -2 , -8 } , sexp2.AsInts );
-            Assert.Equal( new [] { -5 } , sexp3.AsInts );
-            Assert.Equal( new [] { 4 , 5 , 6 } , sexp4.AsInts );
+            Assert.Equal( new[] { 2 } , sexp1.AsInts );
+            Assert.Equal( new[] { 8 , 0 , 1 , 2 , -9 , -4 , 7 , 5 , -3 , SexpArrayInt.Na , -2 , -8 } , sexp2.AsInts );
+            Assert.Equal( new[] { -5 } , sexp3.AsInts );
+            Assert.Equal( new[] { 4 , 5 , 6 } , sexp4.AsInts );
             Assert.Equal( new int[] { } , sexp5.AsInts );
         }
 
@@ -110,7 +110,7 @@ namespace RserveCLI2.Test
 
             using ( var service = new Rservice() )
             {
-                
+
                 // Arrange & Act
                 Sexp sexp1 = service.RConnection[ "integer()" ];
                 Sexp sexp2 = service.RConnection[ "as.integer( c( 1 , 2 , 3 ) )" ];
@@ -118,12 +118,12 @@ namespace RserveCLI2.Test
 
                 // Assert
                 Assert.Equal( new int[] { } , sexp1.AsInts );
-                Assert.Equal( new [] { 1 , 2 , 3 } , sexp2.AsInts );
-                Assert.Equal( new [] { 1 , 2 , 3 , 4 , 5 , SexpArrayInt.Na } , sexp3.AsInts );                
+                Assert.Equal( new[] { 1 , 2 , 3 } , sexp2.AsInts );
+                Assert.Equal( new[] { 1 , 2 , 3 , 4 , 5 , SexpArrayInt.Na } , sexp3.AsInts );
             }
-            
+
         }
-        
+
         [Fact]
         public void Equals_ComparedToSameReferencedObject_ReturnsTrue()
         {
@@ -195,6 +195,29 @@ namespace RserveCLI2.Test
             Assert.False( value1.Equals( ( object )value2 ) );
             Assert.False( value1.Equals( value3 ) );
             Assert.False( value1.Equals( ( object )value3 ) );
+            // ReSharper restore RedundantCast
+        }
+
+        [Fact]
+        public void Equals_ComparedToObjectOfDifferentTypeThatCanBeCoercedIntoArrayInt_ReturnsTrue()
+        {
+            // Arrange
+            var value1 = new SexpArrayInt( new[] { 2 , -5 , SexpArrayInt.Na } );
+            var value2 = new double[] { 2.0d , -5.0d , Convert.ToDouble( SexpArrayInt.Na ) };
+            var value3 = new List<int> { 2 , -5 , SexpArrayInt.Na };
+            var value4 = new SexpArrayDouble( new List<double> { 2 , -5 , SexpArrayInt.Na } );
+
+            // Act & Assert
+
+            // ReSharper disable RedundantCast
+            Assert.True( value1.Equals( value2 ) );
+            Assert.True( value1.Equals( ( object )value2 ) );
+
+            Assert.True( value1.Equals( value3 ) );
+            Assert.True( value1.Equals( ( object )value3 ) );
+
+            Assert.True( value1.Equals( value4 ) );
+            Assert.True( value1.Equals( ( object )value4 ) );
             // ReSharper restore RedundantCast
         }
 
@@ -339,5 +362,161 @@ namespace RserveCLI2.Test
             Assert.Throws<NotSupportedException>( () => sexp4.IsNa );
         }
 
+        [Fact]
+        public void Various_LinearAlgebraFunctionsOf2DArrayIntegers_MeetsExpectation()
+        {
+            // note: this test was ported from RserveCLI.  Not in the typical Arrange/Act/Assert format
+
+            using ( var service = new Rservice() )
+            {
+
+                // Same as for integers -- we'll divide by two to get floating point values that aren't integers
+                var matA = new[ , ] { { 14 , 9 , 3 } , { 2 , 11 , 15 } , { 0 , 12 , 17 } , { 5 , 2 , 3 } };
+                var matB = new[ , ] { { 12 , 25 } , { 9 , 10 } , { 8 , 5 } };
+                var matC = new[ , ] { { 273 , 455 } , { 243 , 235 } , { 244 , 205 } , { 102 , 160 } };
+                var sexpA = Sexp.Make( matA );
+                service.RConnection[ "a" ] = sexpA;
+                service.RConnection[ "b" ] = Sexp.Make( matB );
+
+                // Some simple tests with A
+                for ( int i = 0 ; i <= 1 ; i++ )
+                {
+                    Assert.Equal( matA.GetLength( i ) , sexpA.GetLength( i ) );
+                    Assert.Equal( matA.GetLength( i ) , service.RConnection[ "a" ].GetLength( i ) );
+                }
+
+                for ( int row = 0 ; row < matA.GetLength( 0 ) ; row++ )
+                {
+                    for ( int col = 0 ; col < matA.GetLength( 1 ) ; col++ )
+                    {
+                        Assert.Equal( matA[ row , col ] , sexpA[ row , col ].AsInt );
+                        Assert.Equal( matA[ row , col ] , service.RConnection[ "a" ][ row , col ].AsInt );
+                    }
+                }
+
+                var matD = service.RConnection[ "a %*% b" ];
+
+                // check that C and D are equal
+                for ( var i = 0 ; i <= 1 ; i++ )
+                {
+                    Assert.Equal( matC.GetLength( i ) , matD.GetLength( i ) );
+                }
+
+                for ( var row = 0 ; row < matC.GetLength( 0 ) ; row++ )
+                {
+                    for ( var col = 0 ; col < matD.GetLength( 1 ) ; col++ )
+                    {
+                        Assert.Equal( matC[ row , col ] , matD[ row , col ].AsInt );
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void Various_LargeArray()
+        {
+            // note: this test was ported from RserveCLI.  Not in the typical Arrange/Act/Assert format
+
+            using ( var service = new Rservice() )
+            {
+                service.RConnection.Eval( "x <- 1:1000000" );
+                var x = service.RConnection[ "x" ];
+
+                Assert.Equal( x.Count , 1000000 );
+
+                for ( int i = 0 ; i < x.Count ; i++ )
+                {
+                    Assert.Equal( x[ i ].AsInt , i + 1 );
+                }
+            }
+        }
+
+        [Fact]
+        public void Various_ArrayIntTests()
+        {
+            // note: this test was ported from RserveCLI.  Not in the typical Arrange/Act/Assert format
+
+            using ( var service = new Rservice() )
+            {
+
+                var testInts = new[] { -3 , 0 , 1 , 2 , 524566 , 0 };
+                var x1 = Sexp.Make( testInts );
+                x1[ x1.Count - 1 ] = new SexpArrayInt( SexpArrayInt.Na );
+
+                for ( int i = 0 ; i < x1.Count ; i++ )
+                {
+                    if ( !x1[ i ].IsNa )
+                    {
+                        Assert.Equal( testInts[ i ] , x1[ i ].AsInt );
+                    }
+                }
+
+                service.RConnection.Eval( "x2 <- as.integer(c(-3,0,1,2,524566,NA))" );
+                var x2 = service.RConnection[ "x2" ];
+
+                Assert.Equal( x1.Count , x2.Count );
+
+                for ( int i = 0 ; i < x1.Count ; i++ )
+                {
+                    if ( x1[ i ].IsNa )
+                    {
+                        Assert.True( x2[ i ].IsNa );
+                    }
+                    else
+                    {
+                        Assert.True( x1[ i ].AsDouble == x2[ i ].AsDouble );
+                    }
+                }
+
+                service.RConnection[ "x1" ] = x1;
+                var equals = service.RConnection[ "x1 == x2" ];
+
+                Assert.Equal( x1.Count , equals.Count );
+
+                for ( int i = 0 ; i < x1.Count ; i++ )
+                {
+                    if ( !x1[ i ].IsNa )
+                    {
+                        Assert.True( equals[ i ].AsBool , equals.ToString() );
+                    }
+                }
+                Assert.Equal( x1.IndexOf( new SexpArrayInt( 1 ) ) , 2 );
+                x1.AsList[ 0 ] = -5;
+                Assert.Equal( x1[ 0 ].AsInt , -5 );
+            }
+        }
+
+        [Fact]
+        public void Various_IntTests()
+        {
+            // note: this test was ported from RserveCLI.  Not in the typical Arrange/Act/Assert format
+
+            var zero = new SexpArrayInt( 0 );
+            var one = new SexpArrayInt( 1 );
+            var na = new SexpArrayInt( SexpArrayInt.Na );
+
+            // ReSharper disable EqualExpressionComparison
+            Assert.True( zero.Equals( zero ) );
+            Assert.True( one.Equals( one ) );
+            Assert.True( na.Equals( na ) );
+
+            // ReSharper restore EqualExpressionComparison
+            Assert.True( !zero.Equals( one ) );
+            Assert.True( !zero.Equals( na ) );
+            Assert.True( !one.Equals( na ) );
+            Assert.True( zero.Equals( 0 ) );
+            Assert.True( one.Equals( 1 ) );
+            Assert.True( na.IsNa );
+            Assert.True( zero.AsInt == 0 );
+            Assert.True( one.AsInt == 1 );
+
+            foreach ( var a in new Sexp[] { zero , one , na } )
+            {
+                Assert.True( !a.Equals( new SexpNull() ) );
+            }
+        }
+
     }
+
+
 }

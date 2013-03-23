@@ -123,6 +123,39 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Gets as int by converting contained double.
+        /// </summary>
+        public override int AsInt
+        {
+            get
+            {
+                if ( ( Value.Count == 1 ) && ( ( Value[ 0 ] % 1 ) == 0 ) )
+                {
+                    return Convert.ToInt32( Value[ 0 ] );
+                }
+                throw new NotSupportedException( "Can only convert length 1 double." );
+            }
+        }
+
+        /// <summary>
+        /// Gets as array of int.
+        /// </summary>
+        /// <remarks>
+        /// A matrix is flattenend by columns.  So the order is: Row1Col1, Row2Col1, Row3Col1, ... , Row1Col2, Row2Col2, Row3Col2, ...
+        /// </remarks>
+        public override int[] AsInts
+        {
+            get
+            {
+                if ( Value.Select( x => ( x % 1 ) == 0 ).All( y => y ) )
+                {
+                    return Value.Select( Convert.ToInt32 ).ToArray();
+                }
+                throw new NotSupportedException( "Can only convert length 1 double." );
+            }
+        }
+
+        /// <summary>
         /// Gets the number of elements contained in the ICollection.
         /// </summary>
         public override int Count
@@ -258,11 +291,22 @@ namespace RserveCLI2
         /// </returns>
         public override bool Equals( object obj )
         {
+            if ( obj == null)
+            {
+                return false;
+            }
             var objSexpArrayDouble = obj as SexpArrayDouble;
             if ( objSexpArrayDouble != null )
             {
                 return Equals( objSexpArrayDouble );
             }
+            
+            // can obj be coersed into an array of double?
+            try
+            {
+                return Equals( new SexpArrayDouble( Make( obj ).AsDoubles ) );
+            }
+            catch ( NotSupportedException ) { }
             return false;
         }
 
