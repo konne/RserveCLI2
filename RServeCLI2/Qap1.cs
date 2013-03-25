@@ -184,13 +184,6 @@ namespace RserveCLI2
 
                 res.AddRange( EncodeSexp( attrs ) );
             }
-
-            if ( t == typeof( SexpBool ) )
-            {
-                s = new SexpArrayBool( new[] { ( ( SexpBool )s ).Value } );
-                t = s.GetType();
-            }
-
             if ( t == typeof( SexpNull ) )
             {
                 xt = XtNull;
@@ -225,13 +218,14 @@ namespace RserveCLI2
             else if ( t == typeof( SexpArrayBool ) )
             {
                 xt = XtArrayBool;
-                var v = ( ( SexpArrayBool )s ).Value;
+                var v = ( SexpArrayBool )s;
 
                 // ReSharper disable RedundantCast
-                res.AddRange( BitConverter.GetBytes( ( int )v.Count ) );
+                res.AddRange( BitConverter.GetBytes( v.Count ) );
 
                 // ReSharper restore RedundantCast
-                res.AddRange( v.Select( ( t1 , i ) => ( byte )s[ i ].AsSexpBool ) );
+                // R logical is false if 0, true if 1, and NA if 2
+                res.AddRange( v.Cast<SexpArrayBool>().Select( x => x.AsByte ) );
 
                 while ( res.Count % 4 != 0 )
                 {
@@ -372,29 +366,34 @@ namespace RserveCLI2
                             // This doesn't match the description on the Web page and doesn't make much sense, but that's what the server seems to do
                             if ( length < 4 )
                             {
-                                throw new WebException(
-                                    "Bool array doesn't seem to contain a data length field." );
+                                throw new WebException( "Bool array doesn't seem to contain a data length field." );
                             }
 
                             var datalength = BitConverter.ToInt32( data , start );
                             if ( datalength > length - 4 )
                             {
-                                throw new WebException(
-                                    "Transmitted data field too short for number of entries." );
+                                throw new WebException( "Transmitted data field too short for number of entries." );
                             }
 
                             start += 4;
-                            var res = new SexpBoolValue[ datalength ];
+                            var res = new bool?[ datalength ];
                             for ( int i = 0 ; i < datalength ; i++ )
                             {
-                                if ( data[ start + i ] >= ( byte )SexpBoolValue.Na )
+                                // R logical is false if 0, true if 1, and NA if 2
+                                switch ( data[ start + i ] )
                                 {
-                                    res[ i ] = SexpBoolValue.Na;
-                                }
-                                else
-                                {
-                                    res[ i ] = ( SexpBoolValue )data[ start + i ];
-                                }
+                                    case 0:
+                                        res[ i ] = false;
+                                        break;
+                                    case 1:
+                                        res[ i ] = true;
+                                        break;
+                                    case 2:
+                                        res[ i ] = null;
+                                        break;
+                                    default:
+                                        throw new NotSupportedException( "I cannot convert R bool" + data[ start + i ] );
+                                }                              
                             }
 
                             result = new SexpArrayBool( res );

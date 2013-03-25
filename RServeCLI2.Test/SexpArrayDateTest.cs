@@ -204,7 +204,7 @@ namespace RserveCLI2.Test
             var sexp2 = new SexpArrayDate( new[] { new DateTime( 2004 , 01 , 23 ) , new DateTime( 2005 , 01 , 23 ) , new DateTime( 2007 , 03 , 12 ) } );
 
             // Act & Assert
-            Assert.Throws<NotSupportedException>( () => sexp1[ 0 ] = new SexpBool( false ) );
+            Assert.Throws<NotSupportedException>( () => sexp1[ 0 ] = new SexpArrayBool( false ) );
             Assert.Throws<NotSupportedException>( () => sexp2[ 0 ] = new SexpArrayString( "asdf" ) );            
         }
 

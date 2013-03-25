@@ -29,12 +29,9 @@ namespace RserveCLI2
         #region Properties
 
         /// <summary>
-        /// Gets a value indicating whether [as bool].
+        /// Gets a value as a nullable bool.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if [as bool]; otherwise, <c>false</c>.
-        /// </value>
-        public virtual bool AsBool
+        public virtual bool? AsBool
         {
             get
             {
@@ -47,9 +44,20 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator bool( Sexp s )
+        public static explicit operator bool?( Sexp s )
         {
             return s.AsBool;
+        }
+
+        /// <summary>
+        /// Gets a value as an array of nullable bool.
+        /// </summary>
+        public virtual bool?[] AsBools
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
         }
 
         /// <summary>
@@ -261,30 +269,6 @@ namespace RserveCLI2
             {
                 return this;
             }
-        }
-
-        /// <summary>
-        /// Gets as sexp bool.
-        /// </summary>
-        /// <value>
-        /// As sexp bool.
-        /// </value>
-        public virtual SexpBoolValue AsSexpBool
-        {
-            get
-            {
-                throw new NotSupportedException();
-            }
-        }
-
-        /// <summary>
-        /// Syntactic sugar for explicit conversion to SexpBoolValue
-        /// </summary>
-        /// <param name="s">The Sexp</param>
-        /// <returns>The converted value</returns>
-        public static explicit operator SexpBoolValue( Sexp s )
-        {
-            return s.AsSexpBool;
         }
 
         /// <summary>

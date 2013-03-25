@@ -15,6 +15,7 @@ namespace RserveCLI2
     /// </summary>
     public abstract class SexpGenericList : Sexp
     {
+
         #region Properties
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace RserveCLI2
         /// <value>
         ///   <c>true</c> if [as bool]; otherwise, <c>false</c>.
         /// </value>
-        public override bool AsBool
+        public override bool? AsBool
         {
             get
             {
@@ -56,20 +57,6 @@ namespace RserveCLI2
             get
             {
                 return AssertOne()[ 0 ].AsInt;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets as sexp bool.
-        /// </summary>
-        /// <value>
-        /// As sexp bool.
-        /// </value>
-        public override SexpBoolValue AsSexpBool
-        {
-            get
-            {
-                return AssertOne()[ 0 ].AsSexpBool;
             }
         }
 
@@ -172,5 +159,6 @@ namespace RserveCLI2
         }
 
         #endregion
+
     }
 }

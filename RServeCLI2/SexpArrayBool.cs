@@ -4,6 +4,9 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System.Collections;
+using System.Text;
+
 namespace RserveCLI2
 {
     using System;
@@ -13,10 +16,20 @@ namespace RserveCLI2
     /// <summary>
     /// An array of (trivalue, i.e., including NA) booleans.
     /// </summary>
+    /// <remarks>
+    /// NA is represented as NULL
+    /// </remarks>
     public class SexpArrayBool : SexpGenericList
     {
 
         #region Constants and Fields
+
+        /// <summary>
+        /// The representation of NA
+        /// </summary>
+        // ReSharper disable RedundantDefaultFieldInitializer
+        private static readonly bool? NaValue = null;
+        // ReSharper restore RedundantDefaultFieldInitializer
 
         #endregion
 
@@ -27,23 +40,23 @@ namespace RserveCLI2
         /// </summary>
         public SexpArrayBool()
         {
-            Value = new List<SexpBoolValue>();
+            Value = new List<bool?>();
         }
 
         /// <summary>
-        /// Initializes a new instance of SexpArrayBool with a bool.
+        /// Initializes a new instance of SexpArrayBool with a nullable bool.
         /// </summary>
-        public SexpArrayBool( bool theValue )
+        public SexpArrayBool( bool? theValue )
         {
-            Value = new List<SexpBoolValue> { theValue ? SexpBoolValue.True : SexpBoolValue.False };
+            Value = new List<bool?> { theValue };
         }
 
         /// <summary>
-        /// Initializes a new instance of SexpArrayBool with an IEnumerable of SexpBoolValue.
+        /// Initializes a new instance of SexpArrayBool with an IEnumerable of nullable bool.
         /// </summary>
-        public SexpArrayBool( IEnumerable<SexpBoolValue> theValue )
+        public SexpArrayBool( IEnumerable<bool?> theValue )
         {
-            Value = new List<SexpBoolValue>();
+            Value = new List<bool?>();
             Value.AddRange( theValue );
         }
 
@@ -52,30 +65,57 @@ namespace RserveCLI2
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether [as bool].
+        /// Gets as a nullable bool.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if [as bool]; otherwise, <c>false</c>.
-        /// </value>
-        public override bool AsBool
+        public override bool? AsBool
         {
             get
             {
                 if ( Value.Count == 1 )
                 {
-                    return new SexpBool( Value[ 0 ] ).AsBool;
+                    return Value[ 0 ];
                 }
-
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new IndexOutOfRangeException( "Can only convert bool arrays of length 1 to bool." );
             }
         }
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Gets as an array of nullable bool.
         /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
+        public override bool?[] AsBools
+        {
+            get
+            {
+                return Value.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Gets the bool value as byte that R can interpret.
+        /// </summary>
+        public byte AsByte
+        {
+            get
+            {
+                if ( Value.Count == 1 )
+                {
+                    if ( Value[ 0 ] == null )
+                    {
+                        return 2;
+                    }
+                    if ( Value[ 0 ] == true )
+                    {
+                        return 1;
+                    }
+                    return 0;
+                }
+                throw new NotSupportedException( "Can only convert bool arrays of length 1 to byte." );
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of elements contained in the ICollection.
+        /// </summary>
         public override int Count
         {
             get
@@ -85,10 +125,23 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
+        /// Determines if the value of this bool is NA
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
-        /// </returns>
+        public override bool IsNa
+        {
+            get
+            {
+                if ( Value.Count == 1 )
+                {
+                    return Value[ 0 ] == null;
+                }
+                throw new NotSupportedException( "Can only check NA for length 1 bool" );
+            }
+        }
+
+        /// <summary>
+        /// Determines if the ICollection is read-only.
+        /// </summary>
         public override bool IsReadOnly
         {
             get
@@ -98,9 +151,21 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Gets the representation of NA
+        /// </summary>
+        public static bool? Na
+        {
+            get
+            {
+                return NaValue;
+            }
+        }
+
+        /// <summary>
         /// Gets the values stored in the list
         /// </summary>
-        internal List<SexpBoolValue> Value { get; private set; }
+        internal List<bool?> Value { get; private set; }
+
         #endregion
 
         #region Indexers
@@ -116,12 +181,12 @@ namespace RserveCLI2
         {
             get
             {
-                return new SexpBool( Value[ index ] );
+                return new SexpArrayBool( Value[ index ] );
             }
 
             set
             {
-                Value[ index ] = value.AsSexpBool;
+                Value[ index ] = value.AsBool;
             }
         }
 
@@ -130,97 +195,149 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Adds an item to the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to add to the ICollection.</param>
         public override void Add( Sexp item )
         {
-            Value.Add( item.AsSexpBool );
+            Value.AddRange( item.AsBools );
         }
 
         /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Checks whether a value is NA.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
+        /// <param name="x">The value to be checked.</param>
+        /// <returns>
+        /// True if the value is NA, false otherwise.
+        /// </returns>
+        public static bool CheckNa( bool? x )
+        {
+            return x == null;
+        }
+
+        /// <summary>
+        /// Removes all items from the ICollection.
+        /// </summary>
         public override void Clear()
         {
             Value.Clear();
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
             {
-                array[ arrayIndex + i ] = new SexpBool( Value[ i ] );
+                array[ arrayIndex + i ] = new SexpArrayBool( Value[ i ] );
             }
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The object to compare with this instance.</param>
+        /// <returns>
+        /// true if the specified object is equal to this instance; otherwise, false.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public override bool Equals( object obj )
+        {
+            if ( obj == null )
+            {
+                return false;
+            }
+            var objSexpArrayBool = obj as SexpArrayBool;
+            if ( objSexpArrayBool != null )
+            {
+                return Equals( objSexpArrayBool );
+            }
+
+            // can obj be coersed into an array of nullable bool?
+            try
+            {
+                return Equals( new SexpArrayBool( Make( obj ).AsBools ) );
+            }
+            catch ( NotSupportedException ) { }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the specified SexpArrayBool is equal to this instance.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// <c>true</c> if the specified SexpArrayBool is equal to this instance; otherwise, <c>false</c>.
+        /// Does not check for attribute equality.
+        /// </returns>
+        public bool Equals( SexpArrayBool other )
+        {
+            if ( ReferenceEquals( null , other ) ) return false;
+            if ( ReferenceEquals( this , other ) ) return true;
+            return StructuralComparisons.StructuralEqualityComparer.Equals( other.Value.ToArray() , Value.ToArray() );
         }
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpBool( a ) ) ).GetEnumerator();
+            return ( from a in Value select ( Sexp )( new SexpArrayBool( a ) ) ).GetEnumerator();
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// Gets hash code.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+            }
+        }
+
+        /// <summary>
+        /// Determines the index of a specific item in the IList.
+        /// </summary>
+        /// <param name="item">The object to locate in the IList.</param>
         /// <returns>
-        /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
+        /// The index of item if found in the list; otherwise, -1.
         /// </returns>
         public override int IndexOf( Sexp item )
         {
-            return Value.IndexOf( item.IsNa ? SexpBool.Na : item.AsSexpBool );
+            return Value.IndexOf( item.AsBool );
         }
 
         /// <summary>
-        /// Inserts an item to the <see cref="T:System.Collections.Generic.IList`1"/> at the specified index.
+        /// Inserts an item to the IList at the specified index.
         /// </summary>
         /// <param name="index">
-        /// The zero-based index at which <paramref name="item"/> should be inserted.
+        /// The zero-based index at which item should be inserted.
         /// </param>
-        /// <param name="item">
-        /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="item">The object to insert into the IList.</param>
         public override void Insert( int index , Sexp item )
         {
-            Value.Insert( index , item.AsSexpBool );
+            Value.Insert( index , item.AsBool );
         }
 
         /// <summary>
-        /// Removes the <see cref="T:System.Collections.Generic.IList`1"/> item at the specified index.
+        /// Removes the IList item at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index of the item to remove.
-        /// </param>
+        /// <param name="index">The zero-based index of the item to remove.</param>
         public override void RemoveAt( int index )
         {
             Value.RemoveAt( index );
         }
 
         /// <summary>
-        /// Converts the Sexp into the most appropriate native representation. Use with caution--this is more a rapid prototyping than
-        /// a production feature.
+        /// Converts the Sexp into the most appropriate native representation. 
+        /// Use with caution--this is more a rapid prototyping than a production feature.
         /// </summary>
         /// <returns>
         /// A CLI native representation of the Sexp
@@ -230,6 +347,28 @@ namespace RserveCLI2
             return Value.ToArray();
         }
 
+        /// <summary>
+        /// Returns a string that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A string that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach ( bool? value in Value )
+            {
+                builder.Append( " " );
+                builder.Append( CheckNa( value ) ? "NA" : value.ToString() );
+            }
+            if ( builder.Length > 0 )
+            {
+                builder.Remove( 0 , 1 );
+            }
+            return builder.ToString();
+        }
+
         #endregion
+
     }
 }

@@ -194,7 +194,7 @@ namespace RserveCLI2.Test
         {
             // Arrange
             var value1 = new SexpArrayDouble( new[] { 2.3 , double.NaN , 4 } );
-            var value2 = new SexpBool( true );
+            var value2 = new SexpArrayBool( true );
             var value3 = new SexpArrayInt( new[] { 1 , 3 } );
 
             // Act & Assert
@@ -475,7 +475,7 @@ namespace RserveCLI2.Test
                 {
                     if ( !double.IsNaN( x1[ i ].AsDouble ) )
                     {
-                        Assert.True( equals[ i ].AsBool , equals.ToString() );
+                        Assert.True( ( bool )equals[ i ].AsBool , equals.ToString() );
                     }
                 }
 

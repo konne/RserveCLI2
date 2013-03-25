@@ -190,7 +190,7 @@ namespace RserveCLI2.Test
         {
             // Arrange
             var value1 = new SexpArrayInt( new[] { 2 , -5 , SexpArrayInt.Na } );
-            var value2 = new SexpBool( true );
+            var value2 = new SexpArrayBool( true );
             var value3 = new SexpArrayDouble( new[] { 1.4 , 3.6 } );
 
             // Act & Assert
@@ -482,7 +482,7 @@ namespace RserveCLI2.Test
                 {
                     if ( !x1[ i ].IsNa )
                     {
-                        Assert.True( equals[ i ].AsBool , equals.ToString() );
+                        Assert.True( ( bool )equals[ i ].AsBool , equals.ToString() );
                     }
                 }
                 Assert.Equal( x1.IndexOf( new SexpArrayInt( 1 ) ) , 2 );
