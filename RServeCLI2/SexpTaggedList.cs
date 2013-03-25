@@ -4,34 +4,46 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
 namespace RserveCLI2
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// A tagged list.
     /// </summary>
     public class SexpTaggedList : Sexp , IEnumerable<KeyValuePair<string , Sexp>>
     {
+
+        # region Constructors
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpTaggedList"/> class.
+        /// Initializes a new instance of SexpTaggedList.
         /// </summary>
         public SexpTaggedList()
         {
             Value = new List<KeyValuePair<string , Sexp>>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of SexpTaggedList with an IEnumerable of KeyValuePair of string,Sexp
+        /// </summary>
+        public SexpTaggedList( IEnumerable<KeyValuePair<string , Sexp>> theValue )
+        {
+            Value = new List<KeyValuePair<string , Sexp>>();
+            Value.AddRange( theValue );
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Gets the number of elements contained in the ICollection.
         /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
         public override int Count
         {
             get
@@ -41,10 +53,8 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
+        /// Determines if the ICollection is read-only.
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
-        /// </returns>
         public override bool IsReadOnly
         {
             get
@@ -54,10 +64,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets an <see cref="T:System.Collections.Generic.ICollection`1"/> containing the keys of the <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// Gets an ICollection containing the keys of the IDictionary.
         /// </summary>
         /// <returns>
-        /// An <see cref="T:System.Collections.Generic.ICollection`1"/> containing the keys of the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// An ICollection containing the keys of the object that implements IDictionary.
         /// </returns>
         public override ICollection<string> Keys
         {
@@ -68,10 +78,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets an <see cref="T:System.Collections.Generic.ICollection`1"/> containing the values in the <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// Gets an ICollection containing the values in the IDictionary.
         /// </summary>
         /// <returns>
-        /// An <see cref="T:System.Collections.Generic.ICollection`1"/> containing the values in the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// An ICollection containing the values in the object that implements IDictionary.
         /// </returns>
         public override ICollection<Sexp> Values
         {
@@ -103,7 +113,6 @@ namespace RserveCLI2
             {
                 return Value[ index ].Value;
             }
-
             set
             {
                 throw new NotSupportedException();
@@ -149,49 +158,38 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Adds an item to the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to add to the ICollection.</param>
         public override void Add( Sexp item )
         {
             throw new NotSupportedException();
         }
 
         /// <summary>
-        /// Adds an element with the provided key and value to the <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// Adds an element with the provided key and value to the IDictionary.
         /// </summary>
-        /// <param name="key">
-        /// The object to use as the key of the element to add.
-        /// </param>
-        /// <param name="value">
-        /// The object to use as the value of the element to add.
-        /// </param>
+        /// <param name="key">The object to use as the key of the element to add.</param>
+        /// <param name="value">The object to use as the value of the element to add.</param>
         public override void Add( string key , Sexp value )
         {
             Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
         }
 
         /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes all items from the ICollection.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override void Clear()
         {
             Value.Clear();
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( Sexp item )
         {
@@ -199,13 +197,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( KeyValuePair<string , Sexp> item )
         {
@@ -213,31 +209,22 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.IDictionary`2"/> contains an element with the specified key.
+        /// Determines whether the IDictionary contains an element with the specified key.
         /// </summary>
-        /// <param name="key">
-        /// The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2"/>.
-        /// </param>
+        /// <param name="key">The key to locate in the IDictionary.</param>
         /// <returns>
-        /// true if the <see cref="T:System.Collections.Generic.IDictionary`2"/> contains an element with the key; otherwise, false.
+        /// true if the IDictionary contains an element with the key; otherwise, false.
         /// </returns>
-        /// <exception cref="T:System.ArgumentNullException">
-        /// <paramref name="key"/> is null.
-        /// </exception>
         public override bool ContainsKey( string key )
         {
             return Value.Exists( x => x.Key == key );
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             for ( int i = 0 ; i < Value.Count ; i++ )
@@ -247,14 +234,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( KeyValuePair<string , Sexp>[] array , int arrayIndex )
         {
             Value.CopyTo( array , arrayIndex );
@@ -264,7 +247,7 @@ namespace RserveCLI2
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
@@ -272,13 +255,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// Determines the index of a specific item in the IList.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the IList.</param>
         /// <returns>
-        /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
+        /// The index of item if found in the list; otherwise, -1.
         /// </returns>
         public override int IndexOf( Sexp item )
         {
@@ -286,30 +267,23 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes the first occurrence of a specific object from the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override bool Remove( Sexp item )
         {
             throw new NotSupportedException();
         }
 
         /// <summary>
-        /// Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// Removes the element with the specified key from the IDictionary.
         /// </summary>
-        /// <param name="key">
-        /// The key of the element to remove.
-        /// </param>
+        /// <param name="key">The key of the element to remove.</param>
         /// <returns>
-        /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+        /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original IDictionary.
         /// </returns>
         public override bool Remove( string key )
         {
@@ -317,38 +291,31 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes the first occurrence of a specific object from the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override bool Remove( KeyValuePair<string , Sexp> item )
         {
             return Value.Remove( item );
         }
 
         /// <summary>
-        /// Removes the <see cref="T:System.Collections.Generic.IList`1"/> item at the specified index.
+        /// Removes the IList item at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index of the item to remove.
-        /// </param>
+        /// <param name="index">The zero-based index of the item to remove.</param>
         public override void RemoveAt( int index )
         {
             Value.RemoveAt( index );
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a string that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A string that represents this instance.
         /// </returns>
         public override string ToString()
         {
@@ -370,18 +337,11 @@ namespace RserveCLI2
         /// <summary>
         /// Gets the value associated with the specified key.
         /// </summary>
-        /// <param name="key">
-        /// The key whose value to get.
-        /// </param>
-        /// <param name="value">
-        /// When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter. This parameter is passed uninitialized.
-        /// </param>
+        /// <param name="key">The key whose value to get.</param>
+        /// <param name="value">When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter. This parameter is passed uninitialized.</param>
         /// <returns>
-        /// true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"/> contains an element with the specified key; otherwise, false.
-        /// </returns>
-        /// <exception cref="T:System.ArgumentNullException">
-        /// <paramref name="key"/> is null.
-        /// </exception>
+        /// true if the object that implements IDictionary contains an element with the specified key; otherwise, false.
+        /// </returns>        
         public override bool TryGetValue( string key , out Sexp value )
         {
             throw new NotImplementedException();
@@ -397,7 +357,7 @@ namespace RserveCLI2
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         IEnumerator<KeyValuePair<string , Sexp>> IEnumerable<KeyValuePair<string , Sexp>>.GetEnumerator()
         {

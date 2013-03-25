@@ -4,20 +4,24 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
 namespace RserveCLI2
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
 
     /// <summary>
     /// An implementation of the QAP1 protocol used to communicate with Rserve
     /// </summary>
     internal class Qap1
     {
+
+        #region Constants and Fields
+
         #region DT_ declarations
 
         /// <summary>
@@ -39,9 +43,11 @@ namespace RserveCLI2
         /// Large data flag
         /// </summary>
         internal const byte DtLarge = 64;
+
         #endregion
 
         #region XT_ declarations
+
         /// <summary>
         /// The Sexp is NULL
         /// </summary>
@@ -141,12 +147,12 @@ namespace RserveCLI2
         /// Flag for the presence of attributes
         /// </summary>
         internal const byte XtHasAttr = 128;
+
         #endregion
 
-        /// <summary>
-        /// The socket used to communicate with Rserve
-        /// </summary>
-        private readonly Socket _socket;
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Initializes a new instance of the Qap1 class.
@@ -594,6 +600,15 @@ namespace RserveCLI2
             return res;
         }
 
+        #endregion
+
+        #region Private Members
+
+        /// <summary>
+        /// The socket used to communicate with Rserve
+        /// </summary>
+        private readonly Socket _socket;
+
         /// <summary>
         /// Submit a command to Rserve
         /// </summary>
@@ -673,5 +688,8 @@ namespace RserveCLI2
             var toConsume = ( int )length;
             return toConsume;
         }
+
+        #endregion
+
     }
 }

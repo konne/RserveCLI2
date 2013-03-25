@@ -3,11 +3,12 @@
 // Copyright (c) 2011, Oliver M. Haynold
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Text;
+
 namespace RserveCLI2
 {
-    using System;
-    using System.Text;
-
+    
     /// <summary>
     /// DES Encryption algorithm.
     /// Based on FreeBSD's libcrypt:

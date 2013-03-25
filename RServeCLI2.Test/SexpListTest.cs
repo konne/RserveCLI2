@@ -4,6 +4,7 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -18,13 +19,13 @@ namespace RserveCLI2.Test
             // note: this test was ported from RserveCLI.  Not in the typical Arrange/Act/Assert format
             using ( var service = new Rservice() )
             {
-                var mylist = new Dictionary<string , object> { { "One" , 1 } , { "Two" , 2.0 } , { "Three" , "three" } };
+                var mylist = new Dictionary<string , object> { { "One" , 1 } , { "Two" , 2.0 } , { "Three" , "three" } , { "Four" , true } , { "Five" , new DateTime( 2012 , 01 , 01 ) } };
                 var x1 = Sexp.Make( mylist );
                 service.RConnection[ "x1" ] = x1;
 
                 Assert.Equal( x1.Count , mylist.Count );
 
-                service.RConnection.Eval( "x2 <- list(One=1,Two=2.0,Three=\"three\")" );
+                service.RConnection.Eval( "x2 <- list(One=1,Two=2.0,Three='three',Four=TRUE,Five=as.Date('2012-01-01'))" );
                 var x2 = service.RConnection[ "x2" ];
 
                 Assert.Equal( x1.Count , x2.Count );

@@ -4,31 +4,43 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace RserveCLI2
 {
-    using System.Collections.Generic;
-
+    
     /// <summary>
     /// A List that can contain Sexps of various types. This is the basis for data frames, too.
     /// </summary>
     public class SexpList : SexpGenericList
     {
+
+        #region Constructors
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpList"/> class.
+        /// Initializes a new instance of SexpList.
         /// </summary>
         public SexpList()
         {
             Value = new List<Sexp>();
         }
 
+        /// <summary>
+        /// Initializes a new instance SexpList with an IEnumerable of Sexp
+        /// </summary>
+        public SexpList( IEnumerable<Sexp> theValue )
+        {
+            Value = new List<Sexp>();
+            Value.AddRange( theValue );
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Gets the number of elements contained in the ICollection.
         /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
         public override int Count
         {
             get
@@ -38,10 +50,8 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
+        /// Determines if the ICollection is read-only.
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
-        /// </returns>
         public override bool IsReadOnly
         {
             get
@@ -84,18 +94,16 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Adds an item to the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to add to the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to add to the ICollection.</param>
         public override void Add( Sexp item )
         {
             Value.Add( item );
         }
 
         /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes all items from the ICollection.
         /// </summary>
         public override void Clear()
         {
@@ -103,13 +111,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( Sexp item )
         {
@@ -117,14 +123,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
             Value.CopyTo( array , arrayIndex );
@@ -134,7 +136,7 @@ namespace RserveCLI2
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
@@ -142,13 +144,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// Determines the index of a specific item in the IList.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.IList`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the IList.</param>
         /// <returns>
-        /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
+        /// The index of item if found in the list; otherwise, -1.
         /// </returns>
         public override int IndexOf( Sexp item )
         {
@@ -156,13 +156,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Inserts an item to the <see cref="T:System.Collections.Generic.IList`1"/> at the specified index.
+        /// Inserts an item to the IList at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index at which <paramref name="item"/> should be inserted.
-        /// </param>
+        /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="item">
-        /// The object to insert into the <see cref="T:System.Collections.Generic.IList`1"/>.
+        /// The object to insert into the IList.
         /// </param>
         public override void Insert( int index , Sexp item )
         {
@@ -170,13 +168,11 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes the first occurrence of a specific object from the ICollection.
         /// </summary>
-        /// <param name="item">
-        /// The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
         public override bool Remove( Sexp item )
         {
@@ -184,16 +180,15 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Removes the <see cref="T:System.Collections.Generic.IList`1"/> item at the specified index.
+        /// Removes the IList item at the specified index.
         /// </summary>
-        /// <param name="index">
-        /// The zero-based index of the item to remove.
-        /// </param>
+        /// <param name="index">The zero-based index of the item to remove.</param>
         public override void RemoveAt( int index )
         {
             Value.RemoveAt( index );
         }
 
         #endregion
+
     }
 }

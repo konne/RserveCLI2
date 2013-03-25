@@ -4,16 +4,17 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
 namespace RserveCLI2
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
-
+    
     /// <summary>
     /// A connection to an R session
     /// </summary>

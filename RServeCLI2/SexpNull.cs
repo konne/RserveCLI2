@@ -4,24 +4,23 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace RserveCLI2
 {
-    using System;
-    using System.Collections.Generic;
-
+    
     /// <summary>
     /// The S NULL Value
     /// </summary>
     public class SexpNull : Sexp
     {
+
         #region Properties
 
         /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Gets the number of elements contained in the ICollection.
         /// </summary>
-        /// <returns>
-        /// The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </returns>
         public override int Count
         {
             get
@@ -34,7 +33,7 @@ namespace RserveCLI2
         /// Gets a value indicating whether this instance is NA.
         /// </summary>
         /// <value>
-        /// <c>true</c> if this instance is NA; otherwise, <c>false</c>.
+        /// true if this instance is NA; otherwise, false
         /// </value>
         public override bool IsNa
         {
@@ -59,9 +58,9 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
+        /// Gets a value indicating whether the ICollection is read-only.
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.
+        /// <returns>true if the ICollection is read-only; otherwise, false.
         /// </returns>
         public override bool IsReadOnly
         {
@@ -100,23 +99,19 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
+        /// Removes all items from the ICollection.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">
-        /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
-        /// </exception>
         public override void Clear()
         {
+            throw new NotSupportedException();
         }
 
         /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1"/> contains a specific value.
+        /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        /// <param name="item">
-        /// The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-        /// </param>
+        /// <param name="item">The object to locate in the ICollection.</param>
         /// <returns>
-        /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
+        /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
         public override bool Contains( Sexp item )
         {
@@ -124,23 +119,20 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Copies to.
+        /// Copies the elements of the ICollection to an Array, starting at a particular Array index.
         /// </summary>
-        /// <param name="array">
-        /// The array.
-        /// </param>
-        /// <param name="arrayIndex">
-        /// Index of the array.
-        /// </param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
         public override void CopyTo( Sexp[] array , int arrayIndex )
         {
+            throw new NotSupportedException();
         }
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
@@ -148,8 +140,8 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Converts the Sexp into the most appropriate native representation. Use with caution--this is more a rapid prototyping than
-        /// a production feature.
+        /// Converts the Sexp into the most appropriate native representation. 
+        /// Use with caution--this is more a rapid prototyping than a production feature.
         /// </summary>
         /// <returns>
         /// A CLI native representation of the Sexp
@@ -160,10 +152,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a string that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A string that represents this instance.
         /// </returns>
         public override string ToString()
         {
@@ -171,5 +163,6 @@ namespace RserveCLI2
         }
 
         #endregion
+
     }
 }

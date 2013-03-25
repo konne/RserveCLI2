@@ -5,23 +5,18 @@
 
 namespace RserveCLI2
 {
+
     /// <summary>
     /// A Sexp for Symnames. Same as a string, but can't be NA.
     /// </summary>
     public class SexpSymname : Sexp
     {
-        #region Constants and Fields
-
-        #endregion
 
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SexpSymname"/> class.
+        /// Initializes a new instance of the SexpSymname class with a string.
         /// </summary>
-        /// <param name="theValue">
-        /// The value.
-        /// </param>
         public SexpSymname( string theValue )
         {
             Value = theValue;
@@ -32,16 +27,24 @@ namespace RserveCLI2
         #region Properties
 
         /// <summary>
-        /// Gets or sets as string.
+        /// Gets as string.
         /// </summary>
-        /// <value>
-        /// As string.
-        /// </value>
         public override string AsString
         {
             get
             {
                 return Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets as array of string.
+        /// </summary>
+        public override string[] AsStrings
+        {
+            get
+            {
+                return new [] { Value };
             }
         }
 
@@ -55,8 +58,8 @@ namespace RserveCLI2
         #region Public Methods
 
         /// <summary>
-        /// Converts the Sexp into the most appropriate native representation. Use with caution--this is more a rapid prototyping than
-        /// a production feature.
+        /// Converts the Sexp into the most appropriate native representation. 
+        /// Use with caution--this is more a rapid prototyping than a production feature.
         /// </summary>
         /// <returns>
         /// A CLI native representation of the Sexp
@@ -67,10 +70,10 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a string that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A string that represents this instance.
         /// </returns>
         public override string ToString()
         {

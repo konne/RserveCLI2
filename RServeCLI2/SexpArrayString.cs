@@ -315,7 +315,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="item">The object to remove from the ICollection.</param>
         /// <returns>
-        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if <paramref name="item"/> is not found in the original ICollection.
+        /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
         public override bool Remove( Sexp item )
         {
