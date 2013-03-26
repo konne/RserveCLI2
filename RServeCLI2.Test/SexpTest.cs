@@ -17,7 +17,7 @@ namespace RserveCLI2.Test
     {
 
         [Fact]
-        public void RowNames_MatrixCreatedInRWithRowNames_ReturnsMatrixRowNames()
+        public void RowNamesGet_MatrixCreatedInRWithRowNames_ReturnsMatrixRowNames()
         {
             using ( var service = new Rservice() )
             {
@@ -37,7 +37,7 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void RowNames_MatrixCreatedInRWithOnlyColNames_ReturnsNullRowNames()
+        public void RowNamesGet_MatrixCreatedInRWithOnlyColNames_ReturnsNullRowNames()
         {
             using ( var service = new Rservice() )
             {
@@ -56,7 +56,7 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void RowNames_DataDoesNotHaveRowNames_ReturnsNull()
+        public void RowNamesGet_DataDoesNotHaveRowNames_ReturnsNull()
         {
             using ( var service = new Rservice() )
             {
@@ -78,7 +78,184 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void ColNames_MatrixCreatedInRWithColNames_ReturnsMatrixColNames()
+        public void RowNamesSet_DataDoesNotHaveRowNames_AddsRowNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+
+                // Act
+                test1.RowNames = new[] { "RowA1" , "RowB1" };
+                test2.RowNames = new[] { "RowA2" , "RowB2" };
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                test1 = service.RConnection[ "test1" ];
+                test2 = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.Equal( new[] { "RowA1" , "RowB1" } , test1.RowNames );
+                Assert.Equal( new[] { "RowA1" , "RowB1" } , service.RConnection[ "rownames( test1 )" ].AsStrings );
+                Assert.Null( test1.ColNames );                
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames( test1 )" ] );
+
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , test2.RowNames );
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , service.RConnection[ "rownames( test2 )" ].AsStrings );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , test2.ColNames );                
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , service.RConnection[ "colnames( test2 )" ].AsStrings );
+            }
+        }
+
+        [Fact]
+        public void RowNamesSet_DataHasRowNames_OverwriteRowsNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA1' , 'RowB1' ) , NULL ) )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+
+                // Act
+                test1.RowNames = new[] { "RowA3" , "RowB3" };
+                test2.RowNames = new[] { "RowA4" , "RowB4" };
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                test1 = service.RConnection[ "test1" ];
+                test2 = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.Equal( new[] { "RowA3" , "RowB3" } , test1.RowNames );
+                Assert.Equal( new[] { "RowA3" , "RowB3" } , service.RConnection[ "rownames( test1 )" ].AsStrings );
+                Assert.Null( test1.ColNames );
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames( test1 )" ] );
+                
+                Assert.Equal( new[] { "RowA4" , "RowB4" } , test2.RowNames );
+                Assert.Equal( new[] { "RowA4" , "RowB4" } , service.RConnection[ "rownames( test2 )" ].AsStrings );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , test2.ColNames );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , service.RConnection[ "colnames( test2 )" ].AsStrings );
+            }
+        }
+
+        [Fact]
+        public void RowNamesSet_SexpDoesNotHaveDimAttribute_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = new SexpArrayDouble();
+                Sexp test2 = service.RConnection[ "c( 1 , 2 , 3 )" ];
+
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.RowNames = new[] { "RowA" } );
+                Assert.Throws<NotSupportedException>( () => test2.RowNames = new[] { "RowA" } );
+            }
+        }
+
+        [Fact]
+        public void RowNamesSet_LengthOfRowNamesDoesNotMatchNumberOfRows_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" ];
+                Sexp test2 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" ];
+
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.RowNames = new[] { "RowA" } );
+                Assert.Throws<NotSupportedException>( () => test1.RowNames = new[] { "RowA" , "RowB" , "RowC" } );
+                Assert.Throws<NotSupportedException>( () => test2.RowNames = new[] { "RowA" } );
+                Assert.Throws<NotSupportedException>( () => test2.RowNames = new[] { "RowA" , "RowB" , "RowC" } );
+            }
+        }
+
+        [Fact]
+        public void RowNamesSet_SetToNull_ClearsRowNamesInSexp()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                service.RConnection.VoidEval( "test3 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA3' , 'RowB3' ) , NULL ) )" );
+                service.RConnection.VoidEval( "test4 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA4' , 'ColB4' , 'ColC4' ) ) )" );
+
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+                Sexp test3 = service.RConnection[ "test3" ];
+                Sexp test4 = service.RConnection[ "test4" ];
+
+                // Act
+                test1.RowNames = null;
+                test2.RowNames = null;
+                test3.RowNames = null;
+                test4.RowNames = null;
+
+                // Assert
+                Assert.Null( test1.RowNames );
+                Assert.Null( test2.RowNames );
+                Assert.Null( test3.RowNames );
+                Assert.Null( test4.RowNames );
+
+                Assert.Null( test1.ColNames );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , test2.ColNames );
+                Assert.Null( test3.ColNames );
+                Assert.Equal( new[] { "ColA4" , "ColB4" , "ColC4" } , test4.ColNames );
+            }
+        }
+
+        [Fact]
+        public void RowNamesSet_SetToNull_ClearsRowNamesInR()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                service.RConnection.VoidEval( "test3 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA3' , 'RowB3' ) , NULL ) )" );
+                service.RConnection.VoidEval( "test4 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA4' , 'ColB4' , 'ColC4' ) ) )" );
+
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+                Sexp test3 = service.RConnection[ "test3" ];
+                Sexp test4 = service.RConnection[ "test4" ];
+
+                // Act
+                test1.RowNames = null;
+                test2.RowNames = null;
+                test3.RowNames = null;
+                test4.RowNames = null;
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                service.RConnection[ "test3" ] = test3;
+                service.RConnection[ "test4" ] = test4;
+
+                // Assert
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test1)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test2)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test3)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test4)" ] );
+
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test1)" ] );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , service.RConnection[ "colnames(test2)" ].AsStrings );
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test3)" ] );
+                Assert.Equal( new[] { "ColA4" , "ColB4" , "ColC4" } , service.RConnection[ "colnames(test4)" ].AsStrings );
+
+            }
+        }
+
+        [Fact]
+        public void ColNamesGet_MatrixCreatedInRWithColNames_ReturnsMatrixColNames()
         {
             using ( var service = new Rservice() )
             {
@@ -98,7 +275,7 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void ColNames_MatrixCreatedInRWithOnlyRowNames_ReturnsNullColNames()
+        public void ColNamesGet_MatrixCreatedInRWithOnlyRowNames_ReturnsNullColNames()
         {
             using ( var service = new Rservice() )
             {
@@ -117,7 +294,7 @@ namespace RserveCLI2.Test
         }
 
         [Fact]
-        public void ColNames_DataDoesNotHaveColNames_ReturnsNull()
+        public void ColNamesGet_DataDoesNotHaveColNames_ReturnsNull()
         {
             using ( var service = new Rservice() )
             {
@@ -138,6 +315,185 @@ namespace RserveCLI2.Test
             }
         }
 
+        [Fact]
+        public void ColNamesSet_DataDoesNotHaveColNames_AddsColNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , NULL ) )" );
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+
+                // Act
+                test1.ColNames = new[] { "ColA1" , "ColB1" , "ColC1" };
+                test2.ColNames = new[] { "ColA2" , "ColB2" , "ColC2" };
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                test1 = service.RConnection[ "test1" ];
+                test2 = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.Null( test1.RowNames );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames( test1 )" ] );
+                Assert.Equal( new[] { "ColA1" , "ColB1" , "ColC1" } , test1.ColNames );
+                Assert.Equal( new[] { "ColA1" , "ColB1" , "ColC1" } , service.RConnection[ "colnames(test1)" ].AsStrings );
+
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , test2.RowNames );
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , service.RConnection[ "rownames(test2)" ].AsStrings );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , test2.ColNames );
+                Assert.Equal( new[] { "ColA2" , "ColB2" , "ColC2" } , service.RConnection[ "colnames(test2)" ].AsStrings );
+
+            }
+        }
+
+        [Fact]
+        public void ColNamesSet_DataHasColNames_OverwriteColNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA1' , 'ColB1' , 'ColC1' ) ) )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+
+                // Act
+                test1.ColNames = new[] { "ColA3" , "ColB3" , "ColC3" };
+                test2.ColNames = new[] { "ColA4" , "ColB4" , "ColC4" };
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                test1 = service.RConnection[ "test1" ];
+                test2 = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.Null( test1.RowNames );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames( test1 )" ] );
+                Assert.Equal( new[] { "ColA3" , "ColB3" , "ColC3" } , test1.ColNames );
+                Assert.Equal( new[] { "ColA3" , "ColB3" , "ColC3" } , service.RConnection[ "colnames( test1 )" ].AsStrings );
+
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , test2.RowNames );
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , service.RConnection[ "rownames( test2 )" ].AsStrings );
+                Assert.Equal( new[] { "ColA4" , "ColB4" , "ColC4" } , test2.ColNames );
+                Assert.Equal( new[] { "ColA4" , "ColB4" , "ColC4" } , service.RConnection[ "colnames( test2 )" ].AsStrings );
+            }
+        }
+
+        [Fact]
+        public void ColNamesSet_SexpDoesNotHaveDimAttribute_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = new SexpArrayDouble();
+                Sexp test2 = service.RConnection[ "c( 1 , 2 , 3 )" ];
+
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.ColNames = new[] { "RowA" } );
+                Assert.Throws<NotSupportedException>( () => test2.ColNames = new[] { "RowA" } );
+            }
+        }
+
+        [Fact]
+        public void ColNamesSet_LengthOfColNamesDoesNotMatchNumberOfCols_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" ];
+                Sexp test2 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" ];
+
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.ColNames = new[] { "ColA" } );
+                Assert.Throws<NotSupportedException>( () => test1.ColNames = new[] { "ColA" , "ColB" , "ColC" , "ColD" } );
+                Assert.Throws<NotSupportedException>( () => test2.ColNames = new[] { "ColA" } );
+                Assert.Throws<NotSupportedException>( () => test2.ColNames = new[] { "ColA" , "ColB" , "ColC" , "ColD" } );
+            }
+        }
+
+        [Fact]
+        public void ColNamesSet_SetToNull_ClearsColNamesInSexp()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                service.RConnection.VoidEval( "test3 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA3' , 'RowB3' ) , NULL ) )" );
+                service.RConnection.VoidEval( "test4 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA4' , 'ColB4' , 'ColC4' ) ) )" );
+
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+                Sexp test3 = service.RConnection[ "test3" ];
+                Sexp test4 = service.RConnection[ "test4" ];
+
+                // Act
+                test1.ColNames = null;
+                test2.ColNames = null;
+                test3.ColNames = null;
+                test4.ColNames = null;
+
+                // Assert
+                Assert.Null( test1.ColNames );
+                Assert.Null( test2.ColNames );
+                Assert.Null( test3.ColNames );
+                Assert.Null( test4.ColNames );
+
+                Assert.Null( test1.RowNames );
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , test2.RowNames );
+                Assert.Equal( new[] { "RowA3" , "RowB3" } , test3.RowNames );
+                Assert.Null( test4.RowNames );
+                
+            }
+        }
+
+        [Fact]
+        public void ColNamesSet_SetToNull_ClearsColNamesInR()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                service.RConnection.VoidEval( "test1 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE )" );
+                service.RConnection.VoidEval( "test2 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA2' , 'RowB2' ) , c( 'ColA2' , 'ColB2' , 'ColC2' ) ) )" );
+                service.RConnection.VoidEval( "test3 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( c( 'RowA3' , 'RowB3' ) , NULL ) )" );
+                service.RConnection.VoidEval( "test4 = matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , byrow = TRUE , dimnames = list( NULL , c( 'ColA4' , 'ColB4' , 'ColC4' ) ) )" );
+
+                Sexp test1 = service.RConnection[ "test1" ];
+                Sexp test2 = service.RConnection[ "test2" ];
+                Sexp test3 = service.RConnection[ "test3" ];
+                Sexp test4 = service.RConnection[ "test4" ];
+
+                // Act
+                test1.ColNames = null;
+                test2.ColNames = null;
+                test3.ColNames = null;
+                test4.ColNames = null;
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                service.RConnection[ "test3" ] = test3;
+                service.RConnection[ "test4" ] = test4;
+
+                // Assert
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test1)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test2)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test3)" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "colnames(test4)" ] );
+
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test1)" ] );
+                Assert.Equal( new[] { "RowA2" , "RowB2" } , service.RConnection[ "rownames(test2)" ].AsStrings );
+                Assert.Equal( new[] { "RowA3" , "RowB3" } , service.RConnection[ "rownames(test3)" ].AsStrings );
+                Assert.IsType<SexpNull>( service.RConnection[ "rownames(test4)" ] );                
+            }
+        }
+
+
         #region Make Methods
 
         [Fact]
@@ -149,6 +505,7 @@ namespace RserveCLI2.Test
             // ReSharper disable RedundantExplicitArrayCreation
             object objSexp = new SexpTaggedList();
             object objBool = true;
+            object objIEnumerableBool = new bool?[] { true , null , false };
             object objDouble = 4.4d;
             object objIEnumerableDouble = new[] { -5.4d , 2.3d };
             object obj2DArrayDouble = new double[ 2 , 2 ] { { -5.4d , 2.3d } , { 5.4d , -2.3d } };
@@ -168,6 +525,7 @@ namespace RserveCLI2.Test
             // Act & Assert
             Assert.IsType<SexpTaggedList>( Sexp.Make( objSexp ) );
             Assert.IsType<SexpArrayBool>( Sexp.Make( objBool ) );
+            Assert.IsType<SexpArrayBool>( Sexp.Make( objIEnumerableBool ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( objDouble ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( objIEnumerableDouble ) );
             Assert.IsType<SexpArrayDouble>( Sexp.Make( obj2DArrayDouble ) );
@@ -182,9 +540,9 @@ namespace RserveCLI2.Test
             Assert.IsType<SexpArrayString>( Sexp.Make( objString ) );
             Assert.IsType<SexpArrayString>( Sexp.Make( objIEnumerableString ) );
             Assert.IsType<SexpList>( Sexp.Make( objDictionary ) );
-            
+
         }
-        
+
         [Fact]
         public void Make_WithDate_CreatesSexpArrayDate()
         {
@@ -212,7 +570,7 @@ namespace RserveCLI2.Test
             // Assert
             Assert.IsType<SexpArrayDate>( sexp );
         }
-        
+
         [Fact]
         public void Make_WithDate_ProperlyStoresDateAsInt()
         {
@@ -308,7 +666,7 @@ namespace RserveCLI2.Test
             Assert.True( matrix3DecimalSexp.Equals( matrix3DoubleSexp ) );
             Assert.True( matrix4DecimalSexp.Equals( matrix4DoubleSexp ) );
         }
-        
+
         [Fact]
         public void Make_2dArrayOfDoubleWithRowAndColumnNames_ProperlyAssignsRowAndColumnNames()
         {
@@ -346,7 +704,6 @@ namespace RserveCLI2.Test
 
                 Assert.Equal( new[] { "RowA" , "RowB" } , matrix4FromR.RowNames );
                 Assert.Equal( new[] { "ColA" , "ColB" , "ColC" } , matrix4FromR.ColNames );
-
 
             }
         }
@@ -392,7 +749,7 @@ namespace RserveCLI2.Test
 
             }
         }
-        
+
         [Fact]
         public void Make_2dArrayOfIntWithRowAndColumnNames_ProperlyAssignsRowAndColumnNames()
         {
@@ -434,7 +791,7 @@ namespace RserveCLI2.Test
 
             }
         }
-        
+
         [Fact]
         public void Make_2dArrayOfDoubleWithWrongSizedRowAndColumnNames_ThrowsNotSupportedException()
         {

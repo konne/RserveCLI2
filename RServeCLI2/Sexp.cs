@@ -344,6 +344,66 @@ namespace RserveCLI2
         }
 
         /// <summary>
+        /// Gets colnames of this matrix.
+        /// </summary>
+        /// <remarks>
+        /// If none, returns null.  This matches R's behavior.  
+        /// For example, both colnames( matrix( 1 ) ) and colnames( c( 1 , 2 , 3 ) ) return NULL in R.
+        /// </remarks>
+        public string[] ColNames
+        {
+            get
+            {
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    string[] colNames = Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
+                    return colNames.Length == 0 ? null : colNames;
+                }
+                return null;
+            }
+            set
+            {
+                // contains dim attribute?  if not then its not something we can add col names to
+                if ( !Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Sexp is missing 'dim' attribute.  Cannot add col names" );
+                }
+
+                // get dimnames, default to NULL, NULL if not present
+                var dimnames = new SexpList( new[] { new SexpNull() , new SexpNull() } );
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    dimnames = ( SexpList )Attributes[ "dimnames" ];
+                }
+
+                // are we trying to clear out the col names?
+                if ( value == null )
+                {
+                    dimnames[ 1 ] = new SexpNull();
+                }
+                else
+                {
+                    int cols = Attributes[ "dim" ].AsInts[ 1 ];
+                    if ( cols != value.Length )
+                    {
+                        throw new NotSupportedException( "length of 'dimnames' [2] not equal to array extent" );
+                    }
+                    dimnames[ 1 ] = Make( value );
+                }
+                
+                // did we clear out everything?
+                if ( ( dimnames[ 0 ] is SexpNull ) && ( dimnames[ 1 ] is SexpNull ) )
+                {
+                    Attributes.Remove( "dimnames" );
+                }
+                else
+                {
+                    Attributes[ "dimnames" ] = dimnames;    
+                }                
+            }
+        }
+
+        /// <summary>
         /// Gets the number of elements contained in the ICollection.
         /// </summary>
         /// <returns>
@@ -419,7 +479,7 @@ namespace RserveCLI2
         /// <summary>
         /// Gets the names.
         /// </summary>
-        public virtual Sexp Names
+        public Sexp Names
         {
             get
             {
@@ -435,6 +495,66 @@ namespace RserveCLI2
             get
             {
                 return Attributes[ "dim" ].Count;
+            }
+        }
+        
+        /// <summary>
+        /// Gets rownames of this matrix.
+        /// </summary>
+        /// <remarks>
+        /// If none, returns null.  This matches R's behavior.  
+        /// For example, both rownames( matrix( 1 ) ) and rownames( c( 1 , 2 , 3 ) ) return NULL in R.
+        /// </remarks>
+        public string[] RowNames
+        {
+            get
+            {
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    string[] rowNames = Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
+                    return rowNames.Length == 0 ? null : rowNames;
+                }
+                return null;
+            }
+            set
+            {
+                // must contain dim attribute
+                if ( !Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Sexp is missing 'dim' attribute.  Cannot add row names" );
+                }
+
+                // get existing dimnames, if not there default to NULL, NULL
+                var dimnames = new SexpList( new[] { new SexpNull() , new SexpNull() } );
+                if ( Attributes.ContainsKey( "dimnames" ) )
+                {
+                    dimnames = ( SexpList )Attributes[ "dimnames" ];
+                }
+
+                // are we trying to clear out the row names?
+                if ( value == null )
+                {
+                    dimnames[ 0 ] = new SexpNull();
+                }
+                else
+                {
+                    int rows = Attributes[ "dim" ].AsInts[ 0 ];
+                    if ( rows != value.Length )
+                    {
+                        throw new NotSupportedException( "length of 'dimnames' [1] not equal to array extent" );
+                    }
+                    dimnames[ 0 ] = Make( value );
+                }
+
+                // did we clear out everything?
+                if ( ( dimnames[ 0 ] is SexpNull ) && ( dimnames[ 1 ] is SexpNull ) )
+                {
+                    Attributes.Remove( "dimnames" );
+                }
+                else
+                {
+                    Attributes[ "dimnames" ] = dimnames;
+                }                
             }
         }
 
@@ -465,47 +585,7 @@ namespace RserveCLI2
                 return ( ICollection<object> )Values;
             }
         }
-
-        /// <summary>
-        /// Gets rownames of this matrix.
-        /// </summary>
-        /// <remarks>
-        /// If none, returns null.  This matches R's behavior.  
-        /// For example, both rownames( matrix( 1 ) ) and rownames( c( 1 , 2 , 3 ) ) return NULL in R.
-        /// </remarks>
-        public string[] RowNames
-        {
-            get
-            {
-                if ( Attributes.ContainsKey( "dimnames" ) )
-                {
-                    string[] rowNames = Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
-                    return rowNames.Length == 0 ? null : rowNames;
-                }
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Gets colnames of this matrix.
-        /// </summary>
-        /// <remarks>
-        /// If none, returns null.  This matches R's behavior.  
-        /// For example, both colnames( matrix( 1 ) ) and colnames( c( 1 , 2 , 3 ) ) return NULL in R.
-        /// </remarks>
-        public string[] ColNames
-        {
-            get
-            {
-                if ( Attributes.ContainsKey( "dimnames" ) )
-                {
-                    string[] colNames = Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
-                    return colNames.Length == 0 ? null : colNames;
-                }
-                return null;
-            }
-        }
-
+        
         #endregion
 
         #region Indexers
@@ -608,7 +688,6 @@ namespace RserveCLI2
             {
                 return this[ index ];
             }
-
             set
             {
                 this[ index ] = Make( value );
@@ -628,7 +707,6 @@ namespace RserveCLI2
             {
                 return this[ key ];
             }
-
             set
             {
                 this[ key ] = Make( value );
@@ -649,9 +727,10 @@ namespace RserveCLI2
         /// The Sexp made.
         /// </returns>
         public static Sexp Make( object x )
-        {        
+        {
             if ( x is Sexp                         ) { return       ( Sexp )x;                           }
-            if ( x is bool                         ) { return Make( ( bool )x                         ); }
+            if ( x is bool?                        ) { return Make( ( bool? )x                        ); }
+            if ( x is IEnumerable<bool?>           ) { return Make( ( IEnumerable<bool?> )x           ); }
             if ( x is double                       ) { return Make( ( double )x                       ); }
             if ( x is IEnumerable<double>          ) { return Make( ( IEnumerable<double> )x          ); }
             if ( x is double[ , ]                  ) { return Make( ( double[ , ] )x                  ); }
@@ -659,8 +738,8 @@ namespace RserveCLI2
             if ( x is IEnumerable<decimal>         ) { return Make( ( IEnumerable<decimal> )x         ); }
             if ( x is decimal[ , ]                 ) { return Make( ( decimal[ , ] )x                 ); }
             if ( x is int                          ) { return Make( ( int )x                          ); }
-            if ( x is int[ , ]                     ) { return Make( ( int[ , ] )x                     ); }
             if ( x is IEnumerable<int>             ) { return Make( ( IEnumerable<int> )x             ); }
+            if ( x is int[ , ]                     ) { return Make( ( int[ , ] )x                     ); }            
             if ( x is DateTime                     ) { return Make( ( DateTime )x                     ); }
             if ( x is IEnumerable<DateTime>        ) { return Make( ( IEnumerable<DateTime> )x        ); }
             if ( x is string                       ) { return Make( ( string )x                       ); }
@@ -673,7 +752,17 @@ namespace RserveCLI2
         /// Makes a SexpArrayBool from a bool.
         /// </summary>
         /// <param name="x">The bool to convert into an SexpArrayBool.</param>
-        public static Sexp Make( bool x )
+        public static Sexp Make( bool? x )
+        {
+            return new SexpArrayBool( x );
+        }
+
+        /// <summary>
+        /// Makes a SexpArrayBool from a bool.
+        /// </summary>
+        /// <param name="names">Vector names</param>
+        /// <param name="x">The IEnumerable of bool to convert into an SexpArrayBool.</param>
+        public static Sexp Make( IEnumerable<bool?> x , IEnumerable<string> names = null )
         {
             return new SexpArrayBool( x );
         }
@@ -691,7 +780,8 @@ namespace RserveCLI2
         /// Makes a SexpArrayInt from an IEnumerable of int.
         /// </summary>
         /// <param name="xs">The IEnumerable of int to convert into an SexpArrayInt.</param>
-        public static Sexp Make( IEnumerable<int> xs )
+        /// <param name="names">Vector names</param>
+        public static Sexp Make( IEnumerable<int> xs , IEnumerable<string> names = null )
         {
             return new SexpArrayInt( xs );
         }
@@ -710,7 +800,8 @@ namespace RserveCLI2
         /// Makes a SexpArrayDate from an IEnumerable of DateTime
         /// </summary>
         /// <param name="xs">The IEnumerable of DateTime to convert into an SexpArrayDate.</param>
-        public static Sexp Make( IEnumerable<DateTime> xs )
+        /// <param name="names">Vector names</param>
+        public static Sexp Make( IEnumerable<DateTime> xs , IEnumerable<string> names = null )
         {
             return new SexpArrayDate( xs );
         }
@@ -728,7 +819,8 @@ namespace RserveCLI2
         /// Makes a SexpArrayDouble from an IEnumerable of decimal.
         /// </summary>
         /// <param name="xs">The IEnumerable of decimal to convert into an SexpArrayDouble.</param>
-        public static Sexp Make( IEnumerable<decimal> xs )
+        /// <param name="names">Vector names</param>
+        public static Sexp Make( IEnumerable<decimal> xs , IEnumerable<string> names = null  )
         {
             return Make( xs.Select( Convert.ToDouble ) );
         }
@@ -767,7 +859,8 @@ namespace RserveCLI2
         /// Makes a SexpArrayDouble from an IEnumerable of double.
         /// </summary>
         /// <param name="xs">The IEnumerable of double to convert into an SexpArrayDouble.</param>
-        public static Sexp Make( IEnumerable<double> xs )
+        /// <param name="names">Vector names</param>
+        public static Sexp Make( IEnumerable<double> xs , IEnumerable<string> names = null )
         {
             return new SexpArrayDouble( xs );
         }
@@ -792,7 +885,14 @@ namespace RserveCLI2
             }
             var res = new SexpArrayDouble( fortranXs );
             res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
-            AddDimNamesAttribute( res , rows , cols , rowNames , colNames );
+            if ( rowNames != null )
+            {
+                res.RowNames = rowNames.ToArray();
+            }
+            if ( colNames != null )
+            {
+                res.ColNames = colNames.ToArray();
+            }
             return res;
         }
 
@@ -817,7 +917,14 @@ namespace RserveCLI2
 
             var res = new SexpArrayInt( fortranXs );
             res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
-            AddDimNamesAttribute( res , rows , cols , rowNames , colNames );
+            if ( rowNames != null )
+            {
+                res.RowNames = rowNames.ToArray();
+            }
+            if ( colNames != null )
+            {
+                res.ColNames = colNames.ToArray();
+            }
             return res;
         }
 
@@ -834,7 +941,8 @@ namespace RserveCLI2
         /// Makes a SexpArrayString from an IEnumerable of string.
         /// </summary>
         /// <param name="xs">The IEnumerable of string to convert into an SexpArrayString.</param>
-        public static Sexp Make( IEnumerable<string> xs )
+        /// <param name="names">Vector names</param>
+        public static Sexp Make( IEnumerable<string> xs , IEnumerable<string> names = null )
         {
             return new SexpArrayString( xs );
         }
@@ -1509,47 +1617,6 @@ namespace RserveCLI2
         }
 
         #endregion
-
-        #endregion
-
-        #region Private Members
-
-        /// <summary>
-        /// Adds dimnames attribute to an Sexp
-        /// </summary>
-        private static void AddDimNamesAttribute( Sexp data , int rows , int cols , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
-        {
-            if ( ( rowNames != null ) || ( colNames != null ) )
-            {
-                var dimnames = new SexpList();
-                if ( rowNames == null )
-                {
-                    dimnames.Add( new SexpNull() );
-                }
-                else
-                {
-                    if ( rows != rowNames.Count() )
-                    {
-                        throw new NotSupportedException( "length of 'dimnames' [1] not equal to array extent" );
-                    }
-                    dimnames.Add( Make( rowNames ) );
-                }
-
-                if ( colNames == null )
-                {
-                    dimnames.Add( new SexpNull() );
-                }
-                else
-                {
-                    if ( cols != colNames.Count() )
-                    {
-                        throw new NotSupportedException( "length of 'dimnames' [2] not equal to array extent" );
-                    }
-                    dimnames.Add( Make( colNames ) );
-                }
-                data.Attributes.Add( "dimnames" , dimnames );
-            }
-        }
 
         #endregion
 
