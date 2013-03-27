@@ -785,7 +785,12 @@ namespace RserveCLI2
         /// <param name="x">The IEnumerable of bool to convert into an SexpArrayBool.</param>
         public static Sexp Make( IEnumerable<bool?> x , IEnumerable<string> names = null )
         {
-            return new SexpArrayBool( x );
+            var value = new SexpArrayBool( x );
+            if ( names != null )
+            {
+                value.Names = names.ToArray();
+            }
+            return value;
         }
 
         /// <summary>
@@ -804,7 +809,12 @@ namespace RserveCLI2
         /// <param name="names">Vector names</param>
         public static Sexp Make( IEnumerable<int> xs , IEnumerable<string> names = null )
         {
-            return new SexpArrayInt( xs );
+            var value = new SexpArrayInt( xs );
+            if ( names != null )
+            {
+                value.Names = names.ToArray();
+            }
+            return value;
         }
 
         /// <summary>
@@ -824,7 +834,12 @@ namespace RserveCLI2
         /// <param name="names">Vector names</param>
         public static Sexp Make( IEnumerable<DateTime> xs , IEnumerable<string> names = null )
         {
-            return new SexpArrayDate( xs );
+            var value = new SexpArrayDate( xs );
+            if ( names != null )
+            {
+                value.Names = names.ToArray();
+            }
+            return value;
         }
 
         /// <summary>
@@ -843,7 +858,7 @@ namespace RserveCLI2
         /// <param name="names">Vector names</param>
         public static Sexp Make( IEnumerable<decimal> xs , IEnumerable<string> names = null  )
         {
-            return Make( xs.Select( Convert.ToDouble ) );
+            return Make( xs.Select( Convert.ToDouble ) , names );
         }
 
         /// <summary>
@@ -883,7 +898,12 @@ namespace RserveCLI2
         /// <param name="names">Vector names</param>
         public static Sexp Make( IEnumerable<double> xs , IEnumerable<string> names = null )
         {
-            return new SexpArrayDouble( xs );
+            var value = new SexpArrayDouble( xs );
+            if ( names != null )
+            {
+                value.Names = names.ToArray();
+            }
+            return value;
         }
 
         /// <summary>
@@ -965,7 +985,12 @@ namespace RserveCLI2
         /// <param name="names">Vector names</param>
         public static Sexp Make( IEnumerable<string> xs , IEnumerable<string> names = null )
         {
-            return new SexpArrayString( xs );
+            var value = new SexpArrayString( xs );
+            if ( names != null )
+            {
+                value.Names = names.ToArray();
+            }
+            return value;
         }
 
         /// <summary>

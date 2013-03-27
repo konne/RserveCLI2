@@ -1056,6 +1056,198 @@ namespace RserveCLI2.Test
             // ReSharper restore RedundantArgumentDefaultValue            
         }
 
+        [Fact]
+        public void Make_WithIEnumerableNullableBoolAndNames_CreatesNamedLogicalVector()
+        {
+            using ( var service = new Rservice() )
+            {                
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new bool?[] { true } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new bool?[] { false , true , null } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayBool>( test1A );
+                Equals( new[] { "one" } , test1A.Names );
+                Equals( new bool?[] { true } , test1A.AsBools );
+
+                Assert.IsType<SexpArrayBool>( test1B );
+                Equals( new[] { "one" } , test1B.Names );
+                Equals( new bool?[] { true } , test1B.AsBools );
+
+                Assert.IsType<SexpArrayBool>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new bool?[] { false , true , null } , test2A.AsBools );
+
+                Assert.IsType<SexpArrayBool>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new bool?[] { false , true , null } , test2B.AsBools );
+            }
+        }
+
+        [Fact]
+        public void Make_WithIEnumerableIntAndNames_CreatesNamedIntVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new [] { 1 } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new [] { -1 , SexpArrayInt.Na , 5 } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayInt>( test1A );
+                Equals( new[] { "one" } , test1A.Names );
+                Equals( new [] { 1 } , test1A.AsInts );
+
+                Assert.IsType<SexpArrayInt>( test1B );
+                Equals( new[] { "one" } , test1B.Names );
+                Equals( new[] { 1 } , test1B.AsInts );
+
+                Assert.IsType<SexpArrayInt>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new [] { -1 , SexpArrayInt.Na , 5 } , test2A.AsInts );
+
+                Assert.IsType<SexpArrayInt>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new[] { -1 , SexpArrayInt.Na , 5 } , test2B.AsInts );
+            }
+        }
+
+        [Fact]
+        public void Make_WithIEnumerableDateAndNames_CreatesNamedDateVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new[] { new DateTime( 2011 , 01 , 01 ) } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new[] { new DateTime( 2012 , 04 , 05 ) , new DateTime( 2009 , 07 , 15 ) , new DateTime( 2008 , 12 , 06 ) } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayDate>( test1A );
+                Equals( new[] { new DateTime( 2011 , 01 , 01 ) } , test1A.Names );
+                Equals( new[] { 2.2 } , test1A.AsDates );
+
+                Assert.IsType<SexpArrayDate>( test1B );
+                Equals( new[] { new DateTime( 2011 , 01 , 01 ) } , test1B.Names );
+                Equals( new[] { 2.2 } , test1B.AsDates );
+
+                Assert.IsType<SexpArrayDate>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new[] { new DateTime( 2012 , 04 , 05 ) , new DateTime( 2009 , 07 , 15 ) , new DateTime( 2008 , 12 , 06 ) } , test2A.AsDates );
+
+                Assert.IsType<SexpArrayDate>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new[] { new DateTime( 2012 , 04 , 05 ) , new DateTime( 2009 , 07 , 15 ) , new DateTime( 2008 , 12 , 06 ) } , test2B.AsDates );
+            }
+        }
+
+        [Fact]
+        public void Make_WithIEnumerableDecimalAndNames_CreatesNamedNumericVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new[] { 2.2m } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new[] { -1.1m , 4.1m , 5.6m } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayDouble>( test1A );
+                Equals( new[] { "one" } , test1A.Names );
+                Equals( new[] { 2.2m } , test1A.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test1B );
+                Equals( new[] { "one" } , test1B.Names );
+                Equals( new[] { 2.2m } , test1B.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new[] { -1.1m , 4.1m , 5.6m } , test2A.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new[] { -1.1m , 4.1m , 5.6m } , test2B.AsDoubles );
+            }
+        }
+        
+        [Fact]
+        public void Make_WithIEnumerableDoubleAndNames_CreatesNamedNumericVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new[] { 2.2 } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new[] { -1.1 , SexpArrayDouble.Na , 5.6 } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayDouble>( test1A );
+                Equals( new[] { "one" } , test1A.Names );
+                Equals( new[] { 2.2 } , test1A.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test1B );
+                Equals( new[] { "one" } , test1B.Names );
+                Equals( new[] { 2.2 } , test1B.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new[] { -1.1 , SexpArrayDouble.Na , 5.6 } , test2A.AsDoubles );
+
+                Assert.IsType<SexpArrayDouble>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new[] { -1.1 , SexpArrayDouble.Na , 5.6 } , test2B.AsDoubles );
+            }
+        }
+        
+        [Fact]
+        public void Make_WithIEnumerableStringAndNames_CreatesNamedCharacterVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange & Act
+                Sexp test1A = Sexp.Make( new[] { "charming" } , new[] { "one" } );
+                Sexp test2A = Sexp.Make( new[] { "almost" , "done" , "here" } , new[] { "one" , "two" , "three" } );
+                service.RConnection[ "test1" ] = test1A;
+                service.RConnection[ "test2" ] = test2A;
+                Sexp test1B = service.RConnection[ "test1" ];
+                Sexp test2B = service.RConnection[ "test2" ];
+
+                // Assert
+                Assert.IsType<SexpArrayString>( test1A );
+                Equals( new[] { "one" } , test1A.Names );
+                Equals( new[] { "charming" } , test1A.AsStrings );
+
+                Assert.IsType<SexpArrayString>( test1B );
+                Equals( new[] { "one" } , test1B.Names );
+                Equals( new[] { "charming" } , test1B.AsStrings );
+
+                Assert.IsType<SexpArrayString>( test2A );
+                Equals( new[] { "one" , "two" , "three" } , test2A.Names );
+                Equals( new[] { "almost" , "done" , "here" } , test2A.AsStrings );
+
+                Assert.IsType<SexpArrayString>( test2B );
+                Equals( new[] { "one" , "two" , "three" } , test2B.Names );
+                Equals( new[] { "almost" , "done" , "here" } , test2B.AsStrings );
+            }
+        }
+
         # endregion
 
     }
