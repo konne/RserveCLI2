@@ -21,3 +21,4 @@ Added Features
 - Create SEXP from decimal
 - Can now create usable data.frames
 - Bi-directional support for matrix row/column names
+- Can now make named vectors
