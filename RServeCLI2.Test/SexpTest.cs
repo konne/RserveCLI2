@@ -493,6 +493,213 @@ namespace RserveCLI2.Test
             }
         }
 
+        [Fact]
+        public void NamesGet_VectorHasNoNames_ReturnsNull()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( 1 , 2 , 3 , 4 )" ];
+                Sexp test2 = service.RConnection[ "numeric()" ];
+                Sexp test3 = service.RConnection[ "c( TRUE , NA , FALSE )" ];
+                Sexp test4 = service.RConnection[ "'abcde'" ];
+
+                // Act & Assert
+                Assert.Null( test1.Names );
+                Assert.Null( test2.Names );
+                Assert.Null( test3.Names );
+                Assert.Null( test4.Names );               
+            }
+        }
+
+        [Fact]
+        public void NamesGet_Matrix_ReturnsNull()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 )" ];
+                Sexp test2 = service.RConnection[ "matrix( c( 1 , 2 , 3 , 4 , 5 , 6 ) , nrow = 2 , dimnames = list( c( 'Row1' , 'Row2' ) , c( 'Col1' , 'Col2' , 'Col3' ) ) )" ];
+
+                // Act & Assert
+                Assert.Null( test1.Names );
+                Assert.Null( test2.Names );
+            }
+        }
+
+        [Fact]
+        public void NamesGet_VectorHasNames_ReturnsNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( A = 1 , B = 2 , C = 3 , D = 4 )" ];
+                Sexp test2 = service.RConnection[ "c( Double1 = 1.1 , Double2 = 2.2 , Double3 = 3.3 , Double4 = 4.4 )" ];
+                Sexp test3 = service.RConnection[ "c( First = TRUE , Second = NA , Third = FALSE )" ];
+                Sexp test4 = service.RConnection[ "c( Alfred = 'Hitchcock' )" ];
+                service.RConnection.VoidEval( "test5 = c( 1 , 2 ); names( test5 ) = c( 'Go' , 'Fast' )" );
+                Sexp test5 = service.RConnection[ "test5" ];
+                
+                // Act & Assert
+                Assert.Equal( new[] { "A" , "B" , "C" , "D" } , test1.Names );
+                Assert.Equal( new[] { "Double1" , "Double2" , "Double3" , "Double4" } , test2.Names );
+                Assert.Equal( new[] { "First" , "Second" , "Third" } , test3.Names );
+                Assert.Equal( new[] { "Alfred" } , test4.Names );
+                Assert.Equal( new[] { "Go" , "Fast" } , test5.Names );
+            }
+        }
+
+        [Fact]
+        public void NamesSet_SetToNull_ClearsNames()
+        {
+            using ( var service = new Rservice() )
+            {
+
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( A = 1 , B = 2 , C = 3 , D = 4 )" ];
+                Sexp test2 = service.RConnection[ "c( 1.2 , 2.1 , 3.2 , 4.4 )" ];
+                
+                // Act
+                test1.Names = null;
+                test2.Names = null;
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+
+                // Act & Assert
+                Assert.Null( test1.Names );
+                Assert.Null( test2.Names );
+                Assert.IsType<SexpNull>( service.RConnection[ "names( test1 )" ] );
+                Assert.IsType<SexpNull>( service.RConnection[ "names( test2 )" ] );
+
+            }
+        }
+
+        [Fact]
+        public void NamesSet_AppliedToMatrix_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange
+                Sexp test1 = service.RConnection[ "matrix( 1 : 6 , nrow = 2 )" ];
+                Sexp test2 = Sexp.Make( new double[ , ] { { 2 , 3 } , { 4 , 5 } } );
+
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.Names = new [] { "abcd" } );
+                Assert.Throws<NotSupportedException>( () => test2.Names = new[] { "abcd" } );
+            }
+        }
+
+        [Fact]
+        public void NamesSet_NamesCountDoesNotMatchValuesCount_ThrowsNotSupportedException()
+        {
+            using ( var service = new Rservice() )
+            {
+                
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( A = 1 , B = 2 , C = 3 , D = 4 )" ];
+                Sexp test2 = service.RConnection[ "c( 1.1 , 2.2 , 3.3 , 4.4 )" ];
+                Sexp test3 = service.RConnection[ "c( First = TRUE , Second = NA , Third = FALSE )" ];
+                Sexp test4 = service.RConnection[ "'Hitchcock'" ];
+                
+                // Act & Assert
+                Assert.Throws<NotSupportedException>( () => test1.Names = new string[] { } );
+                Assert.Throws<NotSupportedException>( () => test1.Names = new [] { "one" , "two" , "three" } );
+                Assert.Throws<NotSupportedException>( () => test1.Names = new [] { "one" , "two" , "three" , "four" , "five" } );
+
+                Assert.Throws<NotSupportedException>( () => test2.Names = new string[] { } );
+                Assert.Throws<NotSupportedException>( () => test2.Names = new[] { "one" , "two" , "three" } );
+                Assert.Throws<NotSupportedException>( () => test2.Names = new[] { "one" , "two" , "three" , "four" , "five" } );
+                
+                Assert.Throws<NotSupportedException>( () => test3.Names = new[] { "one" } );
+                Assert.Throws<NotSupportedException>( () => test3.Names = new[] { "one" , "two" } );
+                Assert.Throws<NotSupportedException>( () => test3.Names = new[] { "one" , "two" , "three" , "four" } );
+
+                Assert.Throws<NotSupportedException>( () => test4.Names = new string[] {  } );
+                Assert.Throws<NotSupportedException>( () => test4.Names = new [] { "one" , "two" , "three" } );
+
+            }
+        }
+
+        [Fact]
+        public void NamesSet_VectorAlreadyContainsNames_NamesAreOverwritten()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( A = 1 , B = 2 , C = 3 , D = 4 )" ];
+                Sexp test2 = service.RConnection[ "c( Double1 = 1.1 , Double2 = 2.2 , Double3 = 3.3 , Double4 = 4.4 )" ];
+                Sexp test3 = service.RConnection[ "c( First = TRUE , Second = NA , Third = FALSE )" ];
+                Sexp test4 = service.RConnection[ "c( Alfred = 'Hitchcock' )" ];
+
+                var newNames1 = new[] { "E" , "F" , "G" , "H" };
+                var newNames2 = new[] { "D1" , "D2" , "D3" , "D4" };
+                var newNames3 = new[] { "Fourth" , "Fifth" , "Sixth" };
+                var newNames4 = new[] { "Al" };
+
+                // Act
+                test1.Names = newNames1;
+                test2.Names = newNames2;
+                test3.Names = newNames3;
+                test4.Names = newNames4;
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                service.RConnection[ "test3" ] = test3;
+                service.RConnection[ "test4" ] = test4;
+                
+                // Assert
+                Assert.Equal( newNames1 , test1.Names );
+                Assert.Equal( newNames2 , test2.Names );
+                Assert.Equal( newNames3 , test3.Names );
+                Assert.Equal( newNames4 , test4.Names );
+
+                Assert.Equal( newNames1 , service.RConnection[ "names( test1 )" ].AsStrings );
+                Assert.Equal( newNames2 , service.RConnection[ "names( test2 )" ].AsStrings );
+                Assert.Equal( newNames3 , service.RConnection[ "names( test3 )" ].AsStrings );
+                Assert.Equal( newNames4 , service.RConnection[ "names( test4 )" ].AsStrings );
+            }
+        }
+
+        [Fact]
+        public void NamesSet_VectorDoesNotOriginallyContainNames_NamesAreAddedToVector()
+        {
+            using ( var service = new Rservice() )
+            {
+                // Arrange
+                Sexp test1 = service.RConnection[ "c( 1 , 2 , 3 , 4 )" ];
+                Sexp test2 = service.RConnection[ "c( 1.1 , 2.2 , 3.3 , 4.4 )" ];
+                Sexp test3 = service.RConnection[ "c( TRUE , NA , FALSE )" ];
+                Sexp test4 = service.RConnection[ "'Hitchcock'" ];
+
+                var newNames1 = new[] { "E" , "F" , "G" , "H" };
+                var newNames2 = new[] { "D1" , "D2" , "D3" , "D4" };
+                var newNames3 = new[] { "Fourth" , "Fifth" , "Sixth" };
+                var newNames4 = new[] { "Al" };
+
+                // Act
+                test1.Names = newNames1;
+                test2.Names = newNames2;
+                test3.Names = newNames3;
+                test4.Names = newNames4;
+                service.RConnection[ "test1" ] = test1;
+                service.RConnection[ "test2" ] = test2;
+                service.RConnection[ "test3" ] = test3;
+                service.RConnection[ "test4" ] = test4;
+
+                // Assert
+                Assert.Equal( newNames1 , test1.Names );
+                Assert.Equal( newNames2 , test2.Names );
+                Assert.Equal( newNames3 , test3.Names );
+                Assert.Equal( newNames4 , test4.Names );
+
+                Assert.Equal( newNames1 , service.RConnection[ "names( test1 )" ].AsStrings );
+                Assert.Equal( newNames2 , service.RConnection[ "names( test2 )" ].AsStrings );
+                Assert.Equal( newNames3 , service.RConnection[ "names( test3 )" ].AsStrings );
+                Assert.Equal( newNames4 , service.RConnection[ "names( test4 )" ].AsStrings );
+            }
+        }
 
         #region Make Methods
 

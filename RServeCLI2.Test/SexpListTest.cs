@@ -33,8 +33,8 @@ namespace RserveCLI2.Test
                 for ( int i = 0 ; i < x1.Count ; i++ )
                 {
                     Assert.True( x1[ i ].Equals( x2[ i ] ) );
-                    Assert.Equal( x1.Names[ i ].AsString , x2.Names[ i ].AsString );
-                    Assert.True( x1[ x1.Names[ i ].AsString ].Equals( x2[ x2.Names[ i ].AsString ] ) );
+                    Assert.Equal( x1.Names[ i ] , x2.Names[ i ] );
+                    Assert.True( x1[ x1.Names[ i ] ].Equals( x2[ x2.Names[ i ] ] ) );
                 }
             }
         }

@@ -472,18 +472,39 @@ namespace RserveCLI2
         {
             get
             {
-                return Names.AsStrings;
+                return Names;
             }
         }
 
         /// <summary>
         /// Gets the names.
         /// </summary>
-        public Sexp Names
+        public string[] Names
         {
             get
             {
-                return Attributes[ "names" ];
+                if ( Attributes.ContainsKey( "names" ) )
+                {
+                    return Attributes[ "names" ].AsStrings;
+                }
+                return null;
+            }
+            set
+            {
+                if ( value == null )
+                {
+                    Attributes.Remove( "names" );
+                    return;
+                }
+                if ( Attributes.ContainsKey( "dim" ) )
+                {
+                    throw new NotSupportedException( "Cannot set names on matrix.  use RowNames or ColNames" );
+                }
+                if ( Count != value.Length )
+                {
+                    throw new NotSupportedException( string.Format( "'names' attribute [{0}] must be the same length as the vector [{1}]" , value.Length , Count ) );
+                }
+                Attributes[ "names" ] = new SexpArrayString( value );
             }
         }
 
@@ -652,7 +673,7 @@ namespace RserveCLI2
         {
             get
             {
-                var index = Array.IndexOf( Names.AsStrings , key );
+                var index = Array.IndexOf( Names , key );
                 if ( index < 0 )
                 {
                     throw new KeyNotFoundException( "Could not find key '" + key + "' in names." );
@@ -663,7 +684,7 @@ namespace RserveCLI2
 
             set
             {
-                var index = Array.IndexOf( Names.AsStrings , key );
+                var index = Array.IndexOf( Names , key );
                 if ( index < 0 )
                 {
                     Add( key , value );
@@ -1397,7 +1418,7 @@ namespace RserveCLI2
             }
 
             Add( value );
-            Names.Add( new SexpArrayString( key ) );
+            Attributes[ "names" ].Add( key );
         }
 
         /// <summary>
@@ -1433,14 +1454,14 @@ namespace RserveCLI2
                 return false;
             }
 
-            var index = Array.IndexOf( Names.AsStrings , key );
+            var index = Array.IndexOf( Names , key );
             if ( index < 0 )
             {
                 return false;
             }
 
             RemoveAt( index );
-            Names.RemoveAt( index );
+            Attributes[ "names" ].RemoveAt( index );
             return true;
         }
 
