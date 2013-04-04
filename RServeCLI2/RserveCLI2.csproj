@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>RserveCLI2</RootNamespace>
     <AssemblyName>RserveCLI2</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>

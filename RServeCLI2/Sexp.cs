@@ -1569,7 +1569,7 @@ namespace RserveCLI2
         /// </returns>
         IEnumerator<object> IEnumerable<object>.GetEnumerator()
         {
-            return GetEnumerator();
+            return ( IEnumerator<object> )GetEnumerator();
         }
 
         #endregion

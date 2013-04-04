@@ -322,7 +322,7 @@ namespace RserveCLI2
         public void WriteFile( string fileName , Stream data )
         {
             var ms = new MemoryStream();
-            data.CopyTo( ms );
+            CopyTo( data , ms );
 
             _protocol.Command( CmdCreateFile , new object[] { fileName } );
             _protocol.Command( CmdWriteFile , new object[] { ms.ToArray() } );
@@ -436,6 +436,53 @@ namespace RserveCLI2
                     break;
                 default:
                     throw new ArgumentException( "Could not interpret login method '" + method + "'" );
+            }
+        }
+
+        /// <summary>
+        /// Decompile of .NET 4's CopyTo
+        /// </summary>
+        public void CopyTo( Stream source , Stream destination )
+        {
+            if ( destination != null )
+            {
+                if ( source.CanRead || source.CanWrite )
+                {
+                    if ( destination.CanRead || destination.CanWrite )
+                    {
+                        if ( source.CanRead )
+                        {
+                            if ( destination.CanWrite )
+                            {
+                                CopyTo( source , destination , 4096 );
+                                return;
+                            }
+                            throw new NotSupportedException( "Stream does not support writing" );
+                        }
+                        throw new NotSupportedException( "Stream does not support reading" );
+                    }
+                    throw new ObjectDisposedException( "destination" , "Can not access a closed Stream." );
+                }
+                throw new ObjectDisposedException( null , "Can not access a closed Stream." );
+            }
+            throw new ArgumentNullException( "destination" );
+        }
+
+        /// <summary>
+        /// Decompile of .NET 4's InternalCopyTo
+        /// </summary>
+        private void CopyTo( Stream source , Stream destination , int bufferSize )
+        {
+            byte[] numArray = new byte[ bufferSize ];
+            while ( true )
+            {
+                int num = source.Read( numArray , 0 , ( int )numArray.Length );
+                int num1 = num;
+                if ( num == 0 )
+                {
+                    break;
+                }
+                destination.Write( numArray , 0 , num1 );
             }
         }
 

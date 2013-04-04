@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Text;
 
 namespace RserveCLI2
@@ -318,7 +317,7 @@ namespace RserveCLI2
         {
             if ( ReferenceEquals( null , other ) ) return false;
             if ( ReferenceEquals( this , other ) ) return true;
-            return StructuralComparisons.StructuralEqualityComparer.Equals( other.Value.ToArray() , Value.ToArray() );
+            return other.Value.SequenceEqual( Value );
         }
 
         /// <summary>

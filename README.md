@@ -11,7 +11,7 @@ Fork of RserveCLI
 - This is a fork of RserveCLI, by Oliver M. Haynold which is hosted here: https://rservecli.codeplex.com
 - Forked at commit 14449
 - I wanted to add features and fix bugs unencumbered by the author's bandwidth
-- I'm targeting Visual Studio 2010 and the 4.0 framework (dropping Mono Develop and pre-4.0)
+- I'm targeting Visual Studio 2010 and the 3.5 framework (dropping Mono Develop)
 
 Added Features
 --------------
