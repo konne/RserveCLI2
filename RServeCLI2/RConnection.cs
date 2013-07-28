@@ -364,7 +364,12 @@ namespace RserveCLI2
         private void Init( string user , string password )
         {
             var buf = new byte[ 32 ];
-            _socket.Receive( buf );
+            int received = _socket.Receive( buf );
+            if ( received == 0 )
+            {
+                throw new Exception( "Rserve connection was closed by the remote host" );
+            }
+
             var parms = new List<string>();
             for ( int i = 0 ; i < buf.Length ; i += 4 )
             {
