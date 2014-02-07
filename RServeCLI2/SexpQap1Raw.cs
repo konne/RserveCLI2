@@ -3,6 +3,8 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace RserveCLI2
 {
 
@@ -10,6 +12,7 @@ namespace RserveCLI2
     /// A container for Sexps that we don't know how to interpret. This way you can still pass such a Sexp back to Rserve, even though its meaning
     /// remains opaque.
     /// </summary>
+    [Serializable]
     public class SexpQap1Raw : Sexp
     {
 

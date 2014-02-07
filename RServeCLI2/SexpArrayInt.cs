@@ -15,6 +15,7 @@ namespace RserveCLI2
     /// <summary>
     /// An array of integers.
     /// </summary>
+    [Serializable]
     public class SexpArrayInt : SexpGenericList
     {
 

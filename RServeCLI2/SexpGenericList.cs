@@ -4,6 +4,7 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections;
 using System.Text;
 
@@ -12,6 +13,7 @@ namespace RserveCLI2
     /// <summary>
     /// Functionality for list-like Sexps.
     /// </summary>
+    [Serializable]
     public abstract class SexpGenericList : Sexp
     {
 

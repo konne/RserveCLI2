@@ -15,6 +15,7 @@ namespace RserveCLI2
     /// <summary>
     /// A local representation for an S-Expression (a.k.a., Sexp, Rexp, R-expression).
     /// </summary>
+    [Serializable]
     public abstract class Sexp : IList<Sexp> , IDictionary<string , Sexp> , IList<object> , IDictionary<string , object>
     {
 

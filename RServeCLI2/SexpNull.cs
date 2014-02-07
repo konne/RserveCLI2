@@ -13,6 +13,7 @@ namespace RserveCLI2
     /// <summary>
     /// The S NULL Value
     /// </summary>
+    [Serializable]
     public class SexpNull : Sexp
     {
 

@@ -18,6 +18,7 @@ namespace RserveCLI2
     /// <remarks>
     /// Uses double.NaN to represent NA
     /// </remarks>
+    [Serializable]
     public class SexpArrayDouble : SexpGenericList
     {
 

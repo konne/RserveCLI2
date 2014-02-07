@@ -18,6 +18,7 @@ namespace RserveCLI2
     /// <remarks>
     /// NA is represented as NULL
     /// </remarks>
+    [Serializable]
     public class SexpArrayBool : SexpGenericList
     {
 

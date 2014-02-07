@@ -3,12 +3,15 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace RserveCLI2
 {
 
     /// <summary>
     /// A Sexp for Symnames. Same as a string, but can't be NA.
     /// </summary>
+    [Serializable]
     public class SexpSymname : Sexp
     {
 

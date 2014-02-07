@@ -4,6 +4,7 @@
 // All rights reserved.
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 
 namespace RserveCLI2
@@ -12,6 +13,7 @@ namespace RserveCLI2
     /// <summary>
     /// A List that can contain Sexps of various types. This is the basis for data frames, too.
     /// </summary>
+    [Serializable]
     public class SexpList : SexpGenericList
     {
 

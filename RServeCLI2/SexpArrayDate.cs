@@ -15,6 +15,7 @@ namespace RserveCLI2
     /// <summary>
     /// An array of Dates.  Time portion of a date is severed.
     /// </summary>
+    [Serializable]
     public class SexpArrayDate : SexpArrayInt
     {
 

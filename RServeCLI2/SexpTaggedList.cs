@@ -15,6 +15,7 @@ namespace RserveCLI2
     /// <summary>
     /// A tagged list.
     /// </summary>
+    [Serializable]
     public class SexpTaggedList : Sexp , IEnumerable<KeyValuePair<string , Sexp>>
     {
 
