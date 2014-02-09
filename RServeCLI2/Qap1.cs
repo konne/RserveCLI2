@@ -180,356 +180,6 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Encode a Sexp in Qap1 format
-        /// </summary>
-        /// <param name="s">The Sexp to be encoded</param>
-        /// <returns>QAP4-encoded bit stream</returns>
-        public List<byte> EncodeSexp( Sexp s )
-        {
-            var t = s.GetType();
-            var res = new List<byte>();
-            byte xt;
-            SexpTaggedList attrs = null;
-            if ( s.Attributes.Count > 0 )
-            {
-                attrs = new SexpTaggedList();
-                foreach ( var a in s.Attributes )
-                {
-                    attrs.Add( a.Key , a.Value );
-                }
-
-                res.AddRange( EncodeSexp( attrs ) );
-            }
-            if ( t == typeof( SexpNull ) )
-            {
-                xt = XtNull;
-            }
-            else if ( t == typeof( SexpArrayDouble ) )
-            {
-                xt = XtArrayDouble;
-                var v = ( ( SexpArrayDouble )s ).Value;
-                foreach ( var t1 in v )
-                {
-                    res.AddRange( BitConverter.GetBytes( t1 ) );
-                }
-            }
-            else if ( t == typeof( SexpArrayInt ) )
-            {
-                xt = XtArrayInt;
-                var v = ( ( SexpArrayInt )s ).Value;
-                foreach ( var t1 in v )
-                {
-                    res.AddRange( BitConverter.GetBytes( t1 ) );
-                }
-            }
-            else if ( t == typeof( SexpArrayDate ) )
-            {
-                xt = XtArrayInt;
-                var v = ( ( SexpArrayInt )s ).Value;
-                foreach ( var t1 in v )
-                {
-                    res.AddRange( BitConverter.GetBytes( t1 ) );
-                }
-            }
-            else if ( t == typeof( SexpArrayBool ) )
-            {
-                xt = XtArrayBool;
-                var v = ( SexpArrayBool )s;
-
-                // ReSharper disable RedundantCast
-                res.AddRange( BitConverter.GetBytes( v.Count ) );
-
-                // ReSharper restore RedundantCast
-                // R logical is false if 0, true if 1, and NA if 2
-                res.AddRange( v.Cast<SexpArrayBool>().Select( x => x.AsByte ) );
-
-                // protocol requires us to pad with null
-                while ( res.Count % 4 != 0 )
-                {
-                    res.Add( 0 );
-                }
-            }
-            else if ( t == typeof( SexpTaggedList ) )
-            {
-                xt = XtListTag;
-                var v = ( SexpTaggedList )s;
-                foreach ( var a in v.AsSexpDictionary )
-                {
-                    res.AddRange( EncodeSexp( a.Value ) );
-                    res.AddRange( EncodeSexp( new SexpSymname( a.Key ) ) );
-                }
-            }
-            else if ( t == typeof( SexpList ) )
-            {
-                xt = XtVector;
-                var v = ( ( SexpList )s ).Value;
-                foreach ( var a in v )
-                {
-                    res.AddRange( EncodeSexp( a ) );
-                }
-            }
-            else if ( t == typeof( SexpArrayString ) )
-            {
-                xt = XtArrayString;
-                var v = ( ( SexpArrayString )s ).Value;
-                foreach ( var a in v )
-                {
-                    // Rserve represents NA strings using 0xff (255).  
-                    if ( a == null )
-                    {
-                        res.Add( 255 );
-                    }
-                    else
-                    {
-                        var b = Encoding.UTF8.GetBytes( a );
-                        
-                        // If 0xff occurs in the beginning of a string it should be doubled to avoid misrepresentation. 
-                        if ( ( b.Length > 0 ) && ( b[ 0 ] == 255 ) )
-                        {
-                            res.Add( 255 );
-                        }
-
-                        res.AddRange( b );
-                    }
-
-                    res.Add( 0 );
-                }
-            }
-            else if ( t == typeof( SexpSymname ) )
-            {
-                xt = XtSymName;
-                var v = ( ( SexpSymname )s ).Value;
-                var b = Encoding.UTF8.GetBytes( v );
-                res.AddRange( b );
-                res.Add( 0 );
-            }
-            else
-            {
-                throw new ArgumentException( "Unknown Sexp type " + t.GetType().Name );
-            }
-
-            if ( attrs != null )
-            {
-                xt |= XtHasAttr;
-            }
-
-            // get payload length
-            long len = res.LongCount();
-            byte[] lenBytes = BitConverter.GetBytes( len );
-
-            // populate header (first four bytes)
-            IEnumerable<byte> header = lenBytes.Take( 3 );
-
-            // a large dataset is > 16MB, it requires the XtLarge flag and an extra 4 bytes in the header to esablish correct payload size
-            bool isLargeData = len > 0xfffff0;
-            if ( isLargeData )
-            {
-                xt |= XtLarge;
-                header = lenBytes.Take( 7 );
-            }
-
-            // insert header
-            res.InsertRange( 0 , header );
-            res.Insert( 0 , xt );
-            
-            return res;
-        }
-
-        /// <summary>
-        /// Decode a Qap1-encoded Sexp
-        /// </summary>
-        /// <param name="data">The byte stream in which the Sexp is encoded</param>
-        /// <param name="start">At which index of data does the Sexp begin?</param>
-        /// <returns>The decoded Sexp.</returns>
-        public Sexp DecodeSexp( byte[] data , ref int start )
-        {
-            byte xt = data[ start + 0 ];
-
-            // ReSharper disable RedundantCast
-            var length = data[ start + 1 ] + ( ( ( int )data[ start + 2 ] ) << 8 ) + ( ( ( int )data[ start + 3 ] ) << 16 );
-
-            // ReSharper restore RedundantCast
-            start += 4;
-            SexpTaggedList attrs = null;
-            if ( ( xt & XtHasAttr ) == XtHasAttr )
-            {
-                xt -= XtHasAttr;
-                int oldstart = start;
-                attrs = ( SexpTaggedList )DecodeSexp( data , ref start );
-                length -= start - oldstart;
-            }
-
-            int end = start + length;
-            Sexp result;
-            if ( xt == XtNull && length == 0 )
-            {
-                result = new SexpNull();
-            }
-            else
-            {
-                switch ( xt )
-                {
-                    case XtSymName:
-                        {
-                            var res = Encoding.UTF8.GetString( data , start , length );
-                            result = new SexpSymname( res.Split( '\x00' )[ 0 ] );
-                        }
-                        break;
-                    case XtArrayInt:
-                        {
-                            var res = new int[ length / 4 ];
-                            for ( int i = 0 ; i < length ; i += 4 )
-                            {
-                                res[ i / 4 ] = BitConverter.ToInt32( data , start + i );
-                            }
-
-                            // is date or just an integer?
-                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
-                            {
-                                result = new SexpArrayDate( res );
-                            }
-                            else
-                            {
-                                result = new SexpArrayInt( res );
-                            }                            
-                        }
-                        break;
-                    case XtArrayBool:
-                        {
-                            // This doesn't match the description on the Web page and doesn't make much sense, but that's what the server seems to do
-                            if ( length < 4 )
-                            {
-                                throw new WebException( "Bool array doesn't seem to contain a data length field." );
-                            }
-
-                            var datalength = BitConverter.ToInt32( data , start );
-                            if ( datalength > length - 4 )
-                            {
-                                throw new WebException( "Transmitted data field too short for number of entries." );
-                            }
-
-                            start += 4;
-                            var res = new bool?[ datalength ];
-                            for ( int i = 0 ; i < datalength ; i++ )
-                            {
-                                // R logical is false if 0, true if 1, and NA if 2
-                                switch ( data[ start + i ] )
-                                {
-                                    case 0:
-                                        res[ i ] = false;
-                                        break;
-                                    case 1:
-                                        res[ i ] = true;
-                                        break;
-                                    case 2:
-                                        res[ i ] = null;
-                                        break;
-                                    default:
-                                        throw new NotSupportedException( "I cannot convert R bool" + data[ start + i ] );
-                                }                              
-                            }
-
-                            result = new SexpArrayBool( res );
-                        }
-                        break;
-                    case XtArrayDouble:
-                        {
-                            var res = new double[ length / 8 ];
-                            for ( int i = 0 ; i < length ; i += 8 )
-                            {
-                                res[ i / 8 ] = BitConverter.ToDouble( data , start + i );
-                            }
-
-                            // is date or just a double?
-                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
-                            {
-                                result = new SexpArrayDate( res.Select( Convert.ToInt32 ) );
-                            }
-                            else
-                            {
-                                result = new SexpArrayDouble( res );
-                            }
-                        }
-                        break;
-                    case XtArrayString:
-                        {
-                            var res = new List<string>();
-                            int i = 0;
-                            for ( int j = 0 ; j < length ; j++ )
-                            {
-                                if ( data[ start + j ] != 0 )
-                                {
-                                    continue;
-                                }
-
-                                if ( j == i + 1 && data[ start + i ] == 255 )
-                                {
-                                    res.Add( null );
-                                }
-                                else
-                                {
-                                    if ( data[ start + i ] == 255 )
-                                    {
-                                        i++;
-                                    }
-
-                                    res.Add( Encoding.UTF8.GetString( data , start + i , j - i ) );
-                                }
-
-                                i = j + 1;
-                            }
-
-                            result = new SexpArrayString( res );
-                        }
-                        break;
-                    case XtListNoTag:
-                    case XtLangNoTag:
-                    case XtVector:
-                        result = new SexpList();
-                        while ( start < end )
-                        {
-                            result.Add( DecodeSexp( data , ref start ) );
-                        }
-                        break;
-                    case XtLangTag:
-                    case XtListTag:
-                        result = new SexpTaggedList();
-                        while ( start < end )
-                        {
-                            var val = DecodeSexp( data , ref start );
-                            var key = DecodeSexp( data , ref start );
-                            result.Add( key.IsNull ? String.Empty : key.AsString , val );
-                        }
-
-                        break;
-                    default:
-                        {
-                            var d = new byte[ length ];
-                            Array.Copy( data , start , d , 0 , length );
-                            result = new SexpQap1Raw( xt , d );
-                        }
-                        break;
-                }
-            }
-
-            if ( start > end )
-            {
-                throw new WebException( "More data consumed than provided." );
-            }
-
-            start = end;
-            if ( attrs != null )
-            {
-                foreach ( var a in attrs.AsSexpDictionary )
-                {
-                    result.Attributes.Add( a.Key , a.Value );
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Send a command and read the stream it returns (used for reading files)
         /// </summary>
         /// <param name="cmd">Command to be sent to the server</param>
@@ -743,6 +393,356 @@ namespace RserveCLI2
 
             var toConsume = ( int )length;
             return toConsume;
+        }
+
+        /// <summary>
+        /// Encode a Sexp in Qap1 format
+        /// </summary>
+        /// <param name="s">The Sexp to be encoded</param>
+        /// <returns>QAP4-encoded bit stream</returns>
+        private static IEnumerable<byte> EncodeSexp( Sexp s )
+        {
+            var t = s.GetType();
+            var res = new List<byte>();
+            byte xt;
+            SexpTaggedList attrs = null;
+            if ( s.Attributes.Count > 0 )
+            {
+                attrs = new SexpTaggedList();
+                foreach ( var a in s.Attributes )
+                {
+                    attrs.Add( a.Key , a.Value );
+                }
+
+                res.AddRange( EncodeSexp( attrs ) );
+            }
+            if ( t == typeof( SexpNull ) )
+            {
+                xt = XtNull;
+            }
+            else if ( t == typeof( SexpArrayDouble ) )
+            {
+                xt = XtArrayDouble;
+                var v = ( ( SexpArrayDouble )s ).Value;
+                foreach ( var t1 in v )
+                {
+                    res.AddRange( BitConverter.GetBytes( t1 ) );
+                }
+            }
+            else if ( t == typeof( SexpArrayInt ) )
+            {
+                xt = XtArrayInt;
+                var v = ( ( SexpArrayInt )s ).Value;
+                foreach ( var t1 in v )
+                {
+                    res.AddRange( BitConverter.GetBytes( t1 ) );
+                }
+            }
+            else if ( t == typeof( SexpArrayDate ) )
+            {
+                xt = XtArrayInt;
+                var v = ( ( SexpArrayInt )s ).Value;
+                foreach ( var t1 in v )
+                {
+                    res.AddRange( BitConverter.GetBytes( t1 ) );
+                }
+            }
+            else if ( t == typeof( SexpArrayBool ) )
+            {
+                xt = XtArrayBool;
+                var v = ( SexpArrayBool )s;
+
+                // ReSharper disable RedundantCast
+                res.AddRange( BitConverter.GetBytes( v.Count ) );
+
+                // ReSharper restore RedundantCast
+                // R logical is false if 0, true if 1, and NA if 2
+                res.AddRange( v.Cast<SexpArrayBool>().Select( x => x.AsByte ) );
+
+                // protocol requires us to pad with null
+                while ( res.Count % 4 != 0 )
+                {
+                    res.Add( 0 );
+                }
+            }
+            else if ( t == typeof( SexpTaggedList ) )
+            {
+                xt = XtListTag;
+                var v = ( SexpTaggedList )s;
+                foreach ( var a in v.AsSexpDictionary )
+                {
+                    res.AddRange( EncodeSexp( a.Value ) );
+                    res.AddRange( EncodeSexp( new SexpSymname( a.Key ) ) );
+                }
+            }
+            else if ( t == typeof( SexpList ) )
+            {
+                xt = XtVector;
+                var v = ( ( SexpList )s ).Value;
+                foreach ( var a in v )
+                {
+                    res.AddRange( EncodeSexp( a ) );
+                }
+            }
+            else if ( t == typeof( SexpArrayString ) )
+            {
+                xt = XtArrayString;
+                var v = ( ( SexpArrayString )s ).Value;
+                foreach ( var a in v )
+                {
+                    // Rserve represents NA strings using 0xff (255).  
+                    if ( a == null )
+                    {
+                        res.Add( 255 );
+                    }
+                    else
+                    {
+                        var b = Encoding.UTF8.GetBytes( a );
+
+                        // If 0xff occurs in the beginning of a string it should be doubled to avoid misrepresentation. 
+                        if ( ( b.Length > 0 ) && ( b[ 0 ] == 255 ) )
+                        {
+                            res.Add( 255 );
+                        }
+
+                        res.AddRange( b );
+                    }
+
+                    res.Add( 0 );
+                }
+            }
+            else if ( t == typeof( SexpSymname ) )
+            {
+                xt = XtSymName;
+                var v = ( ( SexpSymname )s ).Value;
+                var b = Encoding.UTF8.GetBytes( v );
+                res.AddRange( b );
+                res.Add( 0 );
+            }
+            else
+            {
+                throw new ArgumentException( "Unknown Sexp type " + t.GetType().Name );
+            }
+
+            if ( attrs != null )
+            {
+                xt |= XtHasAttr;
+            }
+
+            // get payload length
+            long len = res.LongCount();
+            byte[] lenBytes = BitConverter.GetBytes( len );
+
+            // populate header (first four bytes)
+            IEnumerable<byte> header = lenBytes.Take( 3 );
+
+            // a large dataset is > 16MB, it requires the XtLarge flag and an extra 4 bytes in the header to esablish correct payload size
+            bool isLargeData = len > 0xfffff0;
+            if ( isLargeData )
+            {
+                xt |= XtLarge;
+                header = lenBytes.Take( 7 );
+            }
+
+            // insert header
+            res.InsertRange( 0 , header );
+            res.Insert( 0 , xt );
+
+            return res;
+        }
+
+        /// <summary>
+        /// Decode a Qap1-encoded Sexp
+        /// </summary>
+        /// <param name="data">The byte stream in which the Sexp is encoded</param>
+        /// <param name="start">At which index of data does the Sexp begin?</param>
+        /// <returns>The decoded Sexp.</returns>
+        private static Sexp DecodeSexp( byte[] data , ref int start )
+        {
+            byte xt = data[ start + 0 ];
+
+            // ReSharper disable RedundantCast
+            var length = data[ start + 1 ] + ( ( ( int )data[ start + 2 ] ) << 8 ) + ( ( ( int )data[ start + 3 ] ) << 16 );
+
+            // ReSharper restore RedundantCast
+            start += 4;
+            SexpTaggedList attrs = null;
+            if ( ( xt & XtHasAttr ) == XtHasAttr )
+            {
+                xt -= XtHasAttr;
+                int oldstart = start;
+                attrs = ( SexpTaggedList )DecodeSexp( data , ref start );
+                length -= start - oldstart;
+            }
+
+            int end = start + length;
+            Sexp result;
+            if ( xt == XtNull && length == 0 )
+            {
+                result = new SexpNull();
+            }
+            else
+            {
+                switch ( xt )
+                {
+                    case XtSymName:
+                        {
+                            var res = Encoding.UTF8.GetString( data , start , length );
+                            result = new SexpSymname( res.Split( '\x00' )[ 0 ] );
+                        }
+                        break;
+                    case XtArrayInt:
+                        {
+                            var res = new int[ length / 4 ];
+                            for ( int i = 0 ; i < length ; i += 4 )
+                            {
+                                res[ i / 4 ] = BitConverter.ToInt32( data , start + i );
+                            }
+
+                            // is date or just an integer?
+                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
+                            {
+                                result = new SexpArrayDate( res );
+                            }
+                            else
+                            {
+                                result = new SexpArrayInt( res );
+                            }
+                        }
+                        break;
+                    case XtArrayBool:
+                        {
+                            // This doesn't match the description on the Web page and doesn't make much sense, but that's what the server seems to do
+                            if ( length < 4 )
+                            {
+                                throw new WebException( "Bool array doesn't seem to contain a data length field." );
+                            }
+
+                            var datalength = BitConverter.ToInt32( data , start );
+                            if ( datalength > length - 4 )
+                            {
+                                throw new WebException( "Transmitted data field too short for number of entries." );
+                            }
+
+                            start += 4;
+                            var res = new bool?[ datalength ];
+                            for ( int i = 0 ; i < datalength ; i++ )
+                            {
+                                // R logical is false if 0, true if 1, and NA if 2
+                                switch ( data[ start + i ] )
+                                {
+                                    case 0:
+                                        res[ i ] = false;
+                                        break;
+                                    case 1:
+                                        res[ i ] = true;
+                                        break;
+                                    case 2:
+                                        res[ i ] = null;
+                                        break;
+                                    default:
+                                        throw new NotSupportedException( "I cannot convert R bool" + data[ start + i ] );
+                                }
+                            }
+
+                            result = new SexpArrayBool( res );
+                        }
+                        break;
+                    case XtArrayDouble:
+                        {
+                            var res = new double[ length / 8 ];
+                            for ( int i = 0 ; i < length ; i += 8 )
+                            {
+                                res[ i / 8 ] = BitConverter.ToDouble( data , start + i );
+                            }
+
+                            // is date or just a double?
+                            if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
+                            {
+                                result = new SexpArrayDate( res.Select( Convert.ToInt32 ) );
+                            }
+                            else
+                            {
+                                result = new SexpArrayDouble( res );
+                            }
+                        }
+                        break;
+                    case XtArrayString:
+                        {
+                            var res = new List<string>();
+                            int i = 0;
+                            for ( int j = 0 ; j < length ; j++ )
+                            {
+                                if ( data[ start + j ] != 0 )
+                                {
+                                    continue;
+                                }
+
+                                if ( j == i + 1 && data[ start + i ] == 255 )
+                                {
+                                    res.Add( null );
+                                }
+                                else
+                                {
+                                    if ( data[ start + i ] == 255 )
+                                    {
+                                        i++;
+                                    }
+
+                                    res.Add( Encoding.UTF8.GetString( data , start + i , j - i ) );
+                                }
+
+                                i = j + 1;
+                            }
+
+                            result = new SexpArrayString( res );
+                        }
+                        break;
+                    case XtListNoTag:
+                    case XtLangNoTag:
+                    case XtVector:
+                        result = new SexpList();
+                        while ( start < end )
+                        {
+                            result.Add( DecodeSexp( data , ref start ) );
+                        }
+                        break;
+                    case XtLangTag:
+                    case XtListTag:
+                        result = new SexpTaggedList();
+                        while ( start < end )
+                        {
+                            var val = DecodeSexp( data , ref start );
+                            var key = DecodeSexp( data , ref start );
+                            result.Add( key.IsNull ? String.Empty : key.AsString , val );
+                        }
+
+                        break;
+                    default:
+                        {
+                            var d = new byte[ length ];
+                            Array.Copy( data , start , d , 0 , length );
+                            result = new SexpQap1Raw( xt , d );
+                        }
+                        break;
+                }
+            }
+
+            if ( start > end )
+            {
+                throw new WebException( "More data consumed than provided." );
+            }
+
+            start = end;
+            if ( attrs != null )
+            {
+                foreach ( var a in attrs.AsSexpDictionary )
+                {
+                    result.Attributes.Add( a.Key , a.Value );
+                }
+            }
+
+            return result;
         }
 
         #endregion
