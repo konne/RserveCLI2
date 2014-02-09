@@ -42,8 +42,12 @@
     <Reference Include="xunit">
       <HintPath>.\xunit.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.extensions">
+      <HintPath>.\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Qap1Test.cs" />
     <Compile Include="RConnectionTest.cs" />
     <Compile Include="Rservice.cs" />
     <Compile Include="SexpArrayBoolTest.cs" />

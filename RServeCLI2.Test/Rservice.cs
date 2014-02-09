@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Reflection;
+using System.Threading;
 
 namespace RserveCLI2.Test
 {
@@ -37,7 +38,8 @@ namespace RserveCLI2.Test
         /// Creates a self-hosted Rserve.
         /// </summary>
         /// <param name="showWindow">If true then the Rserve window will be visible.  Useful for debugging.  Default is false.</param>
-        public Rservice( bool showWindow = false )
+        /// <param name="maxInputBufferSizeInKb">The maximal allowable size of the input buffer in kilobytes.  That is, the maximal size of data transported from the client to the server.</param>
+        public Rservice( bool showWindow = false , int maxInputBufferSizeInKb = 0 )
         {
 
             // ReSharper disable AssignNullToNotNullAttribute
@@ -45,16 +47,28 @@ namespace RserveCLI2.Test
             // ReSharper restore AssignNullToNotNullAttribute
             string rExeFilePath = Path.Combine( assemblyDir , "R-2.15.3" , "bin" , "x64" , "Rterm.exe" );
 
+            // the only way to set maxinbuf is via configuration file
+            // generate a config file and reference it as part of the args parameter to Rserve() below
+            string args = "";
+            if ( maxInputBufferSizeInKb > 0 )
+            {
+                string configFile = Path.GetTempFileName();
+                // plaintext warning only shows when using a config file.  setting plaintext enable to eliminate the warning
+                File.WriteAllText( configFile , "maxinbuf " + maxInputBufferSizeInKb + "\r\n" + "plaintext enable" );
+                args = string.Format( ", args = '--RS-conf {0}' " , configFile.Replace( @"\" , "/" ) );
+            }
+
             // launch RTerm and tell it load Rserve, tell it wait until RServe has completed.  We want RTerm to stay open because
             // our only strategy for finding/killing RServe is to search RTerm's child processes.  If wait = FALSE then RTerm completes
             // but RServe does not die
             // ReSharper disable UseObjectOrCollectionInitializer
             _rtermProcess = new Process();
             _rtermProcess.StartInfo.FileName = rExeFilePath;
-            _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE );\"" , Port );
+            _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE {1});\"" , Port , args );
             _rtermProcess.StartInfo.UseShellExecute = false;
             _rtermProcess.StartInfo.CreateNoWindow = !showWindow;
             _rtermProcess.Start();
+            Thread.Sleep( 3000 );
             // ReSharper restore UseObjectOrCollectionInitializer
 
             // create a connection to the server

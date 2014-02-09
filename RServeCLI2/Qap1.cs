@@ -25,6 +25,11 @@ namespace RserveCLI2
         #region DT_ declarations
 
         /// <summary>
+        /// Int data
+        /// </summary>
+        internal const byte DtInt = 1;
+
+        /// <summary>
         /// String data
         /// </summary>
         internal const byte DtString = 4;
@@ -144,6 +149,11 @@ namespace RserveCLI2
         internal const byte XtUnknown = 48;
 
         /// <summary>
+        /// The length of the Sexp is coded as a 56-bit integer, enlarging the header by 4 bytes
+        /// </summary>
+        internal const byte XtLarge = 64;
+
+        /// <summary>
         /// Flag for the presence of attributes
         /// </summary>
         internal const byte XtHasAttr = 128;
@@ -233,6 +243,7 @@ namespace RserveCLI2
                 // R logical is false if 0, true if 1, and NA if 2
                 res.AddRange( v.Cast<SexpArrayBool>().Select( x => x.AsByte ) );
 
+                // protocol requires us to pad with null
                 while ( res.Count % 4 != 0 )
                 {
                     res.Add( 0 );
@@ -251,7 +262,7 @@ namespace RserveCLI2
             else if ( t == typeof( SexpList ) )
             {
                 xt = XtVector;
-                var v = ( SexpList )s;
+                var v = ( ( SexpList )s ).Value;
                 foreach ( var a in v )
                 {
                     res.AddRange( EncodeSexp( a ) );
@@ -263,6 +274,7 @@ namespace RserveCLI2
                 var v = ( ( SexpArrayString )s ).Value;
                 foreach ( var a in v )
                 {
+                    // Rserve represents NA strings using 0xff (255).  
                     if ( a == null )
                     {
                         res.Add( 255 );
@@ -270,7 +282,9 @@ namespace RserveCLI2
                     else
                     {
                         var b = Encoding.UTF8.GetBytes( a );
-                        if ( b.Length > 0 && b[ 0 ] == 255 )
+                        
+                        // If 0xff occurs in the beginning of a string it should be doubled to avoid misrepresentation. 
+                        if ( ( b.Length > 0 ) && ( b[ 0 ] == 255 ) )
                         {
                             res.Add( 255 );
                         }
@@ -294,17 +308,30 @@ namespace RserveCLI2
                 throw new ArgumentException( "Unknown Sexp type " + t.GetType().Name );
             }
 
-            var len = res.Count;
-            res.InsertRange( 0 , new byte[ 4 ] );
             if ( attrs != null )
             {
                 xt |= XtHasAttr;
             }
 
-            res[ 0 ] = xt;
-            res[ 1 ] = ( byte )len;
-            res[ 2 ] = ( byte )( len >> 8 );
-            res[ 3 ] = ( byte )( len >> 16 );
+            // get payload length
+            long len = res.LongCount();
+            byte[] lenBytes = BitConverter.GetBytes( len );
+
+            // populate header (first four bytes)
+            IEnumerable<byte> header = lenBytes.Take( 3 );
+
+            // a large dataset is > 16MB, it requires the XtLarge flag and an extra 4 bytes in the header to esablish correct payload size
+            bool isLargeData = len > 0xfffff0;
+            if ( isLargeData )
+            {
+                xt |= XtLarge;
+                header = lenBytes.Take( 7 );
+            }
+
+            // insert header
+            res.InsertRange( 0 , header );
+            res.Insert( 0 , xt );
+            
             return res;
         }
 
@@ -626,6 +653,9 @@ namespace RserveCLI2
                 if ( a is string )
                 {
                     argbuf.AddRange( Encoding.UTF8.GetBytes( a as string ) );
+                    argbuf.Add( 0 ); // string must be null terminated
+                    
+                    // strings must be padded with zeros so length of the content is divisible by 4
                     while ( argbuf.Count % 4 != 0 )
                     {
                         argbuf.Add( 0 );
@@ -643,23 +673,49 @@ namespace RserveCLI2
                     argbuf.AddRange( ( byte[] )a );
                     dt = DtByteStream;
                 }
+                else if ( a is int )
+                {
+                    argbuf.AddRange( BitConverter.GetBytes( ( int )a ) );
+                    dt = DtInt;
+                }
                 else
                 {
                     throw new ArgumentException( "Invalid argument type." );
                 }
 
-                int len = argbuf.Count;
+                // get payload length
+                long len = argbuf.LongCount();
+                byte[] lenBytes = BitConverter.GetBytes( len );
+
+                // populate header (first four bytes)
+                IEnumerable<byte> header = lenBytes.Take( 3 );
+
+                // a large dataset is > 16MB, it requires the DtLarge flag and an extra 4 bytes in the header to esablish correct payload size
+                bool isLargeData = len > 0xfffff0;
+                if ( isLargeData )
+                {
+                    dt |= DtLarge;
+                    header = lenBytes.Take( 7 );
+                }
+
+                // insert header
+                argbuf.InsertRange( 0 , header );
                 argbuf.Insert( 0 , dt );
-                argbuf.Insert( 1 , ( byte )len );
-                argbuf.Insert( 2 , ( byte )( len >> 8 ) );
-                argbuf.Insert( 3 , ( byte )( len >> 16 ) );
+
                 sbuf.AddRange( argbuf );
             }
 
-            int mlen = sbuf.Count;
+            // header structure:
+            // [0]  (int) command - specifies the request or response type
+            // [4]  (int) length of the message (bits 0-31) - specifies the number of bytes belonging to this message (excluding the header)
+            // [8]  (int) offset of the data part - specifies the offset of the data part, where 0 means directly after the header (which is normally the case)
+            // [12] (int) length of the message (bits 32-63) - high bits of the length (must be 0 if the packet size is smaller than 4GB)
+            long mlen = sbuf.LongCount();
+            byte[] mlenBytes = BitConverter.GetBytes( mlen );
             sbuf.InsertRange( 0 , BitConverter.GetBytes( cmd ) );
-            sbuf.InsertRange( 4 , BitConverter.GetBytes( mlen ) );
-            sbuf.InsertRange( 8 , new byte[ 8 ] );
+            sbuf.InsertRange( 4 , mlenBytes.Take( 4 ) );
+            sbuf.InsertRange( 8 , new byte[ 4 ] );
+            sbuf.InsertRange( 12 , mlenBytes.Skip( 4 ) );
 
             // Execute Command
             _socket.Send( sbuf.ToArray() );
