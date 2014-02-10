@@ -22,3 +22,4 @@ Added Features
 - Can now create usable data.frames
 - Bi-directional support for matrix row/column names
 - Can now make named vectors
+- Now supports sending and receiving large data (>16MB)
