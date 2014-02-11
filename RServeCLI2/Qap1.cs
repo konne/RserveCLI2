@@ -160,6 +160,123 @@ namespace RserveCLI2
 
         #endregion
 
+        #region Errors
+
+        // stat codes; 0-0x3f are reserved for program specific codes - e.g. for R
+        // connection they correspond to the stat of Parse command.
+        // the following codes are returned by the Rserv itself
+        // codes < 0 denote Rerror as provided by R_tryEval
+
+        /// <summary>
+        /// auth.failed or auth.requested but no login came. 
+        /// in case of authentification failure due to name/pwd mismatch, 
+        /// server may send CMD_accessDenied instead
+        /// </summary>
+        internal const byte ErrAuthFailed = 0x41;
+
+        /// <summary>
+        /// connection closed or broken packet killed it
+        /// </summary>
+        internal const byte ErrConnBroken = 0x42;
+
+        /// <summary>
+        /// unsupported/invalid command
+        /// </summary>
+        internal const byte ErrInvCmd = 0x43;
+
+        /// <summary>
+        /// Some parameters are invalid
+        /// </summary>
+        internal const byte ErrInvPar = 0x44;
+
+        /// <summary>
+        /// R-error occured, usually followed by connection shutdown
+        /// </summary>
+        internal const byte ErrRerror = 0x45;
+
+        /// <summary>
+        /// I/O error
+        /// </summary>
+        internal const byte ErrIoError = 0x46;
+
+        /// <summary>
+        /// Attempt to perform fileRead/Write on closed file.
+        /// </summary>
+        internal const byte ErrNotOpen = 0x47;
+
+        /// <summary>
+        /// This answer is also valid onC MD_login; otherwise it's sent if the server doesn't 
+        /// allow the user to issue the specified command. 
+        /// (e.g. some server admins may block file I/O operations for some users)
+        /// </summary>
+        internal const byte ErrAccessDenied = 0x48;
+
+        /// <summary>
+        /// Unsupported command
+        /// </summary>
+        internal const byte ErrUnsupportedCmd = 0x49;
+
+        /// <summary>
+        /// unknown command - the difference between unsupported and unknown is that unsupported commands 
+        /// are known to the server but for some reasons (e.g. platform dependent) it's not supported.  
+        /// unknown commands are simply not recognized by the server at all.
+        /// </summary>
+        internal const byte ErrUnknownCmd = 0x4a;
+
+        /// <summary>
+        /// incoming packet is too big. currently there is a limit as of the size of an incoming packet.
+        /// </summary>
+        internal const byte ErrDataOverflow = 0x4b;
+
+        /// <summary>
+        /// The requested object is too big to be transported in that way. 
+        /// If received after CMD_eval then the evaluation itself was successful.
+        /// Optional parameter is the size of the object 
+        /// </summary>
+        internal const byte ErrObjectTooBig = 0x4c;
+
+        /// <summary>
+        /// Out of memory. the connection is usually closed after this error was sent.
+        /// </summary>
+        internal const byte ErrOutOfMem = 0x4d;
+
+        /// <summary>
+        /// control pipe to the master process is closed or broken
+        /// </summary>
+        internal const byte ErrCtrlClosed = 0x4e;
+
+        /// <summary>
+        /// session is still busy
+        /// </summary>
+        internal const byte ErrSessionBusy = 0x50;
+
+        /// <summary>
+        /// Unable to detach seesion (cannot determine peer IP or problems creating a listening socket for resume)
+        /// </summary>
+        internal const byte ErrDetachFailed = 0x51;
+
+        /// <summary>
+        /// feature is disabled
+        /// </summary>
+        internal const byte ErrDisabled = 0x61;
+
+        /// <summary>
+        /// feature is not present in this build
+        /// </summary>
+        internal const byte ErrUnavailable = 0x62;
+
+        /// <summary>
+        /// crypto-system error
+        /// </summary>
+        internal const byte ErrCryptError = 0x63;
+
+        /// <summary>
+        /// server-initiated close due to security violation (too many attempts, excessive timeout etc.)
+        /// </summary>
+        internal const byte ErrSecurityClose = 0x64;
+        
+        #endregion
+
         #endregion
 
         #region Public Methods
@@ -202,7 +319,7 @@ namespace RserveCLI2
 
             if ( stored != toConsume )
             {
-                throw new WebException( "Expected " + toConsume + " bytes of data, but received " + stored + "." );
+                throw new RserveException( "When reading stream from server, client expects " + toConsume + " bytes of data, but received " + stored + "." );
             }
 
             return res;
@@ -227,7 +344,7 @@ namespace RserveCLI2
                 int headerLength = 4;
                 if ( _socket.Receive( dhbuf , 4 , SocketFlags.None ) != 4 )
                 {
-                    throw new WebException( "Didn't receive a header." );
+                    throw new RserveException( "When receiving command parameter from server, client did not receive the requisite 4-byte header." );
                 }
 
                 // is this a large dataset?  if so, pull the next four bytes which are also used for length of payload.
@@ -237,7 +354,7 @@ namespace RserveCLI2
                     headerLength += 4;
                     if ( _socket.Receive( dhbuf , 4 , 4 , SocketFlags.None ) != 4 )
                     {
-                        throw new WebException( "Didn't receive a header." );
+                        throw new RserveException( "When receiving command parameter with large data from server, client did not receive the requisite extra 4-bytes in the header." );
                     }
                 }
                 
@@ -258,7 +375,7 @@ namespace RserveCLI2
                     }
                     else
                     {
-                        throw new WebException( "Expected " + dvbuf.Length + " bytes of data, but received " + receivedTotal + "." );
+                        throw new RserveException( "When receiving command parameter from server, the payload is expected to be " + dvbuf.Length + " bytes of data, but the client received " + receivedTotal + "." );
                     }
                 }
                 
@@ -271,7 +388,7 @@ namespace RserveCLI2
                     }
                     if ( count > int.MaxValue )
                     {
-                        throw new NotSupportedException( "DTString of length greater than Int32 not supported" );
+                        throw new RserveException( "Recieved a DTString of length greater than Int32 from the server, which is not supported." );
                     }
                     res.Add( Encoding.UTF8.GetString( dvbuf , 0 , ( int )count ) );
                 }
@@ -283,7 +400,7 @@ namespace RserveCLI2
                 }
                 else
                 {
-                    throw new WebException( "Unknown data type:" + typ );
+                    throw new RserveException( "Recieved an unknown command parameter type from the server:" + typ );
                 }
 
                 toConsume -= ( headerLength + dlength );
@@ -345,7 +462,7 @@ namespace RserveCLI2
                 }
                 else
                 {
-                    throw new ArgumentException( "Invalid argument type." );
+                    throw new RserveException( "Attempting to encode an invalid command parameter type." );
                 }
 
                 // get payload length
@@ -389,21 +506,22 @@ namespace RserveCLI2
             var hdrbuf = new byte[ 16 ];
             if ( _socket.Receive( hdrbuf ) != 16 )
             {
-                throw new WebException( "Didn't receive a header." );
+                throw new RserveException( "Response from server does not contain a header." );
             }
 
             // did the server return an error?
             int cmdResult = BitConverter.ToInt32( hdrbuf , 0 );
             if ( ( cmdResult & 15 ) != 1 )
             {
-                throw new WebException( "R threw an error." );
+                int serverErrorCode = ( ( cmdResult >> 24 ) & 127 );
+                throw new RserveException( serverErrorCode );
             }
 
             // not expecting an non-zero offset
             var offset = BitConverter.ToUInt32( hdrbuf , 8 );
             if ( offset != 0 )
             {
-                throw new NotSupportedException( "In response from server, offset is not 0." );
+                throw new RserveException( "In response from server, offset is not 0." );
             }
 
             // calculate length of response payload from the header
@@ -537,7 +655,7 @@ namespace RserveCLI2
             }
             else
             {
-                throw new ArgumentException( "Unknown Sexp type " + t.GetType().Name );
+                throw new RserveException( "Cannot encode an unknown Sexp type " + t.GetType().Name );
             }
 
             if ( attrs != null )
@@ -609,7 +727,7 @@ namespace RserveCLI2
                     {
                         if ( length != 0 )
                         {
-                            throw new WebException( "SexpNull is followed by data when it shouldn't be." );
+                            throw new RserveException( "Attempting to decode an SexpNull, but it is followed by data when it shouldn't be." );
                         }
                         result = new SexpNull();
                     }
@@ -648,14 +766,14 @@ namespace RserveCLI2
                     {
                         if ( length < 4 )
                         {
-                            throw new WebException( "Bool array doesn't seem to contain a data length field." );
+                            throw new RserveException( "Decoding an SexpArrayBool where data doesn't seem to contain a data length field." );
                         }
                         var boolLengthBuf = new byte[ 4 ];
                         Array.Copy( data , start , boolLengthBuf , 0 , 4 );
                         var datalength = BitConverter.ToInt32( boolLengthBuf , 0 );
                         if ( datalength > length - 4 )
                         {
-                            throw new WebException( "Transmitted data field too short for number of entries." );
+                            throw new RserveException( "Decoding an SexpArrayBool where transmitted data field too short for number of entries." );
                         }
 
                         var res = new bool?[ datalength ];
@@ -674,7 +792,7 @@ namespace RserveCLI2
                                     res[ i ] = null;
                                     break;
                                 default:
-                                    throw new NotSupportedException( "I cannot convert R bool" + data[ start + i + 4 ] );
+                                    throw new RserveException( "Decoding an SexpArrayBool and found an element in the array that is not an R bool: " + data[ start + i + 4 ] );
                             }
                         }
 
@@ -762,12 +880,12 @@ namespace RserveCLI2
                     }
                     break;
                 default:
-                    throw new WebException( "Sexp Type not recognized: " + xt );
+                    throw new RserveException( "Cannot decode an Sexp because the type is not recognized: " + xt );
             }
             
             if ( start > end )
             {
-                throw new WebException( "More data consumed than provided." );
+                throw new RserveException( "When decoding an Sexp, more data consumed than provided." );
             }
 
             start = end;

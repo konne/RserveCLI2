@@ -367,7 +367,7 @@ namespace RserveCLI2
             int received = _socket.Receive( buf );
             if ( received == 0 )
             {
-                throw new Exception( "Rserve connection was closed by the remote host" );
+                throw new RserveException( "Rserve connection was closed by the remote host" );
             }
 
             var parms = new List<string>();

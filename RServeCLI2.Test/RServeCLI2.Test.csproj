@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Qap1Test.cs" />
     <Compile Include="RConnectionTest.cs" />
+    <Compile Include="RserveExceptionTest.cs" />
     <Compile Include="Rservice.cs" />
     <Compile Include="SexpArrayBoolTest.cs" />
     <Compile Include="SexpArrayDateTest.cs" />
