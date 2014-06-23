@@ -156,7 +156,7 @@ namespace RserveCLI2
         /// <param name="password">
         /// Password for the user, or nothing
         /// </param>
-        public RConnection( string hostname , int port = 6331 , string user = null , string password = null )
+        public RConnection( string hostname , int port = 6311 , string user = null , string password = null )
         {
             foreach ( IPAddress addr in Dns.GetHostEntry( hostname ).AddressList )
             {
