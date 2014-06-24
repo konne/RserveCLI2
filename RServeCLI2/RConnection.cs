@@ -329,6 +329,23 @@ namespace RserveCLI2
             _protocol.Command( CmdCloseFile , new object[] { } );
         }
 
+        /// <summary>
+        /// Attempt to shut down the server process cleanly. 
+        /// </summary>
+        public void Shutdown()
+        {
+           _protocol.Command(CmdShutdown, new object[] { });
+        }
+
+        /// <summary>
+        /// Attempt to shut down the server process cleanly. 
+        /// This command is asynchronous!
+        /// </summary>
+        public void ServerShutdown()
+        {
+           _protocol.Command(CmdCtrlShutdown, new object[] { });
+        }
+
         #endregion
 
         #region Implemented Interfaces
