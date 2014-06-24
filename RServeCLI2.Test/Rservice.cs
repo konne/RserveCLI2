@@ -64,7 +64,7 @@ namespace RserveCLI2.Test
             // ReSharper disable UseObjectOrCollectionInitializer
             _rtermProcess = new Process();
             _rtermProcess.StartInfo.FileName = rExeFilePath;
-            _rtermProcess.StartInfo.Arguments = string.Format( "-e \"library( Rserve ); Rserve( port = {0} , wait = TRUE {1});\"" , Port , args );
+            _rtermProcess.StartInfo.Arguments = string.Format( "--no-site-file --no-init-file --no-save -e \"library( Rserve ); Rserve( port = {0} , wait = TRUE {1});\"" , Port , args );
             _rtermProcess.StartInfo.UseShellExecute = false;
             _rtermProcess.StartInfo.CreateNoWindow = !showWindow;
             _rtermProcess.Start();
