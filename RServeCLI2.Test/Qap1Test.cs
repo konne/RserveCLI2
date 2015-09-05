@@ -66,7 +66,7 @@ namespace RserveCLI2.Test
         [Theory]
         [InlineData( 5000 )]
         [InlineData( 500000 )]
-        [InlineData( 5000000 )]
+        // Causes OutOfMemoryException [InlineData( 5000000 )]
         public void Command_AssignLargeDataFrame_ProperlyEncodesAndSendsSexpToServer( int rowsToGenerate )
         {
 
@@ -140,7 +140,7 @@ namespace RserveCLI2.Test
         [Theory]
         [InlineData( 5000 )]
         [InlineData( 500000 )]
-        [InlineData( 5000000 )]
+        // Causes OutOfMemoryException [InlineData( 5000000 )]
         public void Command_ReadLargeDataFrame_ProperlyReceivesAndDecodesSexpFromServer( int rowsToGenerate )
         {
             using ( var service = new Rservice( false , 524288 ) )
