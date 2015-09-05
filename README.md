@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/9uv1hv4uxtum1ab8?svg=true)](https://ci.appveyor.com/project/SurajGupta/rservecli2)
+[![NuGet version](https://badge.fury.io/nu/Rservecli2.svg)](http://badge.fury.io/nu/Rservecli2)
 
 Overview
 ---------
