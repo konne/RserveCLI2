@@ -12,11 +12,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("RserveCLI Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("RserveCLI Tests")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Oliver M. Haynold")]
+[assembly: AssemblyCompany("Suraj K. Gupta")]
 [assembly: AssemblyProduct("RserveCLI")]
-[assembly: AssemblyCopyright("Copyright © 2011 Oliver M. Haynold")]
+[assembly: AssemblyCopyright("Original work Copyright (c) 2010 by Oliver Haynold and other contributors.  Modified work Copyright (c) 2015 by Suraj Gupta")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
