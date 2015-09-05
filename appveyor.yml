@@ -26,3 +26,8 @@ artifacts:
 - path: RServeCLI2.zip
 - path: RServeCLI2.Example.zip
 - path: RServeCLI2.Test.zip
+deploy:
+  provider: NuGet
+  api_key:
+    secure: aUaOAaFmJX9VJGINuxJ86ljfbXzi6I748PR0zL8VdZElrdh7C0sbPoFRKl8eciDY
+  artifact: /.*\.nupkg/
