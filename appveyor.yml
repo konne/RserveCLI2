@@ -1,7 +1,7 @@
 version: 1.0.{build}
 configuration:
-- Debug
 - Release
+- Debug
 platform: Any CPU
 assembly_info:
   patch: true
