@@ -162,7 +162,7 @@ namespace RserveCLI2
             {
                 var ipe = new IPEndPoint( addr , port );
                 var s = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
-                s.Connect( ipe );
+                ConnectAsync( s, ipe );
                 if ( !s.Connected )
                 {
                     continue;
@@ -199,8 +199,28 @@ namespace RserveCLI2
 
             var ipe = new IPEndPoint( addr , port );
             _socket = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
-            _socket.Connect( ipe );
+            ConnectAsync(_socket, ipe );
             Init( user , password );
+        }
+
+        /// Connect with a one-second timeout
+        /// From http://stackoverflow.com/questions/1062035/how-to-config-socket-connect-timeout-in-c-sharp
+        private void ConnectAsync(Socket socket, EndPoint end)
+        {
+           IAsyncResult result = socket.BeginConnect(end, null, null);
+
+           bool success = result.AsyncWaitHandle.WaitOne(1000, true);
+
+           if (success)
+           {
+              socket.EndConnect(result);
+           }
+           else
+           {
+              // NOTE, MUST CLOSE THE SOCKET
+              socket.Close();
+              throw new SocketException((int)SocketError.TimedOut);
+           }
         }
 
         #endregion
@@ -327,6 +347,23 @@ namespace RserveCLI2
             _protocol.Command( CmdCreateFile , new object[] { fileName } );
             _protocol.Command( CmdWriteFile , new object[] { ms.ToArray() } );
             _protocol.Command( CmdCloseFile , new object[] { } );
+        }
+
+        /// <summary>
+        /// Attempt to shut down the server process cleanly. 
+        /// </summary>
+        public void Shutdown()
+        {
+           _protocol.Command(CmdShutdown, new object[] { });
+        }
+
+        /// <summary>
+        /// Attempt to shut down the server process cleanly. 
+        /// This command is asynchronous!
+        /// </summary>
+        public void ServerShutdown()
+        {
+           _protocol.Command(CmdCtrlShutdown, new object[] { });
         }
 
         #endregion
