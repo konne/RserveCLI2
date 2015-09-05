@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/9uv1hv4uxtum1ab8?svg=true)](https://ci.appveyor.com/project/SurajGupta/rservecli2)
+
 Overview
 ---------
 RserveCLI2 is a .NET/CLR client for Rserve. It allows .NET/CLR client to access R on the same machine or across the network.
