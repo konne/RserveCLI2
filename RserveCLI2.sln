@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RserveCLI2", "RserveCLI2\RserveCLI2.csproj", "{9BCC1A07-126C-4B24-904A-C0F0D9DCC420}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RServeCLI2.Test", "RserveCLI2.Test\RServeCLI2.Test.csproj", "{3F5A8601-1FCF-4B45-9F80-B7F8FAB4E3DD}"

@@ -10,15 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RserveCLI2
 {
-    
     /// <summary>
     /// A connection to an R session
     /// </summary>
-    public class RConnection : IDisposable
+    public sealed class RConnection : IDisposable
     {
         #region Constants and Fields
 
@@ -125,7 +127,7 @@ namespace RserveCLI2
         /// <summary>
         /// The socket we use to talk to Rserve
         /// </summary>
-        private readonly Socket _socket;
+        private Socket _socket;
 
         /// <summary>
         /// The connection parameters we received from Rserve
@@ -156,23 +158,41 @@ namespace RserveCLI2
         /// <param name="password">
         /// Password for the user, or nothing
         /// </param>
-        public RConnection( string hostname , int port = 6311 , string user = null , string password = null )
-        {
-            foreach ( IPAddress addr in Dns.GetHostEntry( hostname ).AddressList )
-            {
-                var ipe = new IPEndPoint( addr , port );
-                var s = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
-                ConnectAsync( s, ipe );
-                if ( !s.Connected )
-                {
-                    continue;
-                }
+        [Obsolete("Use the static " + nameof(ConnectAsync) + " method instead.")]
+        public RConnection( string hostname, int port = 6311 , string user = null , string password = null ) :
+            this(Async.RunSynchronously(ConnectAsync(hostname, port, CreateNetworkCredential(user, password)))) { }
 
-                _socket = s;
-                break;
+        [Obsolete("Use the static " + nameof(ConnectAsync) + " method instead.")]
+        public RConnection(IPAddress addr = null, int port = 6311, string user = null, string password = null) :
+            this(Async.RunSynchronously(ConnectAsync(addr, port, CreateNetworkCredential(user, password)))) {}
+
+        static NetworkCredential CreateNetworkCredential(string user, string password) =>
+            user != null || password != null ? new NetworkCredential(user, password) : null;
+
+        RConnection(ref Socket socket)
+        {
+            _socket = socket;
+            socket = null; // Owned
+        }
+
+        RConnection(RConnection connection) :
+            this(ref connection._socket)
+        {
+            _protocol = connection._protocol;
+            _connectionParameters = connection._connectionParameters;
+        }
+
+        public static async Task<RConnection> ConnectAsync(string hostname, int port = 6311, NetworkCredential credential = null)
+        {
+            var ipe = await Dns.GetHostEntryAsync(hostname).DontContinueOnCapturedContext();
+            foreach (var addr in ipe.AddressList)
+            {
+                var connection = await ConnectAsync(addr, port, credential).DontContinueOnCapturedContext();
+                if (connection != null)
+                    return connection;
             }
 
-            Init( user , password );
+            return null; // unsuccessful
         }
 
         /// <summary>
@@ -184,43 +204,39 @@ namespace RserveCLI2
         /// <param name="port">
         /// Port on which the server listens
         /// </param>
-        /// <param name="user">
-        /// User name, or nothing for no authentication
+        /// <param name="credential">
+        /// Credential for authentication or <c>null</c> for anonymous
         /// </param>
-        /// <param name="password">
-        /// Password for the user
-        /// </param>
-        public RConnection( IPAddress addr = null , int port = 6311 , string user = null , string password = null )
+        public static async Task<RConnection> ConnectAsync(IPAddress addr = null, int port = 6311, NetworkCredential credential = null)
         {
-            if ( addr == null )
+            var ipe = new IPEndPoint(addr ?? new IPAddress(new byte[] { 127, 0, 0, 1 }), port);
+
+            Socket socket = null;
+            try
             {
-                addr = new IPAddress( new byte[] { 127 , 0 , 0 , 1 } );
+                socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                // Connect with a one-second timeout
+                // From http://stackoverflow.com/questions/1062035/how-to-config-socket-connect-timeout-in-c-sharp
+
+                var connectTask = socket.ConnectAsync(ipe);
+                var timeoutTask = Task.Delay(TimeSpan.FromSeconds(1));
+                var completedTask = await Task.WhenAny(connectTask, timeoutTask)
+                                              .DontContinueOnCapturedContext();
+
+                if (completedTask == timeoutTask)
+                    throw new SocketException((int)SocketError.TimedOut);
+
+                if (!socket.Connected)
+                    return null;
+
+                var connection = new RConnection(ref socket);
+                await connection.InitAsync(credential?.UserName, credential?.Password).DontContinueOnCapturedContext();
+                return connection;
             }
-
-            var ipe = new IPEndPoint( addr , port );
-            _socket = new Socket( ipe.AddressFamily , SocketType.Stream , ProtocolType.Tcp );
-            ConnectAsync(_socket, ipe );
-            Init( user , password );
-        }
-
-        /// Connect with a one-second timeout
-        /// From http://stackoverflow.com/questions/1062035/how-to-config-socket-connect-timeout-in-c-sharp
-        private void ConnectAsync(Socket socket, EndPoint end)
-        {
-           IAsyncResult result = socket.BeginConnect(end, null, null);
-
-           bool success = result.AsyncWaitHandle.WaitOne(1000, true);
-
-           if (success)
-           {
-              socket.EndConnect(result);
-           }
-           else
-           {
-              // NOTE, MUST CLOSE THE SOCKET
-              socket.Close();
-              throw new SocketException((int)SocketError.TimedOut);
-           }
+            finally
+            {
+                socket?.Dispose();
+            }
         }
 
         #endregion
@@ -350,7 +366,7 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Attempt to shut down the server process cleanly. 
+        /// Attempt to shut down the server process cleanly.
         /// </summary>
         public void Shutdown()
         {
@@ -358,7 +374,7 @@ namespace RserveCLI2
         }
 
         /// <summary>
-        /// Attempt to shut down the server process cleanly. 
+        /// Attempt to shut down the server process cleanly.
         /// This command is asynchronous!
         /// </summary>
         public void ServerShutdown()
@@ -398,14 +414,12 @@ namespace RserveCLI2
         /// <param name="password">
         /// Password for the user, or null
         /// </param>
-        private void Init( string user , string password )
+        async Task InitAsync(string user, string password)
         {
             var buf = new byte[ 32 ];
-            int received = _socket.Receive( buf );
+            int received = await _socket.ReceiveAsync(buf).DontContinueOnCapturedContext();
             if ( received == 0 )
-            {
                 throw new RserveException( "Rserve connection was closed by the remote host" );
-            }
 
             var parms = new List<string>();
             for ( int i = 0 ; i < buf.Length ; i += 4 )
@@ -418,25 +432,25 @@ namespace RserveCLI2
             _connectionParameters = parms.ToArray();
             if ( _connectionParameters[ 0 ] != "Rsrv" )
             {
-                throw new ProtocolViolationException( "Did not receive Rserve ID signature." );
+                throw new ProtocolViolationException("Did not receive Rserve ID signature.");
             }
 
-            if ( _connectionParameters[ 2 ] != "QAP1" )
+            if (_connectionParameters[2] != "QAP1")
             {
-                throw new NotSupportedException( "Only QAP1 protocol is supported." );
+                throw new NotSupportedException("Only QAP1 protocol is supported.");
             }
 
-            _protocol = new Qap1( _socket );
-            if ( _connectionParameters.Contains( "ARuc" ) )
+            _protocol = new Qap1(_socket);
+            if (_connectionParameters.Contains("ARuc"))
             {
-                string key = _connectionParameters.FirstOrDefault( x => !String.IsNullOrEmpty( x ) && x[ 0 ] == 'K' );
-                key = String.IsNullOrEmpty( key ) ? "rs" : key.Substring( 1 , key.Length - 1 );
+                string key = _connectionParameters.FirstOrDefault(x => !String.IsNullOrEmpty(x) && x[0] == 'K');
+                key = String.IsNullOrEmpty(key) ? "rs" : key.Substring(1, key.Length - 1);
 
-                Login( user , password , "uc" , key );
+                await LoginAsync(user, password, "uc", key).DontContinueOnCapturedContext();
             }
-            else if ( _connectionParameters.Contains( "ARpt" ) )
+            else if (_connectionParameters.Contains("ARpt"))
             {
-                Login( user , password , "pt" );
+                await LoginAsync(user, password, "pt").DontContinueOnCapturedContext();
             }
         }
 
@@ -478,6 +492,27 @@ namespace RserveCLI2
                     break;
                 default:
                     throw new ArgumentException( "Could not interpret login method '" + method + "'" );
+            }
+        }
+
+        async Task LoginAsync(string user, string password, string method, string salt = null)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (password == null) throw new ArgumentNullException(nameof(password));
+
+            switch (method)
+            {
+                case "pt":
+                    await _protocol.CommandAsync(CmdLogin, new object[] { user + "\n" + password })
+                                   .DontContinueOnCapturedContext();
+                    break;
+                case "uc":
+                    password = new DES().Encrypt(password, salt);
+                    await _protocol.CommandAsync(CmdLogin, new object[] { user + "\n" + password })
+                                   .DontContinueOnCapturedContext();
+                    break;
+                default:
+                    throw new ArgumentException("Could not interpret login method '" + method + "'");
             }
         }
 
@@ -529,5 +564,89 @@ namespace RserveCLI2
         }
 
         #endregion
+    }
+
+    static class TaskExtensions
+    {
+        public static ConfiguredTaskAwaitable<T> DontContinueOnCapturedContext<T>(this Task<T> task) =>
+            task.ConfigureAwait(continueOnCapturedContext: false);
+
+        public static ConfiguredTaskAwaitable DontContinueOnCapturedContext(this Task task) =>
+            task.ConfigureAwait(continueOnCapturedContext: false);
+    }
+
+    static class Async
+    {
+        public static T RunSynchronously<T>(Task<T> task)
+        {
+            RunSynchronously((Task) task);
+            return task.Result;
+        }
+
+        public static void RunSynchronously(Task task)
+        {
+            try
+            {
+                task.Wait();
+            }
+            catch (AggregateException e)
+            {
+                ExceptionDispatchInfo.Capture(e.GetBaseException()).Throw();
+                throw; // Should never end up here.
+            }
+        }
+    }
+
+    static class SocketExtensions
+    {
+        public static Task<int> SendAsync(this Socket socket, byte[] buffer) =>
+            SendAsync(socket, buffer, buffer.Length);
+
+        public static Task<int> SendAsync(this Socket socket, byte[] buffer, int size) =>
+            SendAsync(socket, buffer, 0, size);
+
+        public static Task<int> SendAsync(this Socket socket, byte[] buffer, int offset, int size) =>
+            SendAsync(socket, buffer, offset, size, SocketFlags.None);
+
+        public static Task<int> SendAsync(this Socket socket,
+            byte[] buffer, int offset, int size, SocketFlags socketFlags)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            socket.BeginSend(buffer, offset, size, socketFlags, ar =>
+            {
+                try { tcs.TrySetResult(socket.EndReceive(ar)); }
+                catch (Exception e) { tcs.TrySetException(e); }
+            }, null);
+            return tcs.Task;
+        }
+
+        public static Task<int> ReceiveAsync(this Socket socket, byte[] buffer) =>
+            socket.ReceiveAsync(buffer, buffer.Length);
+
+        public static Task<int> ReceiveAsync(this Socket socket, byte[] buffer, int size) =>
+            socket.ReceiveAsync(buffer, 0, size, SocketFlags.None);
+
+        public static Task<int> ReceiveAsync(this Socket socket,
+            byte[] buffer, int offset, int size, SocketFlags socketFlags)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            socket.BeginReceive(buffer, offset, size, socketFlags, ar =>
+            {
+                try { tcs.TrySetResult(socket.EndReceive(ar)); }
+                catch (Exception e) { tcs.TrySetException(e); }
+            }, null);
+            return tcs.Task;
+        }
+
+        public static Task ConnectAsync(this Socket socket, EndPoint endPoint)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            socket.BeginConnect(endPoint, iar =>
+            {
+                try { socket.EndConnect(iar); tcs.TrySetResult(0); }
+                catch (Exception e) { tcs.TrySetException(e); }
+            }, null);
+            return tcs.Task;
+        }
     }
 }
