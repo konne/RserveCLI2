@@ -45,7 +45,7 @@ namespace RserveCLI2.Test
             // ReSharper disable AssignNullToNotNullAttribute
             string assemblyDir = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).AbsolutePath;
             // ReSharper restore AssignNullToNotNullAttribute
-            string rExeFilePath = Path.Combine( assemblyDir , "R-2.15.3" , "bin" , "x64" , "Rterm.exe" );
+            string rExeFilePath = Path.Combine( assemblyDir , "R-2.15.3" , "bin" , Environment.Is64BitOperatingSystem ? "x64" : "i386" , "Rterm.exe" );
 
             // the only way to set maxinbuf is via configuration file
             // generate a config file and reference it as part of the args parameter to Rserve() below
