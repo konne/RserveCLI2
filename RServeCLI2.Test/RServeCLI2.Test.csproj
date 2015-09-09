@@ -56,6 +56,7 @@
     <Compile Include="SexpArrayDoubleTest.cs" />
     <Compile Include="SexpArrayIntTest.cs" />
     <Compile Include="SexpListTest.cs" />
+    <Compile Include="SexpTaggedListTest.cs" />
     <Compile Include="SexpTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
