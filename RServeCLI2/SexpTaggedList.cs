@@ -131,7 +131,7 @@ namespace RserveCLI2
         {
             get
             {
-                int ndx = Value.FindIndex( x => x.Key == key );
+                int ndx = IndexOfKey( key );
                 if ( ndx < 0 )
                 {
                     throw new KeyNotFoundException();
@@ -142,7 +142,7 @@ namespace RserveCLI2
 
             set
             {
-                int ndx = Value.FindIndex( x => x.Key == key );
+                int ndx = IndexOfKey( key );
                 if ( ndx < 0 )
                 {
                     Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
@@ -342,10 +342,22 @@ namespace RserveCLI2
         /// <param name="value">When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value"/> parameter. This parameter is passed uninitialized.</param>
         /// <returns>
         /// true if the object that implements IDictionary contains an element with the specified key; otherwise, false.
-        /// </returns>        
+        /// </returns>
         public override bool TryGetValue( string key , out Sexp value )
         {
-            throw new NotImplementedException();
+            var ndx = IndexOfKey( key );
+            if ( ndx < 0 )
+            {
+                value = null;
+                return false;
+            }
+            value = Value[ ndx ].Value;
+            return true;
+        }
+
+        int IndexOfKey(string key)
+        {
+            return Value.FindIndex( e => e.Key == key );
         }
 
         #endregion
