@@ -18,7 +18,6 @@ namespace RserveCLI2
     [Serializable]
     public class SexpTaggedList : Sexp , IEnumerable<KeyValuePair<string , Sexp>>
     {
-
         # region Constructors
 
         /// <summary>
@@ -355,7 +354,7 @@ namespace RserveCLI2
             return true;
         }
 
-        int IndexOfKey(string key)
+        private int IndexOfKey(string key)
         {
             return Value.FindIndex( e => e.Key == key );
         }
