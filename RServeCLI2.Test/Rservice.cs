@@ -73,7 +73,7 @@ namespace RserveCLI2.Test
 
             // create a connection to the server
             // ReSharper disable RedundantArgumentDefaultValue
-            RConnection = new RConnection( port: Port );
+            RConnection = RConnection.Connect( port: Port );
             // ReSharper restore RedundantArgumentDefaultValue
 
         }

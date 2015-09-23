@@ -1,19 +1,19 @@
 //-----------------------------------------------------------------------
 // Original work Copyright (c) 2011, Oliver M. Haynold
 // Modified work Copyright (c) 2013, Suraj Gupta
+// Modified work Copyright (c) 2015, Atif Aziz
 // All rights reserved.
 //-----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RserveCLI2
 {
-
     /// <summary>
     /// An implementation of the QAP1 protocol used to communicate with Rserve
     /// </summary>
@@ -168,8 +168,8 @@ namespace RserveCLI2
         // codes < 0 denote Rerror as provided by R_tryEval
 
         /// <summary>
-        /// auth.failed or auth.requested but no login came. 
-        /// in case of authentification failure due to name/pwd mismatch, 
+        /// auth.failed or auth.requested but no login came.
+        /// in case of authentification failure due to name/pwd mismatch,
         /// server may send CMD_accessDenied instead
         /// </summary>
         internal const byte ErrAuthFailed = 0x41;
@@ -205,8 +205,8 @@ namespace RserveCLI2
         internal const byte ErrNotOpen = 0x47;
 
         /// <summary>
-        /// This answer is also valid onC MD_login; otherwise it's sent if the server doesn't 
-        /// allow the user to issue the specified command. 
+        /// This answer is also valid onC MD_login; otherwise it's sent if the server doesn't
+        /// allow the user to issue the specified command.
         /// (e.g. some server admins may block file I/O operations for some users)
         /// </summary>
         internal const byte ErrAccessDenied = 0x48;
@@ -217,8 +217,8 @@ namespace RserveCLI2
         internal const byte ErrUnsupportedCmd = 0x49;
 
         /// <summary>
-        /// unknown command - the difference between unsupported and unknown is that unsupported commands 
-        /// are known to the server but for some reasons (e.g. platform dependent) it's not supported.  
+        /// unknown command - the difference between unsupported and unknown is that unsupported commands
+        /// are known to the server but for some reasons (e.g. platform dependent) it's not supported.
         /// unknown commands are simply not recognized by the server at all.
         /// </summary>
         internal const byte ErrUnknownCmd = 0x4a;
@@ -229,9 +229,9 @@ namespace RserveCLI2
         internal const byte ErrDataOverflow = 0x4b;
 
         /// <summary>
-        /// The requested object is too big to be transported in that way. 
+        /// The requested object is too big to be transported in that way.
         /// If received after CMD_eval then the evaluation itself was successful.
-        /// Optional parameter is the size of the object 
+        /// Optional parameter is the size of the object
         /// </summary>
         internal const byte ErrObjectTooBig = 0x4c;
 
@@ -274,7 +274,7 @@ namespace RserveCLI2
         /// server-initiated close due to security violation (too many attempts, excessive timeout etc.)
         /// </summary>
         internal const byte ErrSecurityClose = 0x64;
-        
+
         #endregion
 
         #endregion
@@ -302,9 +302,9 @@ namespace RserveCLI2
         /// <param name="cmd">Command to be sent to the server</param>
         /// <param name="data">Arguments for the command</param>
         /// <returns>The data read</returns>
-        public byte[] CommandReadStream( int cmd , IList<object> data )
+        public async Task<byte[]> CommandReadStreamAsync(int cmd, IList<object> data)
         {
-            long toConsume = SubmitCommand( cmd , data );
+            long toConsume = await SubmitCommandAsync(cmd, data).ContinueContextFree();
             var res = new byte[ toConsume ];
             long stored = 0;
             int retrieved = -1;
@@ -312,7 +312,7 @@ namespace RserveCLI2
             var tempBuf = new byte[ 1024 * 1014 ];
             while ( ( stored < toConsume ) && ( retrieved != 0 ) )
             {
-                retrieved = _socket.Receive( tempBuf , SocketFlags.None );
+                retrieved = await _socket.ReceiveAsync(tempBuf).ContinueContextFree();
                 Array.Copy( tempBuf , 0 , res , stored , retrieved );
                 stored += retrieved;
             }
@@ -331,18 +331,18 @@ namespace RserveCLI2
         /// <param name="cmd">Command to be sent to the server</param>
         /// <param name="data">Arguments for the command</param>
         /// <returns>The result, parsed into appropriate objects (string or Sexp)</returns>
-        public List<object> Command( int cmd , IList<object> data )
+        public async Task<List<object>> CommandAsync(int cmd, IList<object> data)
         {
-            long toConsume = SubmitCommand( cmd , data );
+            long toConsume = await SubmitCommandAsync(cmd, data).ContinueContextFree();
             var res = new List<object>();
             while ( toConsume > 0 )
             {
-                
+
                 // pull the first 4 bytes of the header
                 // first byte is the DT declaration.  Next three bytes used for length of payload.
                 var dhbuf = new byte[ 9 ];
                 int headerLength = 4;
-                if ( _socket.Receive( dhbuf , 4 , SocketFlags.None ) != 4 )
+                if (await _socket.ReceiveAsync(dhbuf, 4).ContinueContextFree() != 4)
                 {
                     throw new RserveException( "When receiving command parameter from server, client did not receive the requisite 4-byte header." );
                 }
@@ -352,22 +352,22 @@ namespace RserveCLI2
                 if ( ( typ & DtLarge ) == DtLarge )
                 {
                     headerLength += 4;
-                    if ( _socket.Receive( dhbuf , 4 , 4 , SocketFlags.None ) != 4 )
+                    if (await _socket.ReceiveAsync(dhbuf, 4, 4, SocketFlags.None).ContinueContextFree() != 4)
                     {
                         throw new RserveException( "When receiving command parameter with large data from server, client did not receive the requisite extra 4-bytes in the header." );
                     }
                 }
-                
+
                 // determine length of payload
                 var dlength = ( long )BitConverter.ToUInt64( dhbuf , 1 );
-                
+
                 // pull the payload from the socket
                 long receivedTotal = 0;
                 var dvbuf = new byte[ dlength ];
                 while ( receivedTotal < dlength )
                 {
                     var buf = new byte[ Math.Min( dlength - receivedTotal , 1014 * 1024 ) ];
-                    var received = _socket.Receive( buf );
+                    var received = await _socket.ReceiveAsync(buf).ContinueContextFree();
                     if ( received > 0 )
                     {
                         Array.Copy( buf , 0 , dvbuf , receivedTotal , received );
@@ -378,7 +378,7 @@ namespace RserveCLI2
                         throw new RserveException( "When receiving command parameter from server, the payload is expected to be " + dvbuf.Length + " bytes of data, but the client received " + receivedTotal + "." );
                     }
                 }
-                
+
                 if ( ( typ & DtString ) == DtString )
                 {
                     long count = dvbuf.LongLength;
@@ -424,7 +424,7 @@ namespace RserveCLI2
         /// <param name="cmd">The command to be submitted to the server</param>
         /// <param name="data">The arguments for the command</param>
         /// <returns>Length of the response in bytes</returns>
-        private long SubmitCommand( int cmd , IList<object> data )
+        private async Task<long> SubmitCommandAsync( int cmd , IList<object> data )
         {
             // Build command
             var sbuf = new List<byte>();
@@ -436,7 +436,7 @@ namespace RserveCLI2
                 {
                     argbuf.AddRange( Encoding.UTF8.GetBytes( a as string ) );
                     argbuf.Add( 0 ); // string must be null terminated
-                    
+
                     // strings must be padded with zeros so length of the content is divisible by 4
                     while ( argbuf.Count % 4 != 0 )
                     {
@@ -500,11 +500,11 @@ namespace RserveCLI2
             sbuf.InsertRange( 12 , mlenBytes.Skip( 4 ) );
 
             // Execute Command
-            _socket.Send( sbuf.ToArray() );
+            await _socket.SendAsync( sbuf.ToArray() ).ContinueContextFree();
 
             // Read Response
             var hdrbuf = new byte[ 16 ];
-            if ( _socket.Receive( hdrbuf ) != 16 )
+            if ( await _socket.ReceiveAsync( hdrbuf ).ContinueContextFree() != 16 )
             {
                 throw new RserveException( "Response from server does not contain a header." );
             }
@@ -625,7 +625,7 @@ namespace RserveCLI2
                 var v = ( ( SexpArrayString )s ).Value;
                 foreach ( var a in v )
                 {
-                    // Rserve represents NA strings using 0xff (255).  
+                    // Rserve represents NA strings using 0xff (255).
                     if ( a == null )
                     {
                         res.Add( 255 );
@@ -634,7 +634,7 @@ namespace RserveCLI2
                     {
                         var b = Encoding.UTF8.GetBytes( a );
 
-                        // If 0xff occurs in the beginning of a string it should be doubled to avoid misrepresentation. 
+                        // If 0xff occurs in the beginning of a string it should be doubled to avoid misrepresentation.
                         if ( ( b.Length > 0 ) && ( b[ 0 ] == 255 ) )
                         {
                             res.Add( 255 );
@@ -642,8 +642,8 @@ namespace RserveCLI2
 
                         res.AddRange( b );
                     }
-                    res.Add( 0 );                    
-                }                
+                    res.Add( 0 );
+                }
             }
             else if ( t == typeof( SexpSymname ) )
             {
@@ -695,7 +695,7 @@ namespace RserveCLI2
         {
             // pull sexp type
             byte xt = data[ start ];
-            
+
             // calculate length of payload
             var lengthBuf = new byte[ 8 ];
             Array.Copy( data , start + 1 , lengthBuf , 0 , 3 );
@@ -707,7 +707,7 @@ namespace RserveCLI2
                 xt -= XtLarge;
             }
             var length = ( long )BitConverter.ToUInt64( lengthBuf , 0 );
-            
+
             // has attributes?  process first
             SexpTaggedList attrs = null;
             if ( ( xt & XtHasAttr ) == XtHasAttr )
@@ -872,7 +872,7 @@ namespace RserveCLI2
                     }
 
                     break;
-                case XtRaw:                
+                case XtRaw:
                     {
                         var d = new byte[ length ];
                         Array.Copy( data , start , d , 0 , length );
@@ -882,7 +882,7 @@ namespace RserveCLI2
                 default:
                     throw new RserveException( "Cannot decode an Sexp because the type is not recognized: " + xt );
             }
-            
+
             if ( start > end )
             {
                 throw new RserveException( "When decoding an Sexp, more data consumed than provided." );

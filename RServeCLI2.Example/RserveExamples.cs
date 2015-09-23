@@ -20,7 +20,7 @@ namespace RserveCLI2.Example
         /// <param name="args">The arguments.</param>
         public static void Main( string[] args )
         {
-            using ( var s = new RConnection( new System.Net.IPAddress( new byte[] { 127 , 0 , 0 , 1 } ) ) )
+            using ( var s = RConnection.Connect( new System.Net.IPAddress( new byte[] { 127 , 0 , 0 , 1 } ) ) )
             {
                 // Generate some example data
                 var x = Enumerable.Range( 1 , 20 ).ToArray();
