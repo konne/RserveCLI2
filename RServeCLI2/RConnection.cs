@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace RserveCLI2
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// A connection to an R session
     /// </summary>
@@ -280,7 +282,11 @@ namespace RserveCLI2
                                               .ContinueContextFree();
 
                 if (completedTask == timeoutTask)
+                {
+                    connectTask.IgnoreFault();
+                    await timeoutTask.ContinueContextFree();
                     throw new SocketException((int)SocketError.TimedOut);
+                }
 
                 await connectTask.ContinueContextFree();
 
