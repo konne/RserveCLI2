@@ -6,8 +6,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
-using System.Reflection;
 using System.Threading;
 
 namespace RserveCLI2.Test
@@ -41,11 +39,13 @@ namespace RserveCLI2.Test
         /// <param name="maxInputBufferSizeInKb">The maximal allowable size of the input buffer in kilobytes.  That is, the maximal size of data transported from the client to the server.</param>
         public Rservice( bool showWindow = false , int maxInputBufferSizeInKb = 0 )
         {
-
             // ReSharper disable AssignNullToNotNullAttribute
-            string assemblyDir = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).AbsolutePath;
+#if RTERM_PROCESS
+            var codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            var is64BitOperatingSystem = Environment.Is64BitOperatingSystem;
+            string assemblyDir = new Uri( Path.GetDirectoryName( codeBase ) ).AbsolutePath;
             // ReSharper restore AssignNullToNotNullAttribute
-            string rExeFilePath = Path.Combine( assemblyDir , "R-2.15.3" , "bin" , Environment.Is64BitOperatingSystem ? "x64" : "i386" , "Rterm.exe" );
+            string rExeFilePath = Path.Combine( assemblyDir , "R-2.15.3" , "bin" , is64BitOperatingSystem ? "x64" : "i386" , "Rterm.exe" );
 
             // the only way to set maxinbuf is via configuration file
             // generate a config file and reference it as part of the args parameter to Rserve() below
@@ -58,7 +58,7 @@ namespace RserveCLI2.Test
                 args = string.Format( ", args = '--RS-conf {0}' " , configFile.Replace( @"\" , "/" ) );
             }
 
-            // launch RTerm and tell it load Rserve. 
+            // launch RTerm and tell it load Rserve.
             // Keep RTerm open, otherwise the child process will be killed.
             // We will use CmdShutdown to stop the server
             // ReSharper disable UseObjectOrCollectionInitializer
@@ -70,35 +70,36 @@ namespace RserveCLI2.Test
             _rtermProcess.Start();
             Thread.Sleep( 3000 );
             // ReSharper restore UseObjectOrCollectionInitializer
+#endif
+            string hostname = "localhost";
 
             // create a connection to the server
             // ReSharper disable RedundantArgumentDefaultValue
-            RConnection = RConnection.Connect( port: Port );
+            RConnection = RConnection.Connect( port: Port, hostname: hostname);
             // ReSharper restore RedundantArgumentDefaultValue
-
         }
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
 
         /// <summary>
         /// Get the wrapped RConnection
         /// </summary>
         public RConnection RConnection { get; private set; }
 
-        #endregion
+#endregion
 
-        #region Public Members
+#region Public Members
 
         public void Dispose()
         {
             Dispose( true );
         }
 
-        #endregion
+#endregion
 
-        #region Interface Implimentations
+#region Interface Implimentations
 
         protected virtual void Dispose( bool disposing )
         {
@@ -109,8 +110,10 @@ namespace RserveCLI2.Test
                     // dispose the connection to server
                     if ( RConnection != null )
                     {
+#if RTERM_PROCESS
                         // Kill the server
                         RConnection.Shutdown();
+#endif
                         RConnection.Dispose();
                     }
                 }
@@ -118,13 +121,16 @@ namespace RserveCLI2.Test
             }
         }
 
-        #endregion
+#endregion
 
-        #region Private Members
+#region Private Members
 
         private bool _disposed; // to detect redundant calls
+        
+#if RTERM_PROCESS
         private readonly Process _rtermProcess;
-
-        #endregion
+#endif
+        
+#endregion
     }
 }

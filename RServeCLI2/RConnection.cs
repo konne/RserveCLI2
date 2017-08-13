@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 
 namespace RserveCLI2
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// A connection to an R session
     /// </summary>

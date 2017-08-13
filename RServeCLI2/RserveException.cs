@@ -6,9 +6,11 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Security.Permissions;
-using System.Text;
+#if BINARY_SERIALIZATION
 using System.Runtime.Serialization;
+using System.Security.Permissions;
+#endif
+using System.Text;
 
 namespace RserveCLI2
 {
@@ -63,6 +65,7 @@ namespace RserveCLI2
             _serverErrorCode = serverErrorCode;
         }
 
+#if BINARY_SERIALIZATION
         /// <summary>
         /// Initializes a new instance of the RserveException class with serialized data.
         /// </summary>
@@ -72,6 +75,7 @@ namespace RserveCLI2
             _serverErrorCode = ( int? )info.GetValue( "RserveException_serverErrorCode" , typeof( int? ) );
             HResult = _hResult;
         }
+#endif
 
         #endregion
 
@@ -129,16 +133,18 @@ namespace RserveCLI2
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Sets the SerializationInfo object with the server error code.
-        /// (Overrides Exception.GetObjectData(SerializationInfo, StreamingContext).)
-        /// </summary>
+#if BINARY_SERIALIZATION
+/// <summary>
+/// Sets the SerializationInfo object with the server error code.
+/// (Overrides Exception.GetObjectData(SerializationInfo, StreamingContext).)
+/// </summary>
         [SecurityPermission( SecurityAction.LinkDemand , Flags = SecurityPermissionFlag.SerializationFormatter )]
         public override void GetObjectData( SerializationInfo info , StreamingContext context )
         {
             base.GetObjectData( info , context );
             info.AddValue( "RserveException_serverErrorCode" , _serverErrorCode , typeof( int? ) );
         }
+#endif
 
         #endregion
 

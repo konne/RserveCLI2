@@ -239,7 +239,7 @@ namespace RserveCLI2
             foreach ( int value in base.Value )
             {
                 builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : RIntToDate( value ).ToShortDateString() );
+                builder.Append( CheckNa( value ) ? "NA" : RIntToDate( value ).ToString("d") );
             }
             if ( builder.Length > 0 )
             {
