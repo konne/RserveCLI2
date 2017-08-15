@@ -265,7 +265,14 @@ namespace RserveCLI2
         /// <param name="credentials">
         /// Credentials for authentication or <c>null</c> for anonymous
         /// </param>
-        public static async Task<RConnection> ConnectAsync(IPAddress addr = null, int port = 6311, NetworkCredential credentials = null)
+        /// <param name="timeout">
+        /// Optional timeout, defaults to one second
+        /// </param>
+        public static async Task<RConnection> ConnectAsync(
+            IPAddress addr = null,
+            int port = 6311,
+            NetworkCredential credentials = null,
+            TimeSpan? timeout = null)
         {
             var ipe = new IPEndPoint(addr ?? new IPAddress(new byte[] { 127, 0, 0, 1 }), port);
 
@@ -273,19 +280,18 @@ namespace RserveCLI2
             try
             {
                 socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                // Connect with a one-second timeout
+                // Connect with timeout
                 // From http://stackoverflow.com/questions/1062035/how-to-config-socket-connect-timeout-in-c-sharp
 
                 var connectTask = socket.ConnectAsync(ipe);
-                var timeoutTask = Task.Delay(TimeSpan.FromSeconds(1));
-                var completedTask = await Task.WhenAny(connectTask, timeoutTask)
-                                              .ContinueContextFree();
+                var timeoutTask = Task.Delay(timeout ?? TimeSpan.FromSeconds(1));
+                var completedTask = await Task.WhenAny(connectTask, timeoutTask).ContinueContextFree();
 
                 if (completedTask == timeoutTask)
                 {
                     connectTask.IgnoreFault();
                     await timeoutTask.ContinueContextFree();
-                    throw new SocketException((int)SocketError.TimedOut);
+                    throw new SocketException((int) SocketError.TimedOut);
                 }
 
                 await connectTask.ContinueContextFree();
