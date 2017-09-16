@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 
 namespace RserveCLI2
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// A connection to an R session
     /// </summary>
@@ -210,8 +208,19 @@ namespace RserveCLI2
         /// <param name="credentials">
         /// Credentials for authentication or <c>null</c> for anonymous
         /// </param>
-        public static RConnection Connect(string hostname, int port = 6311, NetworkCredential credentials = null) =>
-            Async.RunSynchronously(ConnectAsync(hostname, port, credentials));
+        /// <param name="addressFamily">
+        /// Optional address family when selecting IP address or <c>null</c> if any
+        /// </param>
+        /// <param name="timeout">
+        /// Optional timeout, defaults to one second
+        /// </param>
+        public static RConnection Connect(
+            string hostname, 
+            int port = 6311, 
+            NetworkCredential credentials = null, 
+            AddressFamily? addressFamily = null,
+            TimeSpan? timeout = null) =>
+            Async.RunSynchronously(ConnectAsync(hostname, port, credentials, addressFamily, timeout));
 
         /// <summary>
         /// Asynchronously connects to Rserve identified by host name.
@@ -225,12 +234,31 @@ namespace RserveCLI2
         /// <param name="credentials">
         /// Credentials for authentication or <c>null</c> for anonymous
         /// </param>
-        public static async Task<RConnection> ConnectAsync(string hostname, int port = 6311, NetworkCredential credentials = null)
+        /// <param name="addressFamily">
+        /// Optional address family when selecting IP address or <c>null</c> if any
+        /// </param>
+        /// <param name="timeout">
+        /// Optional timeout, defaults to one second
+        /// </param>
+        public static async Task<RConnection> ConnectAsync(
+            string hostname, 
+            int port = 6311, 
+            NetworkCredential credentials = null,
+            AddressFamily? addressFamily = null,
+            TimeSpan? timeout = null)
         {
-            var ipe = await Dns.GetHostEntryAsync(hostname).ContinueContextFree();
-            foreach (var addr in ipe.AddressList)
+            // if it's an IP address, we can take a shortcut
+            IPAddress ipAddress;
+            if (IPAddress.TryParse(hostname, out ipAddress))
+                return await ConnectAsync(ipAddress, port, credentials, timeout).ContinueContextFree();
+
+            var addressList = await Dns.GetHostAddressesAsync(hostname).ContinueContextFree();
+            foreach (var addr in addressList)
             {
-                var connection = await ConnectAsync(addr, port, credentials).ContinueContextFree();
+                if (addressFamily != null && addr.AddressFamily != addressFamily)
+                    continue;
+
+                var connection = await ConnectAsync(addr, port, credentials, timeout).ContinueContextFree();
                 if (connection != null)
                     return connection;
             }
@@ -250,8 +278,11 @@ namespace RserveCLI2
         /// <param name="credentials">
         /// Credentials for authentication or <c>null</c> for anonymous
         /// </param>
-        public static RConnection Connect(IPAddress addr = null, int port = 6311, NetworkCredential credentials = null) =>
-            Async.RunSynchronously(ConnectAsync(addr, port, credentials));
+        /// <param name="timeout">
+        /// Optional timeout, defaults to one second
+        /// </param>
+        public static RConnection Connect(IPAddress addr = null, int port = 6311, NetworkCredential credentials = null, TimeSpan? timeout = null) =>
+            Async.RunSynchronously(ConnectAsync(addr, port, credentials, timeout));
 
         /// <summary>
         /// Asynchronously connects to Rserve identified by an IP address.
