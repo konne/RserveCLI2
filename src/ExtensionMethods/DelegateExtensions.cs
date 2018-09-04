@@ -17,14 +17,13 @@
 //
 #endregion
 
-namespace Mannex
+namespace RserveCLI2
 {
     using System;
 
     /// <summary>
     /// Extension methods for <see cref="Delegate"/>.
     /// </summary>
-
     static partial class DelegateExtensions
     {
         /// <summary>

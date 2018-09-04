@@ -4,18 +4,19 @@
 // Modified work Copyright (c) 2015, Atif Aziz
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading.Tasks;
+    #endregion
+
     /// <summary>
     /// A connection to an R session
     /// </summary>
@@ -158,8 +159,9 @@ namespace RserveCLI2
         /// Password for the user, or nothing
         /// </param>
         [Obsolete("Use the static " + nameof(Connect) + " method instead.")]
-        public RConnection( string hostname, int port = 6311 , string user = null , string password = null ) :
-            this(Async.RunSynchronously(ConnectAsync(hostname, port, CreateNetworkCredential(user, password)))) { }
+        public RConnection(string hostname, int port = 6311, string user = null, string password = null) :
+            this(Async.RunSynchronously(ConnectAsync(hostname, port, CreateNetworkCredential(user, password))))
+        { }
 
         /// <summary>
         /// Initializes a new instance of the RConnection class.
@@ -178,7 +180,8 @@ namespace RserveCLI2
         /// </param>
         [Obsolete("Use the static " + nameof(Connect) + " method instead.")]
         public RConnection(IPAddress addr = null, int port = 6311, string user = null, string password = null) :
-            this(Async.RunSynchronously(ConnectAsync(addr, port, CreateNetworkCredential(user, password)))) {}
+            this(Async.RunSynchronously(ConnectAsync(addr, port, CreateNetworkCredential(user, password))))
+        { }
 
         static NetworkCredential CreateNetworkCredential(string user, string password) =>
             user != null || password != null ? new NetworkCredential(user, password) : null;
@@ -215,9 +218,9 @@ namespace RserveCLI2
         /// Optional timeout, defaults to one second
         /// </param>
         public static RConnection Connect(
-            string hostname, 
-            int port = 6311, 
-            NetworkCredential credentials = null, 
+            string hostname,
+            int port = 6311,
+            NetworkCredential credentials = null,
             AddressFamily? addressFamily = null,
             TimeSpan? timeout = null) =>
             Async.RunSynchronously(ConnectAsync(hostname, port, credentials, addressFamily, timeout));
@@ -241,8 +244,8 @@ namespace RserveCLI2
         /// Optional timeout, defaults to one second
         /// </param>
         public static async Task<RConnection> ConnectAsync(
-            string hostname, 
-            int port = 6311, 
+            string hostname,
+            int port = 6311,
             NetworkCredential credentials = null,
             AddressFamily? addressFamily = null,
             TimeSpan? timeout = null)
@@ -322,7 +325,7 @@ namespace RserveCLI2
                 {
                     connectTask.IgnoreFault();
                     await timeoutTask.ContinueContextFree();
-                    throw new SocketException((int) SocketError.TimedOut);
+                    throw new SocketException((int)SocketError.TimedOut);
                 }
 
                 await connectTask.ContinueContextFree();
@@ -349,16 +352,16 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The variable to be assigned to or the expression to be evaluated</param>
         /// <returns>The value of the expression</returns>
-        public Sexp this[ string s ]
+        public Sexp this[string s]
         {
             get
             {
-                return Eval( s );
+                return Eval(s);
             }
 
             set
             {
-                Assign( s , value );
+                Assign(s, value);
             }
         }
 
@@ -375,8 +378,8 @@ namespace RserveCLI2
         /// <param name="val">
         /// Sexp to be assigned to the variable
         /// </param>
-        public void Assign( string symbol , Sexp val ) =>
-            Async.RunSynchronously( AssignAsync( symbol , val ) );
+        public void Assign(string symbol, Sexp val) =>
+            Async.RunSynchronously(AssignAsync(symbol, val));
 
         /// <summary>
         /// Asynchronously assign an R variable on the server.
@@ -387,8 +390,8 @@ namespace RserveCLI2
         /// <param name="val">
         /// Sexp to be assigned to the variable
         /// </param>
-        public Task AssignAsync( string symbol , Sexp val ) =>
-            _protocol.CommandAsync( CmdAssignSexp , new object[] { symbol , val } );
+        public Task AssignAsync(string symbol, Sexp val) =>
+            _protocol.CommandAsync(CmdAssignSexp, new object[] { symbol, val });
 
         /// <summary>
         /// Evaluate an R command and return the result. this[string] is syntactic sugar for the same operation.
@@ -399,8 +402,8 @@ namespace RserveCLI2
         /// <returns>
         /// Sexp that resulted from the command
         /// </returns>
-        public Sexp Eval( string s ) =>
-            Async.RunSynchronously( EvalAsync( s ) );
+        public Sexp Eval(string s) =>
+            Async.RunSynchronously(EvalAsync(s));
 
         /// <summary>
         /// Asynchronously evaluate an R command and return the result.
@@ -411,11 +414,11 @@ namespace RserveCLI2
         /// <returns>
         /// Sexp that resulted from the command
         /// </returns>
-        public async Task<Sexp> EvalAsync( string s )
+        public async Task<Sexp> EvalAsync(string s)
         {
-            var res = await _protocol.CommandAsync( CmdEval , new object[] { s } )
+            var res = await _protocol.CommandAsync(CmdEval, new object[] { s })
                                      .ContinueContextFree();
-            return ( Sexp )res[ 0 ];
+            return (Sexp)res[0];
         }
 
         /// <summary>
@@ -427,8 +430,8 @@ namespace RserveCLI2
         /// <returns>
         /// Stream with the file data.
         /// </returns>
-        public Stream ReadFile( string fileName ) =>
-            Async.RunSynchronously( ReadFileAsync( fileName ) );
+        public Stream ReadFile(string fileName) =>
+            Async.RunSynchronously(ReadFileAsync(fileName));
 
         /// <summary>
         /// Asynchronously read a file from the server
@@ -439,25 +442,25 @@ namespace RserveCLI2
         /// <returns>
         /// Stream with the file data.
         /// </returns>
-        public async Task<Stream> ReadFileAsync( string fileName )
+        public async Task<Stream> ReadFileAsync(string fileName)
         {
-            await _protocol.CommandAsync( CmdOpenFile , new object[] { fileName } )
+            await _protocol.CommandAsync(CmdOpenFile, new object[] { fileName })
                            .ContinueContextFree();
             var resList = new List<byte>();
-            while ( true )
+            while (true)
             {
-                byte[] res = await _protocol.CommandReadStreamAsync( CmdReadFile , new object[] { } )
+                byte[] res = await _protocol.CommandReadStreamAsync(CmdReadFile, new object[] { })
                                             .ContinueContextFree();
-                if ( res.Length == 0 )
+                if (res.Length == 0)
                 {
                     break;
                 }
 
-                resList.AddRange( res );
+                resList.AddRange(res);
             }
 
-            await _protocol.CommandAsync( CmdCloseFile , new object[] { } ).ContinueContextFree();
-            return new MemoryStream( resList.ToArray() );
+            await _protocol.CommandAsync(CmdCloseFile, new object[] { }).ContinueContextFree();
+            return new MemoryStream(resList.ToArray());
         }
 
         /// <summary>
@@ -466,8 +469,8 @@ namespace RserveCLI2
         /// <param name="fileName">
         /// Name of the file to be deleted
         /// </param>
-        public void RemoveFile( string fileName ) =>
-            Async.RunSynchronously( RemoveFileAsync( fileName ) );
+        public void RemoveFile(string fileName) =>
+            Async.RunSynchronously(RemoveFileAsync(fileName));
 
         /// <summary>
         /// Asynchronously delete a file from the server
@@ -475,8 +478,8 @@ namespace RserveCLI2
         /// <param name="fileName">
         /// Name of the file to be deleted
         /// </param>
-        public Task RemoveFileAsync( string fileName ) =>
-            _protocol.CommandAsync( CmdRemoveFile , new object[] { fileName } );
+        public Task RemoveFileAsync(string fileName) =>
+            _protocol.CommandAsync(CmdRemoveFile, new object[] { fileName });
 
         /// <summary>
         /// Evaluate an R command and don't return the result (for efficiency)
@@ -484,8 +487,8 @@ namespace RserveCLI2
         /// <param name="s">
         /// R command tp be evaluated
         /// </param>
-        public void VoidEval( string s ) =>
-            Async.RunSynchronously( VoidEvalAsync( s ) );
+        public void VoidEval(string s) =>
+            Async.RunSynchronously(VoidEvalAsync(s));
 
         /// <summary>
         /// Asynchronously evaluate an R command and don't return the result (for efficiency)
@@ -493,8 +496,8 @@ namespace RserveCLI2
         /// <param name="s">
         /// R command tp be evaluated
         /// </param>
-        public Task VoidEvalAsync( string s ) =>
-            _protocol.CommandAsync( CmdVoidEval , new object[] { s } );
+        public Task VoidEvalAsync(string s) =>
+            _protocol.CommandAsync(CmdVoidEval, new object[] { s });
 
         /// <summary>
         /// Write a file to the server.
@@ -507,8 +510,8 @@ namespace RserveCLI2
         /// <param name="data">
         /// Data to be written to the file
         /// </param>
-        public void WriteFile( string fileName , Stream data ) =>
-            Async.RunSynchronously(WriteFileAsync( fileName , data ) );
+        public void WriteFile(string fileName, Stream data) =>
+            Async.RunSynchronously(WriteFileAsync(fileName, data));
 
         /// <summary>
         /// Asynchronously write a file to the server.
@@ -521,20 +524,20 @@ namespace RserveCLI2
         /// <param name="data">
         /// Data to be written to the file
         /// </param>
-        public async Task WriteFileAsync( string fileName , Stream data )
+        public async Task WriteFileAsync(string fileName, Stream data)
         {
             var ms = new MemoryStream();
-            CopyTo( data , ms );
+            CopyTo(data, ms);
 
-            await _protocol.CommandAsync( CmdCreateFile , new object[] { fileName } ).ContinueContextFree();
-            await _protocol.CommandAsync( CmdWriteFile , new object[] { ms.ToArray() } ).ContinueContextFree();
-            await _protocol.CommandAsync( CmdCloseFile , new object[] { } ).ContinueContextFree();
+            await _protocol.CommandAsync(CmdCreateFile, new object[] { fileName }).ContinueContextFree();
+            await _protocol.CommandAsync(CmdWriteFile, new object[] { ms.ToArray() }).ContinueContextFree();
+            await _protocol.CommandAsync(CmdCloseFile, new object[] { }).ContinueContextFree();
         }
 
         /// <summary>
         /// Attempt to shut down the server process cleanly.
         /// </summary>
-        public void Shutdown() => Async.RunSynchronously( ShutdownAsync() );
+        public void Shutdown() => Async.RunSynchronously(ShutdownAsync());
 
         /// <summary>
         /// Asynchronously attempt to shut down the server process cleanly.
@@ -546,7 +549,7 @@ namespace RserveCLI2
         /// Attempt to shut down the server process cleanly.
         /// This command is asynchronous!
         /// </summary>
-        public void ServerShutdown() => Async.RunSynchronously( ServerShutdownAsync() );
+        public void ServerShutdown() => Async.RunSynchronously(ServerShutdownAsync());
 
         /// <summary>
         /// Attempt to shut down the server process cleanly.
@@ -566,9 +569,9 @@ namespace RserveCLI2
         /// </summary>
         public void Dispose()
         {
-            if ( _socket != null )
+            if (_socket != null)
             {
-                ( ( IDisposable )_socket ).Dispose();
+                ((IDisposable)_socket).Dispose();
             }
         }
 
@@ -589,21 +592,21 @@ namespace RserveCLI2
         /// </param>
         async Task InitAsync(string user, string password)
         {
-            var buf = new byte[ 32 ];
+            var buf = new byte[32];
             int received = await _socket.ReceiveAsync(buf).ContinueContextFree();
-            if ( received == 0 )
-                throw new RserveException( "Rserve connection was closed by the remote host" );
+            if (received == 0)
+                throw new RserveException("Rserve connection was closed by the remote host");
 
             var parms = new List<string>();
-            for ( int i = 0 ; i < buf.Length ; i += 4 )
+            for (int i = 0; i < buf.Length; i += 4)
             {
-                var b = new byte[ 4 ];
-                Array.Copy( buf , i , b , 0 , 4 );
-                parms.Add( Encoding.ASCII.GetString( b ) );
+                var b = new byte[4];
+                Array.Copy(buf, i, b, 0, 4);
+                parms.Add(Encoding.ASCII.GetString(b));
             }
 
             _connectionParameters = parms.ToArray();
-            if ( _connectionParameters[ 0 ] != "Rsrv" )
+            if (_connectionParameters[0] != "Rsrv")
             {
                 throw new ProtocolViolationException("Did not receive Rserve ID signature.");
             }
@@ -666,47 +669,47 @@ namespace RserveCLI2
         /// <summary>
         /// Decompile of .NET 4's CopyTo
         /// </summary>
-        public void CopyTo( Stream source , Stream destination )
+        public void CopyTo(Stream source, Stream destination)
         {
-            if ( destination != null )
+            if (destination != null)
             {
-                if ( source.CanRead || source.CanWrite )
+                if (source.CanRead || source.CanWrite)
                 {
-                    if ( destination.CanRead || destination.CanWrite )
+                    if (destination.CanRead || destination.CanWrite)
                     {
-                        if ( source.CanRead )
+                        if (source.CanRead)
                         {
-                            if ( destination.CanWrite )
+                            if (destination.CanWrite)
                             {
-                                CopyTo( source , destination , 4096 );
+                                CopyTo(source, destination, 4096);
                                 return;
                             }
-                            throw new NotSupportedException( "Stream does not support writing" );
+                            throw new NotSupportedException("Stream does not support writing");
                         }
-                        throw new NotSupportedException( "Stream does not support reading" );
+                        throw new NotSupportedException("Stream does not support reading");
                     }
-                    throw new ObjectDisposedException( "destination" , "Can not access a closed Stream." );
+                    throw new ObjectDisposedException("destination", "Can not access a closed Stream.");
                 }
-                throw new ObjectDisposedException( null , "Can not access a closed Stream." );
+                throw new ObjectDisposedException(null, "Can not access a closed Stream.");
             }
-            throw new ArgumentNullException( "destination" );
+            throw new ArgumentNullException("destination");
         }
 
         /// <summary>
         /// Decompile of .NET 4's InternalCopyTo
         /// </summary>
-        private void CopyTo( Stream source , Stream destination , int bufferSize )
+        private void CopyTo(Stream source, Stream destination, int bufferSize)
         {
-            byte[] numArray = new byte[ bufferSize ];
-            while ( true )
+            byte[] numArray = new byte[bufferSize];
+            while (true)
             {
-                int num = source.Read( numArray , 0 , ( int )numArray.Length );
+                int num = source.Read(numArray, 0, (int)numArray.Length);
                 int num1 = num;
-                if ( num == 0 )
+                if (num == 0)
                 {
                     break;
                 }
-                destination.Write( numArray , 0 , num1 );
+                destination.Write(numArray, 0, num1);
             }
         }
 

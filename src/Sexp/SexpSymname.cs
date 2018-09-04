@@ -2,11 +2,11 @@
 // Copyright (c) 2011, Oliver M. Haynold
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    #endregion
 
     /// <summary>
     /// A Sexp for Symnames. Same as a string, but can't be NA.
@@ -14,13 +14,12 @@ namespace RserveCLI2
     [Serializable]
     public class SexpSymname : Sexp
     {
-
         #region Constructors and Destructors
 
         /// <summary>
         /// Initializes a new instance of the SexpSymname class with a string.
         /// </summary>
-        public SexpSymname( string theValue )
+        public SexpSymname(string theValue)
         {
             Value = theValue;
         }
@@ -47,7 +46,7 @@ namespace RserveCLI2
         {
             get
             {
-                return new [] { Value };
+                return new[] { Value };
             }
         }
 

@@ -2,11 +2,11 @@
 // Copyright (c) 2011, Oliver M. Haynold
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    #endregion
 
     /// <summary>
     /// A container for Sexps that we don't know how to interpret. This way you can still pass such a Sexp back to Rserve, even though its meaning
@@ -15,7 +15,6 @@ namespace RserveCLI2
     [Serializable]
     public class SexpQap1Raw : Sexp
     {
-
         # region Constructors
 
         /// <summary>
@@ -27,7 +26,7 @@ namespace RserveCLI2
         /// <param name="data">
         /// The data of the Sexp. Its meaning is opaque.
         /// </param>
-        public SexpQap1Raw( byte type , byte[] data )
+        public SexpQap1Raw(byte type, byte[] data)
         {
             Data = data;
             Type = type;
@@ -36,7 +35,7 @@ namespace RserveCLI2
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         /// Gets the data of the Sexp as sent by Rserve
         /// </summary>
@@ -58,7 +57,7 @@ namespace RserveCLI2
         /// </returns>
         public override string ToString()
         {
-            return string.Format( "[SexpQap1Raw (" + Type + ")]" );
+            return string.Format("[SexpQap1Raw (" + Type + ")]");
         }
 
         #endregion

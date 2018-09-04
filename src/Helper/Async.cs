@@ -5,12 +5,14 @@
 
 namespace RserveCLI2
 {
+    #region Usings
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Runtime.ExceptionServices;
-    using System.Threading.Tasks;
+    using System.Threading.Tasks; 
+    #endregion
 
     static class Async
     {
@@ -58,8 +60,7 @@ namespace RserveCLI2
         public static AggregateException GetSyncRunAggregateException(Exception exception)
         {
             if (exception == null) throw new ArgumentNullException(nameof(exception));
-            AggregateException aggregate;
-            return SyncRunErrors.TryGetValue(exception, out aggregate) ? aggregate : null;
+            return SyncRunErrors.TryGetValue(exception, out AggregateException aggregate) ? aggregate : null;
         }
 
         /// <remarks>
@@ -89,8 +90,7 @@ namespace RserveCLI2
                 {
                     if (inner == null)
                         continue;
-                    var nestedAggregate = inner as AggregateException;
-                    if (nestedAggregate != null)
+                    if (inner is AggregateException nestedAggregate)
                         pending.Enqueue(nestedAggregate);
                     else
                         yield return inner;

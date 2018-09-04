@@ -2,12 +2,12 @@
 // Original work Copyright (c) 2015, Atif Aziz. All rights reserved.
 // Portions Copyright (c) Microsoft. All rights reserved.
 //-----------------------------------------------------------------------
-
 namespace RserveCLI2
 {
+    #region Usings
     using System;
     using System.Threading.Tasks;
-    using Mannex;
+    #endregion
 
     // This infrastructure is essentially there to make sure no exception of a
     // faulted task goes unobserved by this library code!

@@ -3,14 +3,14 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
+    #endregion
 
     /// <summary>
     /// An array of (trivalue, i.e., including NA) booleans.
@@ -46,7 +46,7 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArrayBool with a nullable bool.
         /// </summary>
-        public SexpArrayBool( bool? theValue )
+        public SexpArrayBool(bool? theValue)
         {
             Value = new List<bool?> { theValue };
         }
@@ -54,10 +54,10 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArrayBool with an IEnumerable of nullable bool.
         /// </summary>
-        public SexpArrayBool( IEnumerable<bool?> theValue )
+        public SexpArrayBool(IEnumerable<bool?> theValue)
         {
             Value = new List<bool?>();
-            Value.AddRange( theValue );
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -71,11 +71,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ];
+                    return Value[0];
                 }
-                throw new IndexOutOfRangeException( "Can only convert bool arrays of length 1 to bool." );
+                throw new IndexOutOfRangeException("Can only convert bool arrays of length 1 to bool.");
             }
         }
 
@@ -97,19 +97,19 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    if ( Value[ 0 ] == null )
+                    if (Value[0] == null)
                     {
                         return 2;
                     }
-                    if ( Value[ 0 ] == true )
+                    if (Value[0] == true)
                     {
                         return 1;
                     }
                     return 0;
                 }
-                throw new NotSupportedException( "Can only convert bool arrays of length 1 to byte." );
+                throw new NotSupportedException("Can only convert bool arrays of length 1 to byte.");
             }
         }
 
@@ -131,11 +131,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ] == null;
+                    return Value[0] == null;
                 }
-                throw new NotSupportedException( "Can only check NA for length 1 bool" );
+                throw new NotSupportedException("Can only check NA for length 1 bool");
             }
         }
 
@@ -177,16 +177,16 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return new SexpArrayBool( Value[ index ] );
+                return new SexpArrayBool(Value[index]);
             }
 
             set
             {
-                Value[ index ] = value.AsBool;
+                Value[index] = value.AsBool;
             }
         }
 
@@ -198,9 +198,9 @@ namespace RserveCLI2
         /// Adds an item to the ICollection.
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Value.AddRange( item.AsBools );
+            Value.AddRange(item.AsBools);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace RserveCLI2
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa( bool? x )
+        public static bool CheckNa(bool? x)
         {
             return x == null;
         }
@@ -228,11 +228,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = new SexpArrayBool( Value[ i ] );
+                array[arrayIndex + i] = new SexpArrayBool(Value[i]);
             }
         }
 
@@ -244,24 +244,24 @@ namespace RserveCLI2
         /// true if the specified object is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            if ( obj == null )
+            if (obj == null)
             {
                 return false;
             }
             var objSexpArrayBool = obj as SexpArrayBool;
-            if ( objSexpArrayBool != null )
+            if (objSexpArrayBool != null)
             {
-                return Equals( objSexpArrayBool );
+                return Equals(objSexpArrayBool);
             }
 
             // can obj be coersed into an array of nullable bool?
             try
             {
-                return Equals( new SexpArrayBool( Make( obj ).AsBools ) );
+                return Equals(new SexpArrayBool(Make(obj).AsBools));
             }
-            catch ( NotSupportedException ) { }
+            catch (NotSupportedException) { }
             return false;
         }
 
@@ -273,11 +273,11 @@ namespace RserveCLI2
         /// <c>true</c> if the specified SexpArrayBool is equal to this instance; otherwise, <c>false</c>.
         /// Does not check for attribute equality.
         /// </returns>
-        public bool Equals( SexpArrayBool other )
+        public bool Equals(SexpArrayBool other)
         {
-            if ( ReferenceEquals( null , other ) ) return false;
-            if ( ReferenceEquals( this , other ) ) return true;
-            return other.Value.SequenceEqual( Value );
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.Value.SequenceEqual(Value);
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpArrayBool( a ) ) ).GetEnumerator();
+            return (from a in Value select (Sexp)(new SexpArrayBool(a))).GetEnumerator();
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace RserveCLI2
         {
             unchecked
             {
-                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+                return (base.GetHashCode() * 397) ^ (Value != null ? Value.GetHashCode() : 0);
             }
         }
 
@@ -309,9 +309,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.IndexOf( item.AsBool );
+            return Value.IndexOf(item.AsBool);
         }
 
         /// <summary>
@@ -321,18 +321,18 @@ namespace RserveCLI2
         /// The zero-based index at which item should be inserted.
         /// </param>
         /// <param name="item">The object to insert into the IList.</param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            Value.Insert( index , item.AsBool );
+            Value.Insert(index, item.AsBool);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         /// <summary>
@@ -356,14 +356,14 @@ namespace RserveCLI2
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach ( bool? value in Value )
+            foreach (bool? value in Value)
             {
-                builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : value.ToString() );
+                builder.Append(" ");
+                builder.Append(CheckNa(value) ? "NA" : value.ToString());
             }
-            if ( builder.Length > 0 )
+            if (builder.Length > 0)
             {
-                builder.Remove( 0 , 1 );
+                builder.Remove(0, 1);
             }
             return builder.ToString();
         }

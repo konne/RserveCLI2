@@ -3,14 +3,14 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
+    #endregion
 
     /// <summary>
     /// An array of strings
@@ -18,7 +18,6 @@ namespace RserveCLI2
     [Serializable]
     public class SexpArrayString : SexpGenericList
     {
-        
         #region Constructors and Destructors
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArryString with a string.
         /// </summary>
-        public SexpArrayString( string theValue )
+        public SexpArrayString(string theValue)
         {
             Value = new List<string> { theValue };
         }
@@ -40,10 +39,10 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArrayString with an IEnumerable of string.
         /// </summary>
-        public SexpArrayString( IEnumerable<string> theValue )
+        public SexpArrayString(IEnumerable<string> theValue)
         {
             Value = new List<string>();
-            Value.AddRange( theValue );
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -57,11 +56,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ];
+                    return Value[0];
                 }
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new IndexOutOfRangeException("Can only convert numeric arrays of length 1 to double.");
             }
         }
 
@@ -75,7 +74,7 @@ namespace RserveCLI2
                 return Value.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Gets the number of elements contained in the ICollection.
         /// </summary>
@@ -100,11 +99,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ] == null;
+                    return Value[0] == null;
                 }
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new IndexOutOfRangeException("Can only convert numeric arrays of length 1 to double.");
             }
         }
 
@@ -149,16 +148,16 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return new SexpArrayString( Value[ index ] );
+                return new SexpArrayString(Value[index]);
             }
 
             set
             {
-                Value[ index ] = value.AsString;
+                Value[index] = value.AsString;
             }
         }
 
@@ -170,9 +169,9 @@ namespace RserveCLI2
         /// Adds an item to the ICollection.
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Value.AddRange( item.AsStrings );
+            Value.AddRange(item.AsStrings);
         }
 
         /// <summary>
@@ -182,7 +181,7 @@ namespace RserveCLI2
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa( string x )
+        public static bool CheckNa(string x)
         {
             return x == null;
         }
@@ -202,9 +201,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return Value.Contains( item.AsString );
+            return Value.Contains(item.AsString);
         }
 
         /// <summary>
@@ -212,11 +211,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = new SexpArrayString( Value[ i ] );
+                array[arrayIndex + i] = new SexpArrayString(Value[i]);
             }
         }
 
@@ -228,24 +227,24 @@ namespace RserveCLI2
         /// true if the specified object is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            if ( obj == null )
+            if (obj == null)
             {
                 return false;
             }
             var objSexpArrayString = obj as SexpArrayString;
-            if ( objSexpArrayString != null )
+            if (objSexpArrayString != null)
             {
-                return Equals( objSexpArrayString );
+                return Equals(objSexpArrayString);
             }
 
             // can obj be coersed into an array of int?
             try
             {
-                return Equals( new SexpArrayString( Make( obj ).AsStrings ) );
+                return Equals(new SexpArrayString(Make(obj).AsStrings));
             }
-            catch ( NotSupportedException ) { }
+            catch (NotSupportedException) { }
             return false;
         }
 
@@ -256,11 +255,11 @@ namespace RserveCLI2
         /// true if the specified SexpArrayString is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
-        public bool Equals( SexpArrayString other )
+        public bool Equals(SexpArrayString other)
         {
-            if ( ReferenceEquals( null , other ) ) return false;
-            if ( ReferenceEquals( this , other ) ) return true;
-            return other.Value.SequenceEqual( Value );
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.Value.SequenceEqual(Value);
         }
 
         /// <summary>
@@ -271,7 +270,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpArrayString( a ) ) ).GetEnumerator();
+            return (from a in Value select (Sexp)(new SexpArrayString(a))).GetEnumerator();
         }
 
         /// <summary>
@@ -284,7 +283,7 @@ namespace RserveCLI2
         {
             unchecked
             {
-                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+                return (base.GetHashCode() * 397) ^ (Value != null ? Value.GetHashCode() : 0);
             }
         }
 
@@ -295,9 +294,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.IndexOf( item.AsString );
+            return Value.IndexOf(item.AsString);
         }
 
         /// <summary>
@@ -305,9 +304,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="item">The object to insert into the IList.</param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            Value.Insert( index , item.AsString );
+            Value.Insert(index, item.AsString);
         }
 
         /// <summary>
@@ -317,18 +316,18 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
-            return Value.Remove( item.AsString );
+            return Value.Remove(item.AsString);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         /// <summary>
@@ -352,19 +351,18 @@ namespace RserveCLI2
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach ( string value in Value )
+            foreach (string value in Value)
             {
-                builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : value );
+                builder.Append(" ");
+                builder.Append(CheckNa(value) ? "NA" : value);
             }
-            if ( builder.Length > 0 )
+            if (builder.Length > 0)
             {
-                builder.Remove( 0 , 1 );
+                builder.Remove(0, 1);
             }
             return builder.ToString();
         }
 
         #endregion
-
     }
 }

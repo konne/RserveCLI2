@@ -2,11 +2,12 @@
 // Original work Copyright (c) 2015, Atif Aziz
 // All rights reserved.
 //-----------------------------------------------------------------------
-
 namespace RserveCLI2
 {
+    #region Usings
     using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
+    using System.Threading.Tasks; 
+    #endregion
 
     static class TaskExtensions
     {

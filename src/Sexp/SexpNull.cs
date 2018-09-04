@@ -3,20 +3,19 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-
 namespace RserveCLI2
 {
-    
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+
+    #endregion
     /// <summary>
     /// The S NULL Value
     /// </summary>
     [Serializable]
     public class SexpNull : Sexp
     {
-
         #region Properties
 
         /// <summary>
@@ -82,7 +81,7 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
@@ -114,7 +113,7 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
             return false;
         }
@@ -124,7 +123,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
             throw new NotSupportedException();
         }
@@ -164,6 +163,5 @@ namespace RserveCLI2
         }
 
         #endregion
-
     }
 }

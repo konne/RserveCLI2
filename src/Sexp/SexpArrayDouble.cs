@@ -3,14 +3,14 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
     using System.Collections.Generic;
     using System.Linq;
+    using System;
+    using System.Text;
+    #endregion;
 
     /// <summary>
     /// An array of double-precision floating-point values
@@ -21,7 +21,6 @@ namespace RserveCLI2
     [Serializable]
     public class SexpArrayDouble : SexpGenericList
     {
-
         #region Constructors and Destructors
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of the <see cref="SexpArrayDouble"/> class.
         /// </summary>
-        public SexpArrayDouble( double theValue )
+        public SexpArrayDouble(double theValue)
         {
             Value = new List<double> { theValue };
         }
@@ -46,10 +45,10 @@ namespace RserveCLI2
         /// <param name="theValue">
         /// The value.
         /// </param>
-        public SexpArrayDouble( IEnumerable<double> theValue )
+        public SexpArrayDouble(IEnumerable<double> theValue)
         {
             Value = new List<double>();
-            Value.AddRange( theValue );
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -62,30 +61,30 @@ namespace RserveCLI2
         /// <remarks>
         /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
         /// </remarks>
-        public override double[ , ] As2DArrayDouble
+        public override double[,] As2DArrayDouble
         {
             get
             {
-                if ( !Attributes.ContainsKey( "dim" ) )
+                if (!Attributes.ContainsKey("dim"))
                 {
-                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
+                    throw new NotSupportedException("Sexp does not have the dim attribute.");
                 }
-                if ( Rank == 2 )
+                if (Rank == 2)
                 {
                     // if GetLength fails it means the user screwed around with the dim attribute
-                    int rows = GetLength( 0 );
-                    int cols = GetLength( 1 );
-                    var result = new double[ rows , cols ];
-                    for ( int row = 0 ; row < rows ; row++ )
+                    int rows = GetLength(0);
+                    int cols = GetLength(1);
+                    var result = new double[rows, cols];
+                    for (int row = 0; row < rows; row++)
                     {
-                        for ( int col = 0 ; col < cols ; col++ )
+                        for (int col = 0; col < cols; col++)
                         {
-                            result[ row , col ] = Value[ ( col * rows ) + row ];
+                            result[row, col] = Value[(col * rows) + row];
                         }
                     }
                     return result;
                 }
-                throw new NotSupportedException( "Sexp does not have 2 dimension." );
+                throw new NotSupportedException("Sexp does not have 2 dimension.");
             }
         }
 
@@ -96,11 +95,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ];
+                    return Value[0];
                 }
-                throw new NotSupportedException( "Can only convert length 1 double." );
+                throw new NotSupportedException("Can only convert length 1 double.");
             }
         }
 
@@ -125,11 +124,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( ( Value.Count == 1 ) && ( ( Value[ 0 ] % 1 ) == 0 ) )
+                if ((Value.Count == 1) && ((Value[0] % 1) == 0))
                 {
-                    return Convert.ToInt32( Value[ 0 ] );
+                    return Convert.ToInt32(Value[0]);
                 }
-                throw new NotSupportedException( "Can only convert length 1 double." );
+                throw new NotSupportedException("Can only convert length 1 double.");
             }
         }
 
@@ -143,11 +142,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Select( x => ( x % 1 ) == 0 ).All( y => y ) )
+                if (Value.Select(x => (x % 1) == 0).All(y => y))
                 {
-                    return Value.Select( Convert.ToInt32 ).ToArray();
+                    return Value.Select(Convert.ToInt32).ToArray();
                 }
-                throw new NotSupportedException( "Can only convert length 1 double." );
+                throw new NotSupportedException("Can only convert length 1 double.");
             }
         }
 
@@ -169,11 +168,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return double.IsNaN( Value[ 0 ] );
+                    return double.IsNaN(Value[0]);
                 }
-                throw new NotSupportedException( "Can only check NA for length 1 double." );
+                throw new NotSupportedException("Can only check NA for length 1 double.");
             }
         }
 
@@ -203,7 +202,7 @@ namespace RserveCLI2
         /// Gets the doubles stored in the list
         /// </summary>
         internal List<double> Value { get; private set; }
-        
+
         #endregion
 
         #region Indexers
@@ -215,16 +214,16 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return new SexpArrayDouble( Value[ index ] );
+                return new SexpArrayDouble(Value[index]);
             }
 
             set
             {
-                Value[ index ] = value.AsDouble;
+                Value[index] = value.AsDouble;
             }
         }
 
@@ -235,17 +234,17 @@ namespace RserveCLI2
         /// <summary>
         /// Adds an item to the ICollection.
         /// </summary>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Value.AddRange( item.AsDoubles );
+            Value.AddRange(item.AsDoubles);
         }
 
         /// <summary>
         /// Checks whether a value is NA.
         /// </summary>
-        public static bool CheckNa( double x )
+        public static bool CheckNa(double x)
         {
-            return double.IsNaN( x );
+            return double.IsNaN(x);
         }
 
         /// <summary>
@@ -259,9 +258,9 @@ namespace RserveCLI2
         /// <summary>
         /// Determines whether the ICollection contains a specific value.
         /// </summary>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return Value.Contains( item.AsDouble );
+            return Value.Contains(item.AsDouble);
         }
 
         /// <summary>
@@ -269,11 +268,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = new SexpArrayDouble( Value[ i ] );
+                array[arrayIndex + i] = new SexpArrayDouble(Value[i]);
             }
         }
 
@@ -285,24 +284,24 @@ namespace RserveCLI2
         /// true if the specified object is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            if ( obj == null)
+            if (obj == null)
             {
                 return false;
             }
             var objSexpArrayDouble = obj as SexpArrayDouble;
-            if ( objSexpArrayDouble != null )
+            if (objSexpArrayDouble != null)
             {
-                return Equals( objSexpArrayDouble );
+                return Equals(objSexpArrayDouble);
             }
-            
+
             // can obj be coersed into an array of double?
             try
             {
-                return Equals( new SexpArrayDouble( Make( obj ).AsDoubles ) );
+                return Equals(new SexpArrayDouble(Make(obj).AsDoubles));
             }
-            catch ( NotSupportedException ) { }
+            catch (NotSupportedException) { }
             return false;
         }
 
@@ -314,11 +313,11 @@ namespace RserveCLI2
         /// <c>true</c> if the specified SexpArrayDouble is equal to this instance; otherwise, <c>false</c>.
         /// Does not check for attribute equality.
         /// </returns>
-        public bool Equals( SexpArrayDouble other )
+        public bool Equals(SexpArrayDouble other)
         {
-            if ( ReferenceEquals( null , other ) ) return false;
-            if ( ReferenceEquals( this , other ) ) return true;
-            return other.Value.SequenceEqual( Value );
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.Value.SequenceEqual(Value);
         }
 
         /// <summary>
@@ -329,7 +328,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpArrayDouble( a ) ) ).GetEnumerator();
+            return (from a in Value select (Sexp)(new SexpArrayDouble(a))).GetEnumerator();
         }
 
         /// <summary>
@@ -339,7 +338,7 @@ namespace RserveCLI2
         {
             unchecked
             {
-                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+                return (base.GetHashCode() * 397) ^ (Value != null ? Value.GetHashCode() : 0);
             }
         }
 
@@ -350,9 +349,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.IndexOf( item.AsDouble );            
+            return Value.IndexOf(item.AsDouble);
         }
 
         /// <summary>
@@ -360,9 +359,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="item">The object to insert into the IList.</param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            Value.Insert( index , item.AsDouble );
+            Value.Insert(index, item.AsDouble);
         }
 
         /// <summary>
@@ -372,18 +371,18 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
-            return Value.Remove( item.AsDouble );
+            return Value.Remove(item.AsDouble);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         /// <summary>
@@ -407,18 +406,18 @@ namespace RserveCLI2
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach ( double value in Value )
+            foreach (double value in Value)
             {
-                builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : value.ToString() );
+                builder.Append(" ");
+                builder.Append(CheckNa(value) ? "NA" : value.ToString());
             }
-            if ( builder.Length > 0 )
+            if (builder.Length > 0)
             {
-                builder.Remove( 0 , 1 );
+                builder.Remove(0, 1);
             }
             return builder.ToString();
         }
-        
-        #endregion        
+
+        #endregion
     }
 }

@@ -3,14 +3,14 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    #endregion
 
     /// <summary>
     /// An array of Dates.  Time portion of a date is severed.
@@ -24,7 +24,7 @@ namespace RserveCLI2
         /// <summary>
         /// The origin for R's conversion of dates to ints
         /// </summary>
-        private static readonly DateTime Origin = new DateTime( 1970 , 1 , 1 );
+        private static readonly DateTime Origin = new DateTime(1970, 1, 1);
 
         #endregion
 
@@ -35,25 +35,25 @@ namespace RserveCLI2
         /// </summary>
         public SexpArrayDate()
         {
-            Attributes[ "class" ] = new SexpArrayString( "Date" );
+            Attributes["class"] = new SexpArrayString("Date");
         }
 
         /// <summary>
         /// Initializes a new instance of SexpArrayDate with a DateTime. 
         /// </summary>
-        public SexpArrayDate( DateTime theValue )
-            : base( DateToRInt( theValue ) )
+        public SexpArrayDate(DateTime theValue)
+            : base(DateToRInt(theValue))
         {
-            Attributes[ "class" ] = new SexpArrayString( "Date" );
+            Attributes["class"] = new SexpArrayString("Date");
         }
 
         /// <summary>
         /// Initializes a new instance of SexpArrayDate with IEnumerable of DateTime
         /// </summary>
-        public SexpArrayDate( IEnumerable<DateTime> theValue )
-            : base( theValue.Select( DateToRInt ) )
+        public SexpArrayDate(IEnumerable<DateTime> theValue)
+            : base(theValue.Select(DateToRInt))
         {
-            Attributes[ "class" ] = new SexpArrayString( "Date" );
+            Attributes["class"] = new SexpArrayString("Date");
         }
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace RserveCLI2
         /// Should only be called from Qap1.DecodeSexp.  The class attribute will be added after this class is constructed.
         /// If its constructed now, then there will be an exception inserting duplicate key into Dictionary
         /// </remarks>
-        internal SexpArrayDate( IEnumerable<int> theValue )
-            : base( theValue )
+        internal SexpArrayDate(IEnumerable<int> theValue)
+            : base(theValue)
         {
         }
 
@@ -79,11 +79,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ];
+                    return Value[0];
                 }
-                throw new NotSupportedException( "Can only convert length 1 Date." );
+                throw new NotSupportedException("Can only convert length 1 Date.");
             }
         }
 
@@ -105,7 +105,7 @@ namespace RserveCLI2
         {
             get
             {
-                return ( base.Value.Select( RIntToDate ).ToList() );
+                return (base.Value.Select(RIntToDate).ToList());
             }
         }
 
@@ -120,15 +120,15 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public new Sexp this[ int index ]
+        public new Sexp this[int index]
         {
             get
             {
-                return new SexpArrayDate( Value[ index ] );
+                return new SexpArrayDate(Value[index]);
             }
             set
             {
-                base[ index ] = new SexpArrayInt( DateToRInt( value.AsDate ) );
+                base[index] = new SexpArrayInt(DateToRInt(value.AsDate));
             }
         }
 
@@ -140,9 +140,9 @@ namespace RserveCLI2
         /// Adds an item to the ICollection
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Add( item.AsDates.Select( DateToRInt ) );
+            Add(item.AsDates.Select(DateToRInt));
         }
 
         /// <summary>
@@ -152,9 +152,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return base.Contains( new SexpArrayInt( DateToRInt( item.AsDate ) ) );
+            return base.Contains(new SexpArrayInt(DateToRInt(item.AsDate)));
         }
 
         /// <summary>
@@ -162,11 +162,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = new SexpArrayDate( Value[ i ] );
+                array[arrayIndex + i] = new SexpArrayDate(Value[i]);
             }
         }
 
@@ -178,7 +178,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpArrayDate( a ) ) ).GetEnumerator();
+            return (from a in Value select (Sexp)(new SexpArrayDate(a))).GetEnumerator();
         }
 
         /// <summary>
@@ -188,9 +188,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return IndexOf( DateToRInt( item.AsDate ) );
+            return IndexOf(DateToRInt(item.AsDate));
         }
 
         /// <summary>
@@ -198,9 +198,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="item">The object to insert into the IList.</param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            base.Insert( index , new SexpArrayInt( DateToRInt( item.AsDate ) ) );
+            base.Insert(index, new SexpArrayInt(DateToRInt(item.AsDate)));
         }
 
         /// <summary>
@@ -210,9 +210,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
-            return base.Remove( new SexpArrayInt( DateToRInt( item.AsDate ) ) );
+            return base.Remove(new SexpArrayInt(DateToRInt(item.AsDate)));
         }
 
         /// <summary>
@@ -236,14 +236,14 @@ namespace RserveCLI2
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach ( int value in base.Value )
+            foreach (int value in base.Value)
             {
-                builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : RIntToDate( value ).ToString("d") );
+                builder.Append(" ");
+                builder.Append(CheckNa(value) ? "NA" : RIntToDate(value).ToString("d"));
             }
-            if ( builder.Length > 0 )
+            if (builder.Length > 0)
             {
-                builder.Remove( 0 , 1 );
+                builder.Remove(0, 1);
             }
             return builder.ToString();
         }
@@ -255,17 +255,17 @@ namespace RserveCLI2
         /// <summary>
         /// Converts a DateTime into an R integer
         /// </summary>
-        private static int DateToRInt( DateTime day )
+        private static int DateToRInt(DateTime day)
         {
-            return day.Subtract( Origin ).Days;
+            return day.Subtract(Origin).Days;
         }
 
         /// <summary>
         /// Converts a DateTime into an R integer
         /// </summary>
-        private static DateTime RIntToDate( int rdate )
+        private static DateTime RIntToDate(int rdate)
         {
-            return Origin.AddDays( rdate );
+            return Origin.AddDays(rdate);
         }
 
         #endregion

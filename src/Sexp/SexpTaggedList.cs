@@ -3,20 +3,20 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    #endregion
 
     /// <summary>
     /// A tagged list.
     /// </summary>
     [Serializable]
-    public class SexpTaggedList : Sexp , IEnumerable<KeyValuePair<string , Sexp>>
+    public class SexpTaggedList : Sexp, IEnumerable<KeyValuePair<string, Sexp>>
     {
         # region Constructors
 
@@ -25,16 +25,16 @@ namespace RserveCLI2
         /// </summary>
         public SexpTaggedList()
         {
-            Value = new List<KeyValuePair<string , Sexp>>();
+            Value = new List<KeyValuePair<string, Sexp>>();
         }
 
         /// <summary>
         /// Initializes a new instance of SexpTaggedList with an IEnumerable of KeyValuePair of string,Sexp
         /// </summary>
-        public SexpTaggedList( IEnumerable<KeyValuePair<string , Sexp>> theValue )
+        public SexpTaggedList(IEnumerable<KeyValuePair<string, Sexp>> theValue)
         {
-            Value = new List<KeyValuePair<string , Sexp>>();
-            Value.AddRange( theValue );
+            Value = new List<KeyValuePair<string, Sexp>>();
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace RserveCLI2
         {
             get
             {
-                return ( from a in Value select a.Key ).ToArray();
+                return (from a in Value select a.Key).ToArray();
             }
         }
 
@@ -87,14 +87,14 @@ namespace RserveCLI2
         {
             get
             {
-                return ( from a in Value select a.Value ).ToArray();
+                return (from a in Value select a.Value).ToArray();
             }
         }
 
         /// <summary>
         /// Gets the values stored in the tagged list
         /// </summary>
-        internal List<KeyValuePair<string , Sexp>> Value { get; private set; }
+        internal List<KeyValuePair<string, Sexp>> Value { get; private set; }
 
         #endregion
 
@@ -107,11 +107,11 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return Value[ index ].Value;
+                return Value[index].Value;
             }
             set
             {
@@ -126,29 +126,29 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ string key ]
+        public override Sexp this[string key]
         {
             get
             {
-                int ndx = IndexOfKey( key );
-                if ( ndx < 0 )
+                int ndx = IndexOfKey(key);
+                if (ndx < 0)
                 {
                     throw new KeyNotFoundException();
                 }
 
-                return Value[ ndx ].Value;
+                return Value[ndx].Value;
             }
 
             set
             {
-                int ndx = IndexOfKey( key );
-                if ( ndx < 0 )
+                int ndx = IndexOfKey(key);
+                if (ndx < 0)
                 {
-                    Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
+                    Value.Add(new KeyValuePair<string, Sexp>(key, value));
                 }
                 else
                 {
-                    Value[ ndx ] = new KeyValuePair<string , Sexp>( key , value );
+                    Value[ndx] = new KeyValuePair<string, Sexp>(key, value);
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace RserveCLI2
         /// Adds an item to the ICollection.
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -171,9 +171,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="key">The object to use as the key of the element to add.</param>
         /// <param name="value">The object to use as the value of the element to add.</param>
-        public override void Add( string key , Sexp value )
+        public override void Add(string key, Sexp value)
         {
-            Value.Add( new KeyValuePair<string , Sexp>( key , value ) );
+            Value.Add(new KeyValuePair<string, Sexp>(key, value));
         }
 
         /// <summary>
@@ -191,9 +191,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return Value.Exists( x => x.Value == item );
+            return Value.Exists(x => x.Value == item);
         }
 
         /// <summary>
@@ -203,9 +203,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( KeyValuePair<string , Sexp> item )
+        public override bool Contains(KeyValuePair<string, Sexp> item)
         {
-            return Value.Contains( item );
+            return Value.Contains(item);
         }
 
         /// <summary>
@@ -215,9 +215,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if the IDictionary contains an element with the key; otherwise, false.
         /// </returns>
-        public override bool ContainsKey( string key )
+        public override bool ContainsKey(string key)
         {
-            return Value.Exists( x => x.Key == key );
+            return Value.Exists(x => x.Key == key);
         }
 
         /// <summary>
@@ -225,11 +225,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = Value[ i ].Value;
+                array[arrayIndex + i] = Value[i].Value;
             }
         }
 
@@ -238,9 +238,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( KeyValuePair<string , Sexp>[] array , int arrayIndex )
+        public override void CopyTo(KeyValuePair<string, Sexp>[] array, int arrayIndex)
         {
-            Value.CopyTo( array , arrayIndex );
+            Value.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select a.Value ).GetEnumerator();
+            return (from a in Value select a.Value).GetEnumerator();
         }
 
         /// <summary>
@@ -261,9 +261,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.FindIndex( x => ( x.Value == item ) );
+            return Value.FindIndex(x => (x.Value == item));
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -285,9 +285,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original IDictionary.
         /// </returns>
-        public override bool Remove( string key )
+        public override bool Remove(string key)
         {
-            return Value.RemoveAll( x => x.Key == key ) > 0;
+            return Value.RemoveAll(x => x.Key == key) > 0;
         }
 
         /// <summary>
@@ -297,18 +297,18 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( KeyValuePair<string , Sexp> item )
+        public override bool Remove(KeyValuePair<string, Sexp> item)
         {
-            return Value.Remove( item );
+            return Value.Remove(item);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         /// <summary>
@@ -320,17 +320,17 @@ namespace RserveCLI2
         public override string ToString()
         {
             var r = new StringBuilder();
-            r.Append( "{ " );
-            foreach ( var a in Value )
+            r.Append("{ ");
+            foreach (var a in Value)
             {
-                r.Append( a.Key );
-                r.Append( ": " );
-                r.Append( a.Value.ToString() );
-                r.Append( ", " );
+                r.Append(a.Key);
+                r.Append(": ");
+                r.Append(a.Value.ToString());
+                r.Append(", ");
             }
 
-            r.Remove( r.Length - 2 , 2 );
-            r.Append( " }" );
+            r.Remove(r.Length - 2, 2);
+            r.Append(" }");
             return r.ToString();
         }
 
@@ -342,21 +342,21 @@ namespace RserveCLI2
         /// <returns>
         /// true if the object that implements IDictionary contains an element with the specified key; otherwise, false.
         /// </returns>
-        public override bool TryGetValue( string key , out Sexp value )
+        public override bool TryGetValue(string key, out Sexp value)
         {
-            var ndx = IndexOfKey( key );
-            if ( ndx < 0 )
+            var ndx = IndexOfKey(key);
+            if (ndx < 0)
             {
                 value = null;
                 return false;
             }
-            value = Value[ ndx ].Value;
+            value = Value[ndx].Value;
             return true;
         }
 
         private int IndexOfKey(string key)
         {
-            return Value.FindIndex( e => e.Key == key );
+            return Value.FindIndex(e => e.Key == key);
         }
 
         #endregion
@@ -371,7 +371,7 @@ namespace RserveCLI2
         /// <returns>
         /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string , Sexp>> IEnumerable<KeyValuePair<string , Sexp>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, Sexp>> IEnumerable<KeyValuePair<string, Sexp>>.GetEnumerator()
         {
             return Value.GetEnumerator();
         }

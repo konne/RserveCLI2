@@ -3,14 +3,14 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
+    #endregion
 
     /// <summary>
     /// An array of integers.
@@ -18,7 +18,6 @@ namespace RserveCLI2
     [Serializable]
     public class SexpArrayInt : SexpGenericList
     {
-
         #region Constants and Fields
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArrayInt with an int.
         /// </summary>
-        public SexpArrayInt( int theValue )
+        public SexpArrayInt(int theValue)
         {
             Value = new List<int> { theValue };
         }
@@ -49,10 +48,10 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance of SexpArrayInt with an IEnumerable of int
         /// </summary>
-        public SexpArrayInt( IEnumerable<int> theValue )
+        public SexpArrayInt(IEnumerable<int> theValue)
         {
             Value = new List<int>();
-            Value.AddRange( theValue );
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -65,30 +64,30 @@ namespace RserveCLI2
         /// <remarks>
         /// This method will only work if the Sexp was originally constructed using a 2-dimensional array.
         /// </remarks>
-        public override int[ , ] As2DArrayInt
+        public override int[,] As2DArrayInt
         {
             get
             {
-                if ( !Attributes.ContainsKey( "dim" ) )
+                if (!Attributes.ContainsKey("dim"))
                 {
-                    throw new NotSupportedException( "Sexp does not have the dim attribute." );
+                    throw new NotSupportedException("Sexp does not have the dim attribute.");
                 }
-                if ( Rank == 2 )
+                if (Rank == 2)
                 {
                     // if GetLength fails it means the user screwed around with the dim attribute
-                    int rows = GetLength( 0 );
-                    int cols = GetLength( 1 );
-                    var result = new int[ rows , cols ];
-                    for ( int row = 0 ; row < rows ; row++ )
+                    int rows = GetLength(0);
+                    int cols = GetLength(1);
+                    var result = new int[rows, cols];
+                    for (int row = 0; row < rows; row++)
                     {
-                        for ( int col = 0 ; col < cols ; col++ )
+                        for (int col = 0; col < cols; col++)
                         {
-                            result[ row , col ] = Value[ ( col * rows ) + row ];
+                            result[row, col] = Value[(col * rows) + row];
                         }
                     }
                     return result;
                 }
-                throw new NotSupportedException( "Sexp does not have 2 dimension." );
+                throw new NotSupportedException("Sexp does not have 2 dimension.");
             }
         }
 
@@ -99,12 +98,12 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Convert.ToDouble( Value[ 0 ] );
+                    return Convert.ToDouble(Value[0]);
                 }
 
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new IndexOutOfRangeException("Can only convert numeric arrays of length 1 to double.");
             }
         }
 
@@ -115,7 +114,7 @@ namespace RserveCLI2
         {
             get
             {
-                return Value.Select( Convert.ToDouble ).ToArray();
+                return Value.Select(Convert.ToDouble).ToArray();
             }
         }
 
@@ -129,12 +128,12 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return Value[ 0 ];
+                    return Value[0];
                 }
 
-                throw new IndexOutOfRangeException( "Can only convert numeric arrays of length 1 to double." );
+                throw new IndexOutOfRangeException("Can only convert numeric arrays of length 1 to double.");
             }
         }
 
@@ -170,11 +169,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Value.Count == 1 )
+                if (Value.Count == 1)
                 {
-                    return CheckNa( Value[ 0 ] );
+                    return CheckNa(Value[0]);
                 }
-                throw new NotSupportedException( "Can only check NA for length 1 integer" );
+                throw new NotSupportedException("Can only check NA for length 1 integer");
             }
         }
 
@@ -216,15 +215,15 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return new SexpArrayInt( Value[ index ] );
+                return new SexpArrayInt(Value[index]);
             }
             set
             {
-                Value[ index ] = value.IsNa ? NaValue : value.AsInt;
+                Value[index] = value.IsNa ? NaValue : value.AsInt;
             }
         }
 
@@ -236,9 +235,9 @@ namespace RserveCLI2
         /// Adds an item to the ICollection.
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Value.Add( item.IsNa ? NaValue : item.AsInt );
+            Value.Add(item.IsNa ? NaValue : item.AsInt);
         }
 
         /// <summary>
@@ -248,7 +247,7 @@ namespace RserveCLI2
         /// <returns>
         /// True if the value is NA, false otherwise.
         /// </returns>
-        public static bool CheckNa( int x )
+        public static bool CheckNa(int x)
         {
             return x == NaValue;
         }
@@ -268,9 +267,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return Value.Contains( item.IsNa ? NaValue : item.AsInt );
+            return Value.Contains(item.IsNa ? NaValue : item.AsInt);
         }
 
         /// <summary>
@@ -278,11 +277,11 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            for ( int i = 0 ; i < Value.Count ; i++ )
+            for (int i = 0; i < Value.Count; i++)
             {
-                array[ arrayIndex + i ] = new SexpArrayInt( Value[ i ] );
+                array[arrayIndex + i] = new SexpArrayInt(Value[i]);
             }
         }
 
@@ -294,24 +293,24 @@ namespace RserveCLI2
         /// true if the specified object is equal to this instance; otherwise, false.
         /// Does not check for attribute equality.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            if ( obj == null )
+            if (obj == null)
             {
                 return false;
             }
             var objSexpArrayInt = obj as SexpArrayInt;
-            if ( objSexpArrayInt != null )
+            if (objSexpArrayInt != null)
             {
-                return Equals( objSexpArrayInt );
+                return Equals(objSexpArrayInt);
             }
 
             // can obj be coersed into an array of int?
             try
             {
-                return Equals( new SexpArrayInt( Make( obj ).AsInts ) );
+                return Equals(new SexpArrayInt(Make(obj).AsInts));
             }
-            catch ( NotSupportedException ) { }
+            catch (NotSupportedException) { }
             return false;
         }
 
@@ -323,11 +322,11 @@ namespace RserveCLI2
         /// <c>true</c> if the specified SexpArrayInt is equal to this instance; otherwise, <c>false</c>.
         /// Does not check for attribute equality.
         /// </returns>
-        public bool Equals( SexpArrayInt other )
+        public bool Equals(SexpArrayInt other)
         {
-            if ( ReferenceEquals( null , other ) ) return false;
-            if ( ReferenceEquals( this , other ) ) return true;
-            return other.Value.SequenceEqual( Value );
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.Value.SequenceEqual(Value);
         }
 
         /// <summary>
@@ -338,7 +337,7 @@ namespace RserveCLI2
         /// </returns>
         public override IEnumerator<Sexp> GetEnumerator()
         {
-            return ( from a in Value select ( Sexp )( new SexpArrayInt( a ) ) ).GetEnumerator();
+            return (from a in Value select (Sexp)(new SexpArrayInt(a))).GetEnumerator();
         }
 
         /// <summary>
@@ -348,7 +347,7 @@ namespace RserveCLI2
         {
             unchecked
             {
-                return ( base.GetHashCode() * 397 ) ^ ( Value != null ? Value.GetHashCode() : 0 );
+                return (base.GetHashCode() * 397) ^ (Value != null ? Value.GetHashCode() : 0);
             }
         }
 
@@ -359,9 +358,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.IndexOf( item.IsNa ? NaValue : item.AsInt );
+            return Value.IndexOf(item.IsNa ? NaValue : item.AsInt);
         }
 
         /// <summary>
@@ -369,9 +368,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="item">The object to insert into the IList.</param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            Value.Insert( index , item.IsNa ? NaValue : item.AsInt );
+            Value.Insert(index, item.IsNa ? NaValue : item.AsInt);
         }
 
         /// <summary>
@@ -381,18 +380,18 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
-            return Value.Remove( item.IsNa ? NaValue : item.AsInt );
+            return Value.Remove(item.IsNa ? NaValue : item.AsInt);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         /// <summary>
@@ -416,14 +415,14 @@ namespace RserveCLI2
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach ( int value in Value )
+            foreach (int value in Value)
             {
-                builder.Append( " " );
-                builder.Append( CheckNa( value ) ? "NA" : value.ToString() );
+                builder.Append(" ");
+                builder.Append(CheckNa(value) ? "NA" : value.ToString());
             }
-            if ( builder.Length > 0 )
+            if (builder.Length > 0)
             {
-                builder.Remove( 0 , 1 );
+                builder.Remove(0, 1);
             }
             return builder.ToString();
         }

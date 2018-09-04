@@ -3,20 +3,20 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections;
-using System.Text;
-
 namespace RserveCLI2
 {
+    #region Usings
+    using System;
+    using System.Collections;
+    using System.Text;
+    #endregion
+
     /// <summary>
     /// Functionality for list-like Sexps.
     /// </summary>
     [Serializable]
     public abstract class SexpGenericList : Sexp
     {
-
         #region Public Methods
 
         /// <summary>
@@ -26,17 +26,17 @@ namespace RserveCLI2
         /// <returns>
         /// <c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            Sexp o = Make( obj );
-            if ( o.Count != Count )
+            Sexp o = Make(obj);
+            if (o.Count != Count)
             {
                 return false;
             }
 
-            for ( int i = 0 ; i < Count ; i++ )
+            for (int i = 0; i < Count; i++)
             {
-                if ( !this[ i ].Equals( o[ i ] ) )
+                if (!this[i].Equals(o[i]))
                 {
                     return false;
                 }
@@ -65,19 +65,18 @@ namespace RserveCLI2
         public override string ToString()
         {
             var a = new StringBuilder();
-            a.Append( "[ " );
-            foreach ( object b in ( IEnumerable )this )
+            a.Append("[ ");
+            foreach (object b in (IEnumerable)this)
             {
-                a.Append( b.ToString() );
-                a.Append( ", " );
+                a.Append(b.ToString());
+                a.Append(", ");
             }
 
-            a.Remove( a.Length - 2 , 2 );
-            a.Append( " ]" );
+            a.Remove(a.Length - 2, 2);
+            a.Append(" ]");
             return a.ToString();
         }
 
         #endregion
-
     }
 }

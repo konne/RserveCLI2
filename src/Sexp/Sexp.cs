@@ -3,28 +3,27 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace RserveCLI2
 {
-    
+    #region Usings
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    #endregion
+
     /// <summary>
     /// A local representation for an S-Expression (a.k.a., Sexp, Rexp, R-expression).
     /// </summary>
     [Serializable]
-    public abstract class Sexp : IList<Sexp> , IDictionary<string , Sexp> , IList<object> , IDictionary<string , object>
+    public abstract class Sexp : IList<Sexp>, IDictionary<string, Sexp>, IList<object>, IDictionary<string, object>
     {
-
         #region Constants and Fields
 
         /// <summary>
         /// The Sexp attributes, if any
         /// </summary>
-        private Dictionary<string , Sexp> _attributes;
+        private Dictionary<string, Sexp> _attributes;
 
         #endregion
 
@@ -48,7 +47,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator bool?( Sexp s )
+        public static explicit operator bool? (Sexp s)
         {
             return s.AsBool;
         }
@@ -67,7 +66,7 @@ namespace RserveCLI2
         /// <summary>
         /// Gets as dictionary of objects.
         /// </summary>
-        public IDictionary<string , object> AsDictionary
+        public IDictionary<string, object> AsDictionary
         {
             get
             {
@@ -94,7 +93,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator double( Sexp s )
+        public static explicit operator double(Sexp s)
         {
             return s.AsDouble;
         }
@@ -115,7 +114,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator double[]( Sexp s )
+        public static explicit operator double[] (Sexp s)
         {
             return s.AsDoubles;
         }
@@ -139,7 +138,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator int( Sexp s )
+        public static explicit operator int(Sexp s)
         {
             return s.AsInt;
         }
@@ -150,7 +149,7 @@ namespace RserveCLI2
         /// <value>
         /// As double.
         /// </value>
-        public virtual double[ , ] As2DArrayDouble
+        public virtual double[,] As2DArrayDouble
         {
             get
             {
@@ -163,7 +162,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator double[ , ]( Sexp s )
+        public static explicit operator double[,] (Sexp s)
         {
             return s.As2DArrayDouble;
         }
@@ -187,18 +186,18 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator int[]( Sexp s )
+        public static explicit operator int[] (Sexp s)
         {
             return s.AsInts;
         }
-        
+
         /// <summary>
         /// Gets as int.
         /// </summary>
         /// <value>
         /// The value as an integer.
         /// </value>
-        public virtual int[ , ] As2DArrayInt
+        public virtual int[,] As2DArrayInt
         {
             get
             {
@@ -211,7 +210,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator int[ , ]( Sexp s )
+        public static explicit operator int[,] (Sexp s)
         {
             return s.As2DArrayInt;
         }
@@ -235,7 +234,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator DateTime( Sexp s )
+        public static explicit operator DateTime(Sexp s)
         {
             return s.AsDate;
         }
@@ -259,7 +258,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator DateTime[]( Sexp s )
+        public static explicit operator DateTime[] (Sexp s)
         {
             return s.AsDates;
         }
@@ -278,7 +277,7 @@ namespace RserveCLI2
         /// <summary>
         /// Gets as dictionary of Sexps.
         /// </summary>
-        public IDictionary<string , Sexp> AsSexpDictionary
+        public IDictionary<string, Sexp> AsSexpDictionary
         {
             get
             {
@@ -305,7 +304,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator string( Sexp s )
+        public static explicit operator string(Sexp s)
         {
             return s.AsString;
         }
@@ -317,7 +316,7 @@ namespace RserveCLI2
         {
             get
             {
-                return this.Select<Sexp , string>( a => a.AsString ).ToArray();
+                return this.Select<Sexp, string>(a => a.AsString).ToArray();
             }
         }
 
@@ -326,7 +325,7 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="s">The Sexp</param>
         /// <returns>The converted value</returns>
-        public static explicit operator string[]( Sexp s )
+        public static explicit operator string[] (Sexp s)
         {
             return s.AsStrings;
         }
@@ -336,11 +335,11 @@ namespace RserveCLI2
         /// <summary>
         /// Gets the attributes.
         /// </summary>
-        public Dictionary<string , Sexp> Attributes
+        public Dictionary<string, Sexp> Attributes
         {
             get
             {
-                return _attributes ?? ( _attributes = new Dictionary<string , Sexp>() );
+                return _attributes ?? (_attributes = new Dictionary<string, Sexp>());
             }
         }
 
@@ -355,9 +354,9 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Attributes.ContainsKey( "dimnames" ) )
+                if (Attributes.ContainsKey("dimnames"))
                 {
-                    string[] colNames = Attributes[ "dimnames" ].Values.ToList()[ 1 ].AsStrings;
+                    string[] colNames = Attributes["dimnames"].Values.ToList()[1].AsStrings;
                     return colNames.Length == 0 ? null : colNames;
                 }
                 return null;
@@ -365,42 +364,42 @@ namespace RserveCLI2
             set
             {
                 // contains dim attribute?  if not then its not something we can add col names to
-                if ( !Attributes.ContainsKey( "dim" ) )
+                if (!Attributes.ContainsKey("dim"))
                 {
-                    throw new NotSupportedException( "Sexp is missing 'dim' attribute.  Cannot add col names" );
+                    throw new NotSupportedException("Sexp is missing 'dim' attribute.  Cannot add col names");
                 }
 
                 // get dimnames, default to NULL, NULL if not present
-                var dimnames = new SexpList( new[] { new SexpNull() , new SexpNull() } );
-                if ( Attributes.ContainsKey( "dimnames" ) )
+                var dimnames = new SexpList(new[] { new SexpNull(), new SexpNull() });
+                if (Attributes.ContainsKey("dimnames"))
                 {
-                    dimnames = ( SexpList )Attributes[ "dimnames" ];
+                    dimnames = (SexpList)Attributes["dimnames"];
                 }
 
                 // are we trying to clear out the col names?
-                if ( value == null )
+                if (value == null)
                 {
-                    dimnames[ 1 ] = new SexpNull();
+                    dimnames[1] = new SexpNull();
                 }
                 else
                 {
-                    int cols = Attributes[ "dim" ].AsInts[ 1 ];
-                    if ( cols != value.Length )
+                    int cols = Attributes["dim"].AsInts[1];
+                    if (cols != value.Length)
                     {
-                        throw new NotSupportedException( "length of 'dimnames' [2] not equal to array extent" );
+                        throw new NotSupportedException("length of 'dimnames' [2] not equal to array extent");
                     }
-                    dimnames[ 1 ] = Make( value );
+                    dimnames[1] = Make(value);
                 }
-                
+
                 // did we clear out everything?
-                if ( ( dimnames[ 0 ] is SexpNull ) && ( dimnames[ 1 ] is SexpNull ) )
+                if ((dimnames[0] is SexpNull) && (dimnames[1] is SexpNull))
                 {
-                    Attributes.Remove( "dimnames" );
+                    Attributes.Remove("dimnames");
                 }
                 else
                 {
-                    Attributes[ "dimnames" ] = dimnames;    
-                }                
+                    Attributes["dimnames"] = dimnames;
+                }
             }
         }
 
@@ -428,11 +427,11 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Count == 1 )
+                if (Count == 1)
                 {
-                    return this[ 0 ].IsNa;
+                    return this[0].IsNa;
                 }
-                throw new IndexOutOfRangeException( "Only single values can be tested for NA." );
+                throw new IndexOutOfRangeException("Only single values can be tested for NA.");
             }
         }
 
@@ -484,28 +483,28 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Attributes.ContainsKey( "names" ) )
+                if (Attributes.ContainsKey("names"))
                 {
-                    return Attributes[ "names" ].AsStrings;
+                    return Attributes["names"].AsStrings;
                 }
                 return null;
             }
             set
             {
-                if ( value == null )
+                if (value == null)
                 {
-                    Attributes.Remove( "names" );
+                    Attributes.Remove("names");
                     return;
                 }
-                if ( Attributes.ContainsKey( "dim" ) )
+                if (Attributes.ContainsKey("dim"))
                 {
-                    throw new NotSupportedException( "Cannot set names on matrix.  use RowNames or ColNames" );
+                    throw new NotSupportedException("Cannot set names on matrix.  use RowNames or ColNames");
                 }
-                if ( Count != value.Length )
+                if (Count != value.Length)
                 {
-                    throw new NotSupportedException( string.Format( "'names' attribute [{0}] must be the same length as the vector [{1}]" , value.Length , Count ) );
+                    throw new NotSupportedException(string.Format("'names' attribute [{0}] must be the same length as the vector [{1}]", value.Length, Count));
                 }
-                Attributes[ "names" ] = new SexpArrayString( value );
+                Attributes["names"] = new SexpArrayString(value);
             }
         }
 
@@ -516,10 +515,10 @@ namespace RserveCLI2
         {
             get
             {
-                return Attributes[ "dim" ].Count;
+                return Attributes["dim"].Count;
             }
         }
-        
+
         /// <summary>
         /// Gets rownames of this matrix.
         /// </summary>
@@ -531,9 +530,9 @@ namespace RserveCLI2
         {
             get
             {
-                if ( Attributes.ContainsKey( "dimnames" ) )
+                if (Attributes.ContainsKey("dimnames"))
                 {
-                    string[] rowNames = Attributes[ "dimnames" ].Values.ToList()[ 0 ].AsStrings;
+                    string[] rowNames = Attributes["dimnames"].Values.ToList()[0].AsStrings;
                     return rowNames.Length == 0 ? null : rowNames;
                 }
                 return null;
@@ -541,42 +540,42 @@ namespace RserveCLI2
             set
             {
                 // must contain dim attribute
-                if ( !Attributes.ContainsKey( "dim" ) )
+                if (!Attributes.ContainsKey("dim"))
                 {
-                    throw new NotSupportedException( "Sexp is missing 'dim' attribute.  Cannot add row names" );
+                    throw new NotSupportedException("Sexp is missing 'dim' attribute.  Cannot add row names");
                 }
 
                 // get existing dimnames, if not there default to NULL, NULL
-                var dimnames = new SexpList( new[] { new SexpNull() , new SexpNull() } );
-                if ( Attributes.ContainsKey( "dimnames" ) )
+                var dimnames = new SexpList(new[] { new SexpNull(), new SexpNull() });
+                if (Attributes.ContainsKey("dimnames"))
                 {
-                    dimnames = ( SexpList )Attributes[ "dimnames" ];
+                    dimnames = (SexpList)Attributes["dimnames"];
                 }
 
                 // are we trying to clear out the row names?
-                if ( value == null )
+                if (value == null)
                 {
-                    dimnames[ 0 ] = new SexpNull();
+                    dimnames[0] = new SexpNull();
                 }
                 else
                 {
-                    int rows = Attributes[ "dim" ].AsInts[ 0 ];
-                    if ( rows != value.Length )
+                    int rows = Attributes["dim"].AsInts[0];
+                    if (rows != value.Length)
                     {
-                        throw new NotSupportedException( "length of 'dimnames' [1] not equal to array extent" );
+                        throw new NotSupportedException("length of 'dimnames' [1] not equal to array extent");
                     }
-                    dimnames[ 0 ] = Make( value );
+                    dimnames[0] = Make(value);
                 }
 
                 // did we clear out everything?
-                if ( ( dimnames[ 0 ] is SexpNull ) && ( dimnames[ 1 ] is SexpNull ) )
+                if ((dimnames[0] is SexpNull) && (dimnames[1] is SexpNull))
                 {
-                    Attributes.Remove( "dimnames" );
+                    Attributes.Remove("dimnames");
                 }
                 else
                 {
-                    Attributes[ "dimnames" ] = dimnames;
-                }                
+                    Attributes["dimnames"] = dimnames;
+                }
             }
         }
 
@@ -600,14 +599,14 @@ namespace RserveCLI2
         /// <returns>
         /// An ICollection containing the values in the object that implements IDictionary.
         /// </returns>
-        ICollection<object> IDictionary<string , object>.Values
+        ICollection<object> IDictionary<string, object>.Values
         {
             get
             {
-                return ( ICollection<object> )Values;
+                return (ICollection<object>)Values;
             }
         }
-        
+
         #endregion
 
         #region Indexers
@@ -620,26 +619,26 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[ int row , int col ]
+        public virtual Sexp this[int row, int col]
         {
             get
             {
-                if ( Rank != 2 )
+                if (Rank != 2)
                 {
-                    throw new ArithmeticException( "Only Sexps of Rank 2 can be accessed as arrays." );
+                    throw new ArithmeticException("Only Sexps of Rank 2 can be accessed as arrays.");
                 }
 
-                return this[ ( col * GetLength( 0 ) ) + row ];
+                return this[(col * GetLength(0)) + row];
             }
 
             set
             {
-                if ( Rank != 2 )
+                if (Rank != 2)
                 {
-                    throw new ArithmeticException( "Only objects of rank 2 can be accessed as matrices." );
+                    throw new ArithmeticException("Only objects of rank 2 can be accessed as matrices.");
                 }
 
-                this[ ( col * GetLength( 0 ) ) + row ] = value;
+                this[(col * GetLength(0)) + row] = value;
             }
         }
 
@@ -650,7 +649,7 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[ int index ]
+        public virtual Sexp this[int index]
         {
             get
             {
@@ -670,29 +669,29 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public virtual Sexp this[ string key ]
+        public virtual Sexp this[string key]
         {
             get
             {
-                var index = Array.IndexOf( Names , key );
-                if ( index < 0 )
+                var index = Array.IndexOf(Names, key);
+                if (index < 0)
                 {
-                    throw new KeyNotFoundException( "Could not find key '" + key + "' in names." );
+                    throw new KeyNotFoundException("Could not find key '" + key + "' in names.");
                 }
 
-                return this[ index ];
+                return this[index];
             }
 
             set
             {
-                var index = Array.IndexOf( Names , key );
-                if ( index < 0 )
+                var index = Array.IndexOf(Names, key);
+                if (index < 0)
                 {
-                    Add( key , value );
+                    Add(key, value);
                 }
                 else
                 {
-                    this[ index ] = value;
+                    this[index] = value;
                 }
             }
         }
@@ -704,15 +703,15 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        object IList<object>.this[ int index ]
+        object IList<object>.this[int index]
         {
             get
             {
-                return this[ index ];
+                return this[index];
             }
             set
             {
-                this[ index ] = Make( value );
+                this[index] = Make(value);
             }
         }
 
@@ -723,15 +722,15 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        object IDictionary<string , object>.this[ string key ]
+        object IDictionary<string, object>.this[string key]
         {
             get
             {
-                return this[ key ];
+                return this[key];
             }
             set
             {
-                this[ key ] = Make( value );
+                this[key] = Make(value);
             }
         }
 
@@ -748,35 +747,35 @@ namespace RserveCLI2
         /// <returns>
         /// The Sexp made.
         /// </returns>
-        public static Sexp Make( object x )
+        public static Sexp Make(object x)
         {
-            if ( x is Sexp                         ) { return       ( Sexp )x;                           }
-            if ( x is bool?                        ) { return Make( ( bool? )x                        ); }
-            if ( x is IEnumerable<bool?>           ) { return Make( ( IEnumerable<bool?> )x           ); }
-            if ( x is double                       ) { return Make( ( double )x                       ); }
-            if ( x is IEnumerable<double>          ) { return Make( ( IEnumerable<double> )x          ); }
-            if ( x is double[ , ]                  ) { return Make( ( double[ , ] )x                  ); }
-            if ( x is decimal                      ) { return Make( ( decimal )x                      ); }
-            if ( x is IEnumerable<decimal>         ) { return Make( ( IEnumerable<decimal> )x         ); }
-            if ( x is decimal[ , ]                 ) { return Make( ( decimal[ , ] )x                 ); }
-            if ( x is int                          ) { return Make( ( int )x                          ); }
-            if ( x is IEnumerable<int>             ) { return Make( ( IEnumerable<int> )x             ); }
-            if ( x is int[ , ]                     ) { return Make( ( int[ , ] )x                     ); }            
-            if ( x is DateTime                     ) { return Make( ( DateTime )x                     ); }
-            if ( x is IEnumerable<DateTime>        ) { return Make( ( IEnumerable<DateTime> )x        ); }
-            if ( x is string                       ) { return Make( ( string )x                       ); }
-            if ( x is IEnumerable<string>          ) { return Make( ( IEnumerable<string> )x          ); }
-            if ( x is IDictionary<string , object> ) { return Make( ( IDictionary<string , object> )x ); }
-            throw new ArgumentException( string.Format( "I don't have an automatic conversion rule for type {0} to Sexp." , x.GetType().Name ) );
+            if (x is Sexp) { return (Sexp)x; }
+            if (x is bool?) { return Make((bool?)x); }
+            if (x is IEnumerable<bool?>) { return Make((IEnumerable<bool?>)x); }
+            if (x is double) { return Make((double)x); }
+            if (x is IEnumerable<double>) { return Make((IEnumerable<double>)x); }
+            if (x is double[,]) { return Make((double[,])x); }
+            if (x is decimal) { return Make((decimal)x); }
+            if (x is IEnumerable<decimal>) { return Make((IEnumerable<decimal>)x); }
+            if (x is decimal[,]) { return Make((decimal[,])x); }
+            if (x is int) { return Make((int)x); }
+            if (x is IEnumerable<int>) { return Make((IEnumerable<int>)x); }
+            if (x is int[,]) { return Make((int[,])x); }
+            if (x is DateTime) { return Make((DateTime)x); }
+            if (x is IEnumerable<DateTime>) { return Make((IEnumerable<DateTime>)x); }
+            if (x is string) { return Make((string)x); }
+            if (x is IEnumerable<string>) { return Make((IEnumerable<string>)x); }
+            if (x is IDictionary<string, object>) { return Make((IDictionary<string, object>)x); }
+            throw new ArgumentException(string.Format("I don't have an automatic conversion rule for type {0} to Sexp.", x.GetType().Name));
         }
 
         /// <summary>
         /// Makes a SexpArrayBool from a bool.
         /// </summary>
         /// <param name="x">The bool to convert into an SexpArrayBool.</param>
-        public static Sexp Make( bool? x )
+        public static Sexp Make(bool? x)
         {
-            return new SexpArrayBool( x );
+            return new SexpArrayBool(x);
         }
 
         /// <summary>
@@ -784,10 +783,10 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="names">Vector names</param>
         /// <param name="x">The IEnumerable of bool to convert into an SexpArrayBool.</param>
-        public static Sexp Make( IEnumerable<bool?> x , IEnumerable<string> names = null )
+        public static Sexp Make(IEnumerable<bool?> x, IEnumerable<string> names = null)
         {
-            var value = new SexpArrayBool( x );
-            if ( names != null )
+            var value = new SexpArrayBool(x);
+            if (names != null)
             {
                 value.Names = names.ToArray();
             }
@@ -798,9 +797,9 @@ namespace RserveCLI2
         /// Makes a SexpArrayInt from an int.
         /// </summary>
         /// <param name="x">The int to convert into an SexpArrayInt.</param>
-        public static Sexp Make( int x )
+        public static Sexp Make(int x)
         {
-            return new SexpArrayInt( x );
+            return new SexpArrayInt(x);
         }
 
         /// <summary>
@@ -808,10 +807,10 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="xs">The IEnumerable of int to convert into an SexpArrayInt.</param>
         /// <param name="names">Vector names</param>
-        public static Sexp Make( IEnumerable<int> xs , IEnumerable<string> names = null )
+        public static Sexp Make(IEnumerable<int> xs, IEnumerable<string> names = null)
         {
-            var value = new SexpArrayInt( xs );
-            if ( names != null )
+            var value = new SexpArrayInt(xs);
+            if (names != null)
             {
                 value.Names = names.ToArray();
             }
@@ -823,9 +822,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="x">The DateTime to convert into an SexpArrayDate.
         /// </param>
-        public static Sexp Make( DateTime x )
+        public static Sexp Make(DateTime x)
         {
-            return new SexpArrayDate( x );
+            return new SexpArrayDate(x);
         }
 
         /// <summary>
@@ -833,10 +832,10 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="xs">The IEnumerable of DateTime to convert into an SexpArrayDate.</param>
         /// <param name="names">Vector names</param>
-        public static Sexp Make( IEnumerable<DateTime> xs , IEnumerable<string> names = null )
+        public static Sexp Make(IEnumerable<DateTime> xs, IEnumerable<string> names = null)
         {
-            var value = new SexpArrayDate( xs );
-            if ( names != null )
+            var value = new SexpArrayDate(xs);
+            if (names != null)
             {
                 value.Names = names.ToArray();
             }
@@ -847,9 +846,9 @@ namespace RserveCLI2
         /// Makes a SexpArrayDouble from a decimal.
         /// </summary>
         /// <param name="x">The decimal to convert into an SexpArrayDouble.</param>
-        public static Sexp Make( decimal x )
+        public static Sexp Make(decimal x)
         {
-            return Make( Convert.ToDouble( x ) );
+            return Make(Convert.ToDouble(x));
         }
 
         /// <summary>
@@ -857,9 +856,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="xs">The IEnumerable of decimal to convert into an SexpArrayDouble.</param>
         /// <param name="names">Vector names</param>
-        public static Sexp Make( IEnumerable<decimal> xs , IEnumerable<string> names = null  )
+        public static Sexp Make(IEnumerable<decimal> xs, IEnumerable<string> names = null)
         {
-            return Make( xs.Select( Convert.ToDouble ) , names );
+            return Make(xs.Select(Convert.ToDouble), names);
         }
 
         /// <summary>
@@ -868,28 +867,28 @@ namespace RserveCLI2
         /// <param name="xs">The matrix of decimal.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        public static Sexp Make( decimal[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
+        public static Sexp Make(decimal[,] xs, IEnumerable<string> rowNames = null, IEnumerable<string> colNames = null)
         {
-            var xsDouble = new double[ xs.GetLength( 0 ) , xs.GetLength( 1 ) ];
-            var rows = xs.GetLength( 0 );
-            var cols = xs.GetLength( 1 );
-            for ( int row = 0 ; row < rows ; row++ )
+            var xsDouble = new double[xs.GetLength(0), xs.GetLength(1)];
+            var rows = xs.GetLength(0);
+            var cols = xs.GetLength(1);
+            for (int row = 0; row < rows; row++)
             {
-                for ( int col = 0 ; col < cols ; col++ )
+                for (int col = 0; col < cols; col++)
                 {
-                    xsDouble[ row , col ] = Convert.ToDouble( xs[ row , col ] );
+                    xsDouble[row, col] = Convert.ToDouble(xs[row, col]);
                 }
             }
-            return Make( xsDouble , rowNames , colNames );
+            return Make(xsDouble, rowNames, colNames);
         }
 
         /// <summary>
         /// Makes a SexpArrayDouble from a double.
         /// </summary>
         /// <param name="x">The double to convert into an SexpArrayDouble.</param>
-        public static Sexp Make( double x )
+        public static Sexp Make(double x)
         {
-            return new SexpArrayDouble( x );
+            return new SexpArrayDouble(x);
         }
 
         /// <summary>
@@ -897,10 +896,10 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="xs">The IEnumerable of double to convert into an SexpArrayDouble.</param>
         /// <param name="names">Vector names</param>
-        public static Sexp Make( IEnumerable<double> xs , IEnumerable<string> names = null )
+        public static Sexp Make(IEnumerable<double> xs, IEnumerable<string> names = null)
         {
-            var value = new SexpArrayDouble( xs );
-            if ( names != null )
+            var value = new SexpArrayDouble(xs);
+            if (names != null)
             {
                 value.Names = names.ToArray();
             }
@@ -913,25 +912,25 @@ namespace RserveCLI2
         /// <param name="xs">The matrix of double.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        public static Sexp Make( double[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
+        public static Sexp Make(double[,] xs, IEnumerable<string> rowNames = null, IEnumerable<string> colNames = null)
         {
-            var rows = xs.GetLength( 0 );
-            var cols = xs.GetLength( 1 );
-            var fortranXs = new double[ rows * cols ];
-            for ( int row = 0 ; row < rows ; row++ )
+            var rows = xs.GetLength(0);
+            var cols = xs.GetLength(1);
+            var fortranXs = new double[rows * cols];
+            for (int row = 0; row < rows; row++)
             {
-                for ( int col = 0 ; col < cols ; col++ )
+                for (int col = 0; col < cols; col++)
                 {
-                    fortranXs[ ( col * rows ) + row ] = xs[ row , col ];
+                    fortranXs[(col * rows) + row] = xs[row, col];
                 }
             }
-            var res = new SexpArrayDouble( fortranXs );
-            res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
-            if ( rowNames != null )
+            var res = new SexpArrayDouble(fortranXs);
+            res.Attributes.Add("dim", Make(new[] { rows, cols }));
+            if (rowNames != null)
             {
                 res.RowNames = rowNames.ToArray();
             }
-            if ( colNames != null )
+            if (colNames != null)
             {
                 res.ColNames = colNames.ToArray();
             }
@@ -944,26 +943,26 @@ namespace RserveCLI2
         /// <param name="xs">The matrix of int.</param>
         /// <param name="rowNames">Matrix row names</param>
         /// <param name="colNames">Matrix column names</param>
-        public static Sexp Make( int[ , ] xs , IEnumerable<string> rowNames = null , IEnumerable<string> colNames = null )
+        public static Sexp Make(int[,] xs, IEnumerable<string> rowNames = null, IEnumerable<string> colNames = null)
         {
-            var rows = xs.GetLength( 0 );
-            var cols = xs.GetLength( 1 );
-            var fortranXs = new int[ rows * cols ];
-            for ( int row = 0 ; row < rows ; row++ )
+            var rows = xs.GetLength(0);
+            var cols = xs.GetLength(1);
+            var fortranXs = new int[rows * cols];
+            for (int row = 0; row < rows; row++)
             {
-                for ( int col = 0 ; col < cols ; col++ )
+                for (int col = 0; col < cols; col++)
                 {
-                    fortranXs[ ( col * rows ) + row ] = xs[ row , col ];
+                    fortranXs[(col * rows) + row] = xs[row, col];
                 }
             }
 
-            var res = new SexpArrayInt( fortranXs );
-            res.Attributes.Add( "dim" , Make( new[] { rows , cols } ) );
-            if ( rowNames != null )
+            var res = new SexpArrayInt(fortranXs);
+            res.Attributes.Add("dim", Make(new[] { rows, cols }));
+            if (rowNames != null)
             {
                 res.RowNames = rowNames.ToArray();
             }
-            if ( colNames != null )
+            if (colNames != null)
             {
                 res.ColNames = colNames.ToArray();
             }
@@ -974,9 +973,9 @@ namespace RserveCLI2
         /// Makes a SexpArrayString from a string.
         /// </summary>
         /// <param name="x">The string to convert into an SexpArrayString.</param>
-        public static Sexp Make( string x )
+        public static Sexp Make(string x)
         {
-            return new SexpArrayString( x );
+            return new SexpArrayString(x);
         }
 
         /// <summary>
@@ -984,10 +983,10 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="xs">The IEnumerable of string to convert into an SexpArrayString.</param>
         /// <param name="names">Vector names</param>
-        public static Sexp Make( IEnumerable<string> xs , IEnumerable<string> names = null )
+        public static Sexp Make(IEnumerable<string> xs, IEnumerable<string> names = null)
         {
-            var value = new SexpArrayString( xs );
-            if ( names != null )
+            var value = new SexpArrayString(xs);
+            if (names != null)
             {
                 value.Names = names.ToArray();
             }
@@ -998,12 +997,12 @@ namespace RserveCLI2
         /// Makes a SexpList from a Dictionary.
         /// </summary>
         /// <param name="xs">The Dictionary to convert into an SexpList.</param>
-        public static Sexp Make( IDictionary<string , object> xs )
+        public static Sexp Make(IDictionary<string, object> xs)
         {
             var res = new SexpList();
-            foreach ( var a in xs )
+            foreach (var a in xs)
             {
-                res.Add( a );
+                res.Add(a);
             }
             return res;
         }
@@ -1021,55 +1020,55 @@ namespace RserveCLI2
         /// Sexp of data frame
         /// </returns>
         public static SexpList MakeDataFrame(
-            IEnumerable<KeyValuePair<string , object>> columns = null , IEnumerable<string> rowNames = null )
+            IEnumerable<KeyValuePair<string, object>> columns = null, IEnumerable<string> rowNames = null)
         {
             var res = new SexpList();
-            res.Attributes[ "class" ] = new SexpArrayString( "data.frame" );
-            res.Attributes[ "names" ] = new SexpArrayString();
-            if ( columns != null )
+            res.Attributes["class"] = new SexpArrayString("data.frame");
+            res.Attributes["names"] = new SexpArrayString();
+            if (columns != null)
             {
                 int? rows = null;
-                foreach ( var col in columns )
+                foreach (var col in columns)
                 {
                     // make the column
-                    res.Attributes[ "names" ].Add( new SexpArrayString( col.Key ) );
-                    Sexp column = Make( col.Value );
+                    res.Attributes["names"].Add(new SexpArrayString(col.Key));
+                    Sexp column = Make(col.Value);
 
                     // must be an SexpArray type otherwise it's not a data.frame.  Technically it could be an SexpBool, SexpInt, etc. but too cumbersome to check all of those types
-                    if ( !column.GetType().ToString().Contains( "SexpArray" ) )
+                    if (!column.GetType().ToString().Contains("SexpArray"))
                     {
-                        throw new NotSupportedException( "Can only build data.frame with SexpArray types" );
+                        throw new NotSupportedException("Can only build data.frame with SexpArray types");
                     }
 
                     // each column must have the same number of rows.  
                     // In R you can can do something like data.frame( A = c( 1 , 2 , 3 ) , B = "Test" ) and B will be replicated.
                     // but this library does not support that convenience feature
-                    if ( rows == null )
+                    if (rows == null)
                     {
                         rows = column.Count;
                     }
-                    else if ( column.Count != rows )
+                    else if (column.Count != rows)
                     {
-                        throw new NotSupportedException( string.Format( "arguments imply differing number of rows: {0}, {1}" , rows , column.Count ) );
+                        throw new NotSupportedException(string.Format("arguments imply differing number of rows: {0}, {1}", rows, column.Count));
                     }
 
-                    res.Add( column );
+                    res.Add(column);
                 }
 
-                if ( rowNames == null )
+                if (rowNames == null)
                 {
                     // without this, data.frames will look like they have 0 observations
                     // ReSharper disable PossibleInvalidOperationException
-                    res.Attributes[ "row.names" ] = new SexpArrayInt( new List<int> { SexpArrayInt.Na , -1 * ( int )rows } );
+                    res.Attributes["row.names"] = new SexpArrayInt(new List<int> { SexpArrayInt.Na, -1 * (int)rows });
                     // ReSharper restore PossibleInvalidOperationException
                 }
-                else if ( rowNames.Count() != rows )
+                else if (rowNames.Count() != rows)
                 {
-                    throw new NotSupportedException( "invalid 'row.names' length" );
+                    throw new NotSupportedException("invalid 'row.names' length");
                 }
                 else
                 {
-                    res.Attributes[ "row.names" ] = new SexpArrayString( rowNames );
+                    res.Attributes["row.names"] = new SexpArrayString(rowNames);
                 }
             }
 
@@ -1087,9 +1086,9 @@ namespace RserveCLI2
         /// <returns>
         /// <c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals( object obj )
+        public override bool Equals(object obj)
         {
-            throw new NotSupportedException( "Don't have an equality override for type" + GetType() );
+            throw new NotSupportedException("Don't have an equality override for type" + GetType());
         }
 
         /// <summary>
@@ -1112,9 +1111,9 @@ namespace RserveCLI2
         /// <returns>
         /// Length of the object in the dimension requested.
         /// </returns>
-        public virtual int GetLength( int dim )
+        public virtual int GetLength(int dim)
         {
-            return Attributes[ "dim" ][ dim ].AsInt;
+            return Attributes["dim"][dim].AsInt;
         }
 
         /// <summary>
@@ -1141,9 +1140,9 @@ namespace RserveCLI2
         /// <param name="item">
         /// The object to add to the ICollection.
         /// </param>
-        public void Add( KeyValuePair<string , object> item )
+        public void Add(KeyValuePair<string, object> item)
         {
-            Add( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
+            Add(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
         }
 
         /// <summary>
@@ -1155,9 +1154,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public bool Contains( KeyValuePair<string , object> item )
+        public bool Contains(KeyValuePair<string, object> item)
         {
-            return Contains( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
+            return Contains(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
         }
 
         /// <summary>
@@ -1169,7 +1168,7 @@ namespace RserveCLI2
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public void CopyTo( KeyValuePair<string , object>[] array , int arrayIndex )
+        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
@@ -1186,9 +1185,9 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public bool Remove( KeyValuePair<string , object> item )
+        public bool Remove(KeyValuePair<string, object> item)
         {
-            return Remove( new KeyValuePair<string , Sexp>( item.Key , Make( item.Value ) ) );
+            return Remove(new KeyValuePair<string, Sexp>(item.Key, Make(item.Value)));
         }
 
         #endregion
@@ -1204,9 +1203,9 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public virtual void Add( KeyValuePair<string , Sexp> item )
+        public virtual void Add(KeyValuePair<string, Sexp> item)
         {
-            Add( item.Key , item.Value );
+            Add(item.Key, item.Value);
         }
 
         /// <summary>
@@ -1218,7 +1217,7 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public virtual bool Contains( KeyValuePair<string , Sexp> item )
+        public virtual bool Contains(KeyValuePair<string, Sexp> item)
         {
             throw new NotImplementedException();
         }
@@ -1232,7 +1231,7 @@ namespace RserveCLI2
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public virtual void CopyTo( KeyValuePair<string , Sexp>[] array , int arrayIndex )
+        public virtual void CopyTo(KeyValuePair<string, Sexp>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
@@ -1249,7 +1248,7 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public virtual bool Remove( KeyValuePair<string , Sexp> item )
+        public virtual bool Remove(KeyValuePair<string, Sexp> item)
         {
             throw new NotImplementedException();
         }
@@ -1267,9 +1266,9 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public void Add( object item )
+        public void Add(object item)
         {
-            Add( Make( item ) );
+            Add(Make(item));
         }
 
         /// <summary>
@@ -1281,9 +1280,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public bool Contains( object item )
+        public bool Contains(object item)
         {
-            return Contains( Make( item ) );
+            return Contains(Make(item));
         }
 
         /// <summary>
@@ -1295,9 +1294,9 @@ namespace RserveCLI2
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public void CopyTo( object[] array , int arrayIndex )
+        public void CopyTo(object[] array, int arrayIndex)
         {
-            CopyTo( array , arrayIndex );
+            CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -1312,9 +1311,9 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public bool Remove( object item )
+        public bool Remove(object item)
         {
-            return Remove( Make( item ) );
+            return Remove(Make(item));
         }
 
         #endregion
@@ -1327,7 +1326,7 @@ namespace RserveCLI2
         /// <param name="item">
         /// The object to add to the ICollection.
         /// </param>
-        public virtual void Add( Sexp item )
+        public virtual void Add(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -1352,7 +1351,7 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public virtual bool Contains( Sexp item )
+        public virtual bool Contains(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -1366,7 +1365,7 @@ namespace RserveCLI2
         /// <param name="arrayIndex">
         /// Index of the array.
         /// </param>
-        public virtual void CopyTo( Sexp[] array , int arrayIndex )
+        public virtual void CopyTo(Sexp[] array, int arrayIndex)
         {
             throw new NotSupportedException();
         }
@@ -1383,7 +1382,7 @@ namespace RserveCLI2
         /// <exception cref="T:System.NotSupportedException">
         /// The ICollection is read-only.
         /// </exception>
-        public virtual bool Remove( Sexp item )
+        public virtual bool Remove(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -1401,9 +1400,9 @@ namespace RserveCLI2
         /// <param name="value">
         /// The object to use as the value of the element to add.
         /// </param>
-        public void Add( string key , object value )
+        public void Add(string key, object value)
         {
-            Add( key , Make( value ) );
+            Add(key, Make(value));
         }
 
         /// <summary>
@@ -1418,9 +1417,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if the object that implements IDictionary contains an element with the specified key; otherwise, false.
         /// </returns>
-        public bool TryGetValue( string key , out object value )
+        public bool TryGetValue(string key, out object value)
         {
-            return TryGetValue( key , out value );
+            return TryGetValue(key, out value);
         }
 
         #endregion
@@ -1436,15 +1435,15 @@ namespace RserveCLI2
         /// <param name="value">
         /// The object to use as the value of the element to add.
         /// </param>
-        public virtual void Add( string key , Sexp value )
+        public virtual void Add(string key, Sexp value)
         {
-            if ( Count == 0 && !Attributes.ContainsKey( "names" ) )
+            if (Count == 0 && !Attributes.ContainsKey("names"))
             {
-                Attributes[ "names" ] = new SexpArrayString();
+                Attributes["names"] = new SexpArrayString();
             }
 
-            Add( value );
-            Attributes[ "names" ].Add( key );
+            Add(value);
+            Attributes["names"].Add(key);
         }
 
         /// <summary>
@@ -1459,7 +1458,7 @@ namespace RserveCLI2
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public virtual bool ContainsKey( string key )
+        public virtual bool ContainsKey(string key)
         {
             throw new NotImplementedException();
         }
@@ -1473,21 +1472,21 @@ namespace RserveCLI2
         /// <returns>
         /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key"/> was not found in the original IDictionary.
         /// </returns>
-        public virtual bool Remove( string key )
+        public virtual bool Remove(string key)
         {
-            if ( Count == 0 )
+            if (Count == 0)
             {
                 return false;
             }
 
-            var index = Array.IndexOf( Names , key );
-            if ( index < 0 )
+            var index = Array.IndexOf(Names, key);
+            if (index < 0)
             {
                 return false;
             }
 
-            RemoveAt( index );
-            Attributes[ "names" ].RemoveAt( index );
+            RemoveAt(index);
+            Attributes["names"].RemoveAt(index);
             return true;
         }
 
@@ -1506,7 +1505,7 @@ namespace RserveCLI2
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        public virtual bool TryGetValue( string key , out Sexp value )
+        public virtual bool TryGetValue(string key, out Sexp value)
         {
             throw new NotImplementedException();
         }
@@ -1536,11 +1535,11 @@ namespace RserveCLI2
         /// <returns>
         /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string , object>> IEnumerable<KeyValuePair<string , object>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
         {
             return
-                ( IEnumerator<KeyValuePair<string , object>> )
-                ( ( IEnumerable<KeyValuePair<string , Sexp>> )this ).GetEnumerator();
+                (IEnumerator<KeyValuePair<string, object>>)
+                ((IEnumerable<KeyValuePair<string, Sexp>>)this).GetEnumerator();
         }
 
         #endregion
@@ -1553,7 +1552,7 @@ namespace RserveCLI2
         /// <returns>
         /// A IEnumerator that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<KeyValuePair<string , Sexp>> IEnumerable<KeyValuePair<string , Sexp>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, Sexp>> IEnumerable<KeyValuePair<string, Sexp>>.GetEnumerator()
         {
             throw new NotImplementedException();
         }
@@ -1570,7 +1569,7 @@ namespace RserveCLI2
         /// </returns>
         IEnumerator<object> IEnumerable<object>.GetEnumerator()
         {
-            return ( IEnumerator<object> )GetEnumerator();
+            return (IEnumerator<object>)GetEnumerator();
         }
 
         #endregion
@@ -1601,9 +1600,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public int IndexOf( object item )
+        public int IndexOf(object item)
         {
-            return IndexOf( Make( item ) );
+            return IndexOf(Make(item));
         }
 
         /// <summary>
@@ -1615,9 +1614,9 @@ namespace RserveCLI2
         /// <param name="item">
         /// The object to insert into the IList.
         /// </param>
-        public void Insert( int index , object item )
+        public void Insert(int index, object item)
         {
-            Insert( index , Make( item ) );
+            Insert(index, Make(item));
         }
 
         #endregion
@@ -1633,7 +1632,7 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public virtual int IndexOf( Sexp item )
+        public virtual int IndexOf(Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -1647,7 +1646,7 @@ namespace RserveCLI2
         /// <param name="item">
         /// The object to insert into the IList.
         /// </param>
-        public virtual void Insert( int index , Sexp item )
+        public virtual void Insert(int index, Sexp item)
         {
             throw new NotSupportedException();
         }
@@ -1658,7 +1657,7 @@ namespace RserveCLI2
         /// <param name="index">
         /// The zero-based index of the item to remove.
         /// </param>
-        public virtual void RemoveAt( int index )
+        public virtual void RemoveAt(int index)
         {
             throw new NotSupportedException();
         }

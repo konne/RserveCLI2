@@ -3,20 +3,19 @@
 // Modified work Copyright (c) 2013, Suraj Gupta
 // All rights reserved.
 //-----------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-
 namespace RserveCLI2
 {
-    
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    #endregion
+
     /// <summary>
     /// A List that can contain Sexps of various types. This is the basis for data frames, too.
     /// </summary>
     [Serializable]
     public class SexpList : SexpGenericList
     {
-
         #region Constructors
 
         /// <summary>
@@ -30,10 +29,10 @@ namespace RserveCLI2
         /// <summary>
         /// Initializes a new instance SexpList with an IEnumerable of Sexp
         /// </summary>
-        public SexpList( IEnumerable<Sexp> theValue )
+        public SexpList(IEnumerable<Sexp> theValue)
         {
             Value = new List<Sexp>();
-            Value.AddRange( theValue );
+            Value.AddRange(theValue);
         }
 
         #endregion
@@ -78,16 +77,16 @@ namespace RserveCLI2
         /// <returns>
         /// The element at the specified index.
         /// </returns>
-        public override Sexp this[ int index ]
+        public override Sexp this[int index]
         {
             get
             {
-                return Value[ index ];
+                return Value[index];
             }
 
             set
             {
-                Value[ index ] = value;
+                Value[index] = value;
             }
         }
 
@@ -99,9 +98,9 @@ namespace RserveCLI2
         /// Adds an item to the ICollection.
         /// </summary>
         /// <param name="item">The object to add to the ICollection.</param>
-        public override void Add( Sexp item )
+        public override void Add(Sexp item)
         {
-            Value.Add( item );
+            Value.Add(item);
         }
 
         /// <summary>
@@ -119,9 +118,9 @@ namespace RserveCLI2
         /// <returns>
         /// true if item is found in the ICollection; otherwise, false.
         /// </returns>
-        public override bool Contains( Sexp item )
+        public override bool Contains(Sexp item)
         {
-            return Value.Contains( item );
+            return Value.Contains(item);
         }
 
         /// <summary>
@@ -129,9 +128,9 @@ namespace RserveCLI2
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from ICollection. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins</param>
-        public override void CopyTo( Sexp[] array , int arrayIndex )
+        public override void CopyTo(Sexp[] array, int arrayIndex)
         {
-            Value.CopyTo( array , arrayIndex );
+            Value.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -152,9 +151,9 @@ namespace RserveCLI2
         /// <returns>
         /// The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public override int IndexOf( Sexp item )
+        public override int IndexOf(Sexp item)
         {
-            return Value.IndexOf( item );
+            return Value.IndexOf(item);
         }
 
         /// <summary>
@@ -164,9 +163,9 @@ namespace RserveCLI2
         /// <param name="item">
         /// The object to insert into the IList.
         /// </param>
-        public override void Insert( int index , Sexp item )
+        public override void Insert(int index, Sexp item)
         {
-            Value.Insert( index , item );
+            Value.Insert(index, item);
         }
 
         /// <summary>
@@ -176,21 +175,20 @@ namespace RserveCLI2
         /// <returns>
         /// true if item was successfully removed from the ICollection; otherwise, false. This method also returns false if item is not found in the original ICollection.
         /// </returns>
-        public override bool Remove( Sexp item )
+        public override bool Remove(Sexp item)
         {
-            return Value.Remove( item );
+            return Value.Remove(item);
         }
 
         /// <summary>
         /// Removes the IList item at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the item to remove.</param>
-        public override void RemoveAt( int index )
+        public override void RemoveAt(int index)
         {
-            Value.RemoveAt( index );
+            Value.RemoveAt(index);
         }
 
         #endregion
-
     }
 }
