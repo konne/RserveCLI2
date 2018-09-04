@@ -306,7 +306,7 @@ namespace RserveCLI2
         {
             long toConsume = await SubmitCommandAsync(cmd, data).ContinueContextFree();
             var res = new byte[ toConsume ];
-            long stored = 0;
+            int stored = 0;
             int retrieved = -1;
 
             var tempBuf = new byte[ 1024 * 1014 ];
@@ -362,7 +362,7 @@ namespace RserveCLI2
                 var dlength = ( long )BitConverter.ToUInt64( dhbuf , 1 );
 
                 // pull the payload from the socket
-                long receivedTotal = 0;
+                int receivedTotal = 0;
                 var dvbuf = new byte[ dlength ];
                 while ( receivedTotal < dlength )
                 {
@@ -381,7 +381,7 @@ namespace RserveCLI2
 
                 if ( ( typ & DtString ) == DtString )
                 {
-                    long count = dvbuf.LongLength;
+                    int count = dvbuf.Length;
                     while ( ( count > 0 ) && ( dvbuf[ count - 1 ] != 0 ) )
                     {
                         count--;
@@ -395,7 +395,7 @@ namespace RserveCLI2
 
                 else if ( ( typ & DtSexp ) == DtSexp )
                 {
-                    long start = 0;
+                    int start = 0;
                     res.Add( DecodeSexp( dvbuf , ref start ) );
                 }
                 else
@@ -691,7 +691,7 @@ namespace RserveCLI2
         /// <param name="data">The byte stream in which the Sexp is encoded</param>
         /// <param name="start">At which index of data does the Sexp begin?</param>
         /// <returns>The decoded Sexp.</returns>
-        private static Sexp DecodeSexp( byte[] data , ref long start )
+        private static Sexp DecodeSexp( byte[] data , ref int start )
         {
             // pull sexp type
             byte xt = data[ start ];
@@ -706,19 +706,19 @@ namespace RserveCLI2
                 start += 4;
                 xt -= XtLarge;
             }
-            var length = ( long )BitConverter.ToUInt64( lengthBuf , 0 );
+            var length = ( int )BitConverter.ToUInt64( lengthBuf , 0 );
 
             // has attributes?  process first
             SexpTaggedList attrs = null;
             if ( ( xt & XtHasAttr ) == XtHasAttr )
             {
                 xt -= XtHasAttr;
-                long oldstart = start;
+                int oldstart = start;
                 attrs = ( SexpTaggedList )DecodeSexp( data , ref start );
                 length -= start - oldstart;
             }
 
-            long end = start + length;
+            int end = start + length;
             Sexp result;
 
             switch ( xt )
@@ -745,7 +745,7 @@ namespace RserveCLI2
                     {
                         var res = new int[ length / 4 ];
                         var intBuf = new byte[ 4 ];
-                        for ( long i = 0 ; i < length ; i += 4 )
+                        for ( int i = 0 ; i < length ; i += 4 )
                         {
                             Array.Copy( data , start + i , intBuf , 0 , 4 );
                             res[ i / 4 ] = BitConverter.ToInt32( intBuf , 0 );
@@ -803,7 +803,7 @@ namespace RserveCLI2
                     {
                         var res = new double[ length / 8 ];
                         var doubleBuf = new byte[ 8 ];
-                        for ( long i = 0 ; i < length ; i += 8 )
+                        for ( int i = 0 ; i < length ; i += 8 )
                         {
                             Array.Copy( data , start + i , doubleBuf , 0 , 8 );
                             res[ i / 8 ] = BitConverter.ToDouble( doubleBuf , 0 );
@@ -823,8 +823,8 @@ namespace RserveCLI2
                 case XtArrayString:
                     {
                         var res = new List<string>();
-                        long i = 0;
-                        for ( long j = 0 ; j < length ; j++ )
+                        int i = 0;
+                        for ( int j = 0 ; j < length ; j++ )
                         {
                             if ( data[ start + j ] != 0 )
                             {

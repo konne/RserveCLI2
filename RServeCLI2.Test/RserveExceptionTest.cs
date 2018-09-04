@@ -5,21 +5,19 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.IO;
 using System.Net;
+#if BINARY_SERIALIZATION
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
+#endif
 using Xunit;
 
 namespace RserveCLI2.Test
 {
-
     public class RserveExceptionTest
     {
-
-        #region Public Methods
-
         [Fact]
         public static void Ctor_ConstructsRserveExceptionAndSavesParameters()
         {
@@ -57,7 +55,7 @@ namespace RserveCLI2.Test
         public static void Ctor_CalledWithUnrecognizedServerErrorCode_DoesNotThrow()
         {
             // Arrange, Act, Assert
-            Assert.DoesNotThrow( () => new RserveException( int.MaxValue ) );            
+            new RserveException( int.MaxValue );            
         }
 
         [Fact]
@@ -84,9 +82,9 @@ namespace RserveCLI2.Test
 
             Assert.Contains( message , exception4.ToString() , StringComparison.CurrentCulture );
             Assert.Contains( inner.Message , exception4.ToString() , StringComparison.CurrentCulture );
-            
         }
 
+#if BINARY_SERIALIZATION
         [Fact]
         public static void Serialize_SerializesException()
         {
@@ -102,11 +100,10 @@ namespace RserveCLI2.Test
             var exception4 = new RserveException( message , inner );
             
             // Act & Assert
-            Assert.DoesNotThrow( () => { using ( SerializeToBinaryMemoryStream( exception1 ) ) { } } );
-            Assert.DoesNotThrow( () => { using ( SerializeToBinaryMemoryStream( exception2 ) ) { } } );
-            Assert.DoesNotThrow( () => { using ( SerializeToBinaryMemoryStream( exception3 ) ) { } } );
-            Assert.DoesNotThrow( () => { using ( SerializeToBinaryMemoryStream( exception4 ) ) { } } );
-            
+            SerializeToBinaryMemoryStream( exception1 ).Dispose();
+            SerializeToBinaryMemoryStream( exception2 ).Dispose();
+            SerializeToBinaryMemoryStream( exception3 ).Dispose();
+            SerializeToBinaryMemoryStream( exception4 ).Dispose();
         }
 
         [Fact]
@@ -151,10 +148,6 @@ namespace RserveCLI2.Test
             Assert.Equal( inner.Message , exception4Deserialized.InnerException.Message );
             Assert.Null( exception4Deserialized.ServerErrorCode );
         }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         /// Serializes an object to a MemoryStream using the BinaryFormatter
@@ -238,8 +231,6 @@ namespace RserveCLI2.Test
                 throw new ArgumentException( "Expected type of deserialized object does not match its actual type." );
             }
         }
-
-        #endregion
-        
+#endif
     }
 }

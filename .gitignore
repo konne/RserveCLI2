@@ -51,3 +51,7 @@ stylecop.*
 
 #But keep everything in R folder
 !R/R-2.15.3/bin/
+
+/.vs
+*project.lock.json
+/.idea
