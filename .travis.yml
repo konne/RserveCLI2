@@ -6,11 +6,11 @@ services:
  - docker
 
 before_script:
- - pushd test/docker/ && docker-compose up -d && popd
+ - pushd tests/docker/ && docker-compose up -d && popd
  - sleep 20
 
 after_script:
- - pushd test/docker/ && docker-compose kill && popd
+ - pushd tests/docker/ && docker-compose kill && popd
 
 mono: none
 dotnet: 2.1
