@@ -13,6 +13,6 @@ after_script:
  - pushd test/docker/ && docker-compose kill && popd
 
 mono: none
-dotnet: 2.1.0
+dotnet: 2.1
 script:
    - dotnet restore
