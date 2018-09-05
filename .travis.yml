@@ -1,0 +1,18 @@
+sudo: required
+
+language: csharp
+
+services:
+ - docker
+
+before_script:
+ - pushd test/docker/ && docker-compose up -d && popd
+ - sleep 20
+
+after_script:
+ - pushd test/docker/ && docker-compose kill && popd
+
+mono: none
+dotnet: 2.1.0
+script:
+   - dotnet restore
