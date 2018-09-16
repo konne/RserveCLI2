@@ -37,7 +37,7 @@
   </Choose>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0008">
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
