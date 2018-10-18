@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RServeCLI2.Test", "RServeCLI2.Test.csproj", "{A65BA4B0-41CC-464B-A0AB-9A588273E3A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RserveCLI2", "..\src\RserveCLI2.csproj", "{5E6E0328-BBA4-468C-9D78-694A7946818A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A65BA4B0-41CC-464B-A0AB-9A588273E3A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65BA4B0-41CC-464B-A0AB-9A588273E3A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65BA4B0-41CC-464B-A0AB-9A588273E3A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65BA4B0-41CC-464B-A0AB-9A588273E3A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6E0328-BBA4-468C-9D78-694A7946818A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6E0328-BBA4-468C-9D78-694A7946818A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6E0328-BBA4-468C-9D78-694A7946818A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6E0328-BBA4-468C-9D78-694A7946818A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77F6B07B-C0DE-497A-A2B9-4D2166CA4A39}
+	EndGlobalSection
+EndGlobal

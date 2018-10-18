@@ -37,7 +37,7 @@ namespace RserveCLI2.Test
         /// </summary>
         /// <param name="showWindow">If true then the Rserve window will be visible.  Useful for debugging.  Default is false.</param>
         /// <param name="maxInputBufferSizeInKb">The maximal allowable size of the input buffer in kilobytes.  That is, the maximal size of data transported from the client to the server.</param>
-        public Rservice( bool showWindow = false , int maxInputBufferSizeInKb = 0 )
+        public Rservice(bool showWindow = false, int maxInputBufferSizeInKb = 0)
         {
             // ReSharper disable AssignNullToNotNullAttribute
 #if RTERM_PROCESS
@@ -75,40 +75,40 @@ namespace RserveCLI2.Test
 
             // create a connection to the server
             // ReSharper disable RedundantArgumentDefaultValue
-            RConnection = RConnection.Connect( port: Port, hostname: hostname);
+            RConnection = RConnection.Connect(port: Port, hostname: hostname);
             // ReSharper restore RedundantArgumentDefaultValue
         }
 
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
 
         /// <summary>
         /// Get the wrapped RConnection
         /// </summary>
         public RConnection RConnection { get; private set; }
 
-#endregion
+        #endregion
 
-#region Public Members
+        #region Public Members
 
         public void Dispose()
         {
-            Dispose( true );
+            Dispose(true);
         }
 
-#endregion
+        #endregion
 
-#region Interface Implimentations
+        #region Interface Implimentations
 
-        protected virtual void Dispose( bool disposing )
+        protected virtual void Dispose(bool disposing)
         {
-            if ( !_disposed )
+            if (!_disposed)
             {
-                if ( disposing )
+                if (disposing)
                 {
                     // dispose the connection to server
-                    if ( RConnection != null )
+                    if (RConnection != null)
                     {
 #if RTERM_PROCESS
                         // Kill the server
@@ -121,16 +121,16 @@ namespace RserveCLI2.Test
             }
         }
 
-#endregion
+        #endregion
 
-#region Private Members
+        #region Private Members
 
         private bool _disposed; // to detect redundant calls
-        
+
 #if RTERM_PROCESS
         private readonly Process _rtermProcess;
 #endif
-        
-#endregion
+
+        #endregion
     }
 }
