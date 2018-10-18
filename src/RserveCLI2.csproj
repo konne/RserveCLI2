@@ -20,7 +20,13 @@
     <Description>RserveCLI2 is a .NET/CLR client for Rserve. It allows .NET/CLR client to access R on the same machine or across the network.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageTags>Rserve</PackageTags>    
+    <PackageTags>Rserve</PackageTags>
+
+    <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <Choose>
@@ -37,25 +43,14 @@
   </Choose>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0008">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
     <PackageReference Include="System.Net.Requests" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
   </ItemGroup>
-
-  <Target Name="WriteVersion" AfterTargets="GetVersion" Condition="'$(PackageOutputAbsolutePath)' != ''">
-    <WriteLinesToFile File="$(PackageOutputAbsolutePath)\version.txt" Lines="$(GitVersion_NuGetVersion)" Overwrite="true" />
-  </Target>
-
-  <Target Name="SetPackageVersionFromFile" BeforeTargets="GenerateNuspec">
-    <ReadLinesFromFile File="$(PackageOutputAbsolutePath)\version.txt">
-      <Output TaskParameter="Lines" PropertyName="PackageVersion" />
-    </ReadLinesFromFile>
-  </Target>
 
   <Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
     <ReadLinesFromFile File="$(SolutionDir)\..\..\nugetapikey.txt">
