@@ -6,13 +6,10 @@
     <AssemblyName>RserveCLI2</AssemblyName>
     <RootNamespace>RserveCLI2</RootNamespace>
     <Version>$(GitVersion_NuGetVersion)</Version>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 
     <Company />
     <Product>RserveCLI2</Product>
-    <Authors>Suraj K. Gupta</Authors>
+    <Authors>Oliver Haynold, Suraj K. Gupta, Konrad Mattheis</Authors>
     <RepositoryUrl>https://github.com/konne/RserveCLI2.git</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/konne/RserveCLI2/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/konne/RserveCLI2</PackageProjectUrl>
