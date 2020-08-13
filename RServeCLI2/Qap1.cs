@@ -801,22 +801,34 @@ namespace RserveCLI2
                     break;
                 case XtArrayDouble:
                     {
-                        var res = new double[ length / 8 ];
-                        var doubleBuf = new byte[ 8 ];
-                        for ( int i = 0 ; i < length ; i += 8 )
+                        var res = new double[length / 8];
+                        var doubleBuf = new byte[8];
+                        for (int i = 0; i < length; i += 8)
                         {
-                            Array.Copy( data , start + i , doubleBuf , 0 , 8 );
-                            res[ i / 8 ] = BitConverter.ToDouble( doubleBuf , 0 );
+                            Array.Copy(data, start + i, doubleBuf, 0, 8);
+                            res[i / 8] = BitConverter.ToDouble(doubleBuf, 0);
                         }
 
                         // is date or just a double?
-                        if ( ( attrs != null ) && ( attrs.ContainsKey( "class" ) && attrs[ "class" ].AsStrings.Contains( "Date" ) ) )
+                        if ((attrs != null) && (attrs.ContainsKey("class") && attrs["class"].AsStrings.Contains("Date")))
                         {
-                            result = new SexpArrayDate( res.Select( Convert.ToInt32 ) );
+                            int[] tempBuf = new int[res.Length];
+                            for (int i = 0; i < res.Length; ++i)
+                            {
+                                if (double.IsNaN(res[i]))
+                                {
+                                    tempBuf[i] = SexpArrayInt.Na;
+                                }
+                                else
+                                {
+                                    tempBuf[i] = Convert.ToInt32(res[i]);
+                                }
+                            }
+                            result = new SexpArrayDate(tempBuf);
                         }
                         else
                         {
-                            result = new SexpArrayDouble( res );
+                            result = new SexpArrayDouble(res);
                         }
                     }
                     break;

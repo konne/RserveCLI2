@@ -149,7 +149,25 @@ namespace RserveCLI2.Test
                 Assert.Equal( new[] { new DateTime( 2012 , 01 , 01 ) , new DateTime( 1970 , 01 , 01 ) , new DateTime( 1950 , 06 , 08 ) } , sexp2.AsDates );
                 Assert.Equal( new[] { new DateTime( 2012 , 01 , 01 ) , new DateTime( 1970 , 01 , 01 ) , new DateTime( 1950 , 06 , 08 ) } , sexp3.AsDates );
             }
-        }        
+        }
+
+        [Fact]
+        public void AsDates_SexpConstructedFromR_WithNA()
+        {
+            using (var service = new Rservice())
+            {
+                // Arrange & Act
+                Sexp sexpNA1 = service.RConnection["as.Date(c('2012-01-01', NA))"];
+
+                service.RConnection.VoidEval("test = as.Date(c('2012-01-01', NA))");
+                service.RConnection.VoidEval("mode( test ) = 'integer'");
+                Sexp sexpNA2 = service.RConnection["test"];
+
+                // Assert
+                Assert.Equal(new[] { new DateTime(2012, 01, 01), DateTime.MaxValue }, sexpNA1.AsDates);
+                Assert.Equal(new[] { new DateTime(2012, 01, 01), DateTime.MaxValue }, sexpNA2.AsDates);
+            }
+        }
 
         [Fact]
         public void Indexer_Get_ReturnsSexpWithExpectedDate()

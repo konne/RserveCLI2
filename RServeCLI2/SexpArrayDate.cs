@@ -26,6 +26,11 @@ namespace RserveCLI2
         /// </summary>
         private static readonly DateTime Origin = new DateTime( 1970 , 1 , 1 );
 
+        /// <summary>
+        /// The special values that marks an DateTime as NA.
+        /// </summary>
+        internal new static readonly DateTime NaValue = DateTime.MaxValue;
+
         #endregion
 
         #region Constructors and Destructors
@@ -95,6 +100,17 @@ namespace RserveCLI2
             get
             {
                 return Value.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Gets a representation of the NA value.
+        /// </summary>
+        public new static DateTime Na
+        {
+            get
+            {
+                return NaValue;
             }
         }
 
@@ -263,9 +279,13 @@ namespace RserveCLI2
         /// <summary>
         /// Converts a DateTime into an R integer
         /// </summary>
-        private static DateTime RIntToDate( int rdate )
+        private static DateTime RIntToDate(int rdate)
         {
-            return Origin.AddDays( rdate );
+            if (rdate == SexpArrayInt.Na)
+            {
+                return SexpArrayDate.Na;
+            }
+            return Origin.AddDays(rdate);
         }
 
         #endregion
