@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard1.3;netstandard2.0</TargetFrameworks>
 
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+
     <!-- SourceLink support -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
